@@ -56,7 +56,7 @@ GUI_PROGRAMS = {"ssd", "teddy", "wingraf", "animator", "sofiplus", "resultviewer
 # known by name when the program folder cannot be read (distinctive names only: a generic name such
 # as template.exe could be any program)
 SOFISTIK_NAMES = {"sps", "aqua", "aqb", "sofimsha", "sofimshb", "sofimshc", "sofiload", "ase", "bdk", "maxima",
-                  "talpa", "wingraf", "teddy", "ssd", "plbconverter"}
+                  "talpa", "wingraf", "teddy", "ssd", "plbconverter", "wpsjob"}
 
 CHECK_FORMAT = """\
 {
@@ -516,14 +516,30 @@ def _is_claude_node(p) -> bool:
         return False
 
 
+# SOFiSTiK's own job wrappers between sps.exe and the program doing the work
+JOB_WRAPPERS = {"SPS", "WPSJOB"}
+
+
 def running_module(sofistik_rows: list[dict]) -> str | None:
-    """The SOFiSTiK program doing the work now: the newest process started by sps.exe (a calculation
-    from Claude, Teddy or SSD always runs through sps.exe); 'SPS' between programs; None when idle."""
+    """The SOFiSTiK program doing the work now: the newest process below sps.exe (directly or through
+    its job wrapper WPSJOB) that is not a wrapper or GUI.  A calculation from Claude, Teddy or SSD
+    always runs through sps.exe.  'SPS' between programs; None when idle."""
+    by_pid = {r["pid"]: r for r in sofistik_rows}
     sps = {r["pid"] for r in sofistik_rows if r["name"] == "SPS"}
-    children = [r for r in sofistik_rows if r.get("ppid") in sps and r["name"] != "SPS"
-                and r["name"].lower() not in GUI_PROGRAMS]
-    if children:
-        return max(children, key=lambda r: r["create_time"])["name"]
+
+    def under_sps(r) -> bool:
+        seen, pp = set(), r.get("ppid")
+        while pp in by_pid and pp not in seen:
+            if pp in sps:
+                return True
+            seen.add(pp)
+            pp = by_pid[pp].get("ppid")
+        return pp in sps
+
+    work = [r for r in sofistik_rows if r["name"] not in JOB_WRAPPERS and r["name"].lower() not in GUI_PROGRAMS
+            and under_sps(r)]
+    if work:
+        return max(work, key=lambda r: r["create_time"])["name"]
     return "SPS" if sps else None
 
 

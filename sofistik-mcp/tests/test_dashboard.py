@@ -257,6 +257,15 @@ def test_running_module():
     assert dashboard.running_module([rows[3]]) is None
     assert dashboard.running_module([{"pid": 7, "name": "BDK", "create_time": 1, "ppid": 99}]) is None   # no sps
     assert dashboard.running_module([]) is None
+    # SOFiSTiK 2027 runs the programs under its job wrapper WPSJOB
+    wrapped = [{"pid": 1, "name": "SPS", "create_time": 1, "ppid": 0},
+               {"pid": 2, "name": "WPSJOB", "create_time": 2, "ppid": 1},
+               {"pid": 3, "name": "BDK", "create_time": 3, "ppid": 2}]
+    assert dashboard.running_module(wrapped) == "BDK"
+    assert dashboard.running_module(wrapped[:2]) == "SPS"
+    loop = [{"pid": 5, "name": "ASE", "create_time": 1, "ppid": 6},
+            {"pid": 6, "name": "AQUA", "create_time": 1, "ppid": 5}]
+    assert dashboard.running_module(loop) is None
 
 
 class FakeProc:
