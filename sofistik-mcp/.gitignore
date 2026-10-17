@@ -1,0 +1,12 @@
+.venv/
+settings.json
+selftest/run/
+selftest/selftest_report.txt
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+.mypy_cache/
+.ruff_cache/

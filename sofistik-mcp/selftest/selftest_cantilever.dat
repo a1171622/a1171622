@@ -1,0 +1,52 @@
+$ SOFiSTiK MCP self-test: steel cantilever HEA 200, length 6 m (6 elements), tip load in global +Z:
+$ LC 1 = 1 kN, LC 2 = 2 kN (so an envelope over LC 1-2 is governed by LC 2 with twice the values).
+$ Hand calculation (LC 1): tip deflection = P L^3/(3 E Iy) + P L/(G Az), tip rotation = P L^2/(2 E Iy),
+$ fixed-end moment = P L = 6 kNm, support reaction = 1 kN.  selftest.py compares these with what the
+$ MCP server reads from the .cdb.
+
++PROG AQUA urs:1
+HEAD MCP self-test cantilever
+NORM DC "DIN" NDC "EN199X-200X" COUN 49
+STEE 1 S 355
+SECT 1 ; PROF TYPE HEA 200
+END
+
++PROG SOFIMSHA urs:2
+HEAD MCP self-test cantilever
+UNIT 5 $ sections in mm, geometry and loads in m
+SYST TYPE SPAC GDIV 1000
+NODE NO X Y Z FIX
+  1 0 0 0 F
+  2 1 0 0
+  3 2 0 0
+  4 3 0 0
+  5 4 0 0
+  6 5 0 0
+  7 6 0 0
+GRP 0
+BEAM NO 1 NA 1 NE 2 NCS 1
+BEAM NO 2 NA 2 NE 3 NCS 1
+BEAM NO 3 NA 3 NE 4 NCS 1
+BEAM NO 4 NA 4 NE 5 NCS 1
+BEAM NO 5 NA 5 NE 6 NCS 1
+BEAM NO 6 NA 6 NE 7 NCS 1
+END
+
++PROG SOFILOAD urs:3
+HEAD MCP self-test load
+UNIT 5 $ sections in mm, geometry and loads in m
+$ LC: NO TYPE TITL (TITL is LT32, at most 32 characters): sofiload_1.pdf p. 3-15 "LC - Definition of a Load Case"
+$ NODE: NO TYPE P1; TYPE PZZ = "Load in global Z-direction" (PZ would be the node's local z):
+$ sofiload_1.pdf p. 3-19 "NODE - Nodal Loads" and p. 3-20 Table 3.8 "Type of the Nodal Loading"
+LC 1 TYPE 'NONE' TITL 'self-test tip load 1 kN'
+  NODE NO 7 TYPE PZZ P1 1.0
+LC 2 TYPE 'NONE' TITL 'self-test tip load 2 kN'
+  NODE NO 7 TYPE PZZ P1 2.0
+END
+
++PROG ASE urs:4
+HEAD MCP self-test linear analysis
+$ LC NO: ase_1.pdf p. 3-85 "LC - Load Case and Masses"; a list of load cases as in SOFiSTiK's
+$ example ase.dat/english/special/steel_design_jb.dat ("LC 1,2")
+LC 1,2
+END

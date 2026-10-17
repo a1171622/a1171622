@@ -1,0 +1,17 @@
+   *** Start: Program Calculation - Version 2027-0.0.139
+   *** Start: Program aqb
+   
+   SOFiSTiK 2027-0.0.139    AQB     - DESIGN OF SECTIONS
+   Output on file aqb_steel_check.plb
+   +++++ error no. 10001
+   Data base aqb_steel_check.cdb not found or erroneous
+   TIME NEEDED         0 SECONDS, TOTAL         0 SECONDS
+   DATE       2026-10-14, 00:15:04
+   
+   
+   
+    +++++    1 errors and    0 warnings +++++
+   +++++ DATA ERRONEOUS, PROGRAM ABORTED +++++
+   *** Stop : Program aqb
+   *** Process canceled, error detected!
+   *** End of Calculation!
