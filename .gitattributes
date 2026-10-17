@@ -1,1 +1,1 @@
-sofistik-mcp/**/*.bat text eol=crlf
+sofistik-mcp/**/*.bat -text
