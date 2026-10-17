@@ -103,7 +103,7 @@ refreshes every 3 seconds and shows:
 | Now running | The SOFiSTiK module working now (AQUA, SOFIMSHA, SOFILOAD, ASE, BDK, MAXIMA ...) and the calculation with its running time | The programs running from the SOFiSTiK folder, and the server's own job |
 | PC resources | CPU and RAM of the PC, with the last 10 minutes | Windows, via psutil |
 | Checks and key findings | Each check's status (running, passed, failed, attention, waiting, done), its current step and its findings, newest first | `report_check` calls from the checking session |
-| Processes | Every SOFiSTiK program and Claude window with its CPU and RAM | Windows, via psutil |
+| Processes | Every SOFiSTiK program and Claude process with its CPU and RAM | Windows, via psutil |
 | Claude token usage today | Output, new input and cache tokens, per session | The usage Claude Code records on this PC |
 | Recent calculations | Last 20 runs: status, errors, warnings, time, first error | The server's run results |
 
@@ -113,13 +113,17 @@ Settings > Usage).
 
 **From your phone.** On the same Wi-Fi: set `"dashboard_lan": true` in `settings.json`, restart Claude,
 allow Python when Windows asks, then open `http://<PC name>:8765` on the phone (the PC name is shown at
-the top of the page). Anyone on that network can then read the page; nothing on it can change anything.
-Away from the PC's network: ask Claude in the project "how is the SOFiSTiK run going?". A session on the
-PC calls `dashboard_status` and answers with the same information.
+the top of the page). Anyone on that network can then read the page (file names, check findings, process list, token
+counts; no password), so use it on your own or the office network only. Nothing on it can change
+anything.
+Away from the PC's network: ask Claude in your claude.ai project "show the SOFiSTiK dashboard". This
+works only while the Claude app is open on the PC with Remote Control switched on: Claude then starts a
+session on the PC, which calls `dashboard_status` and shows the answer as a snapshot (not live).
 
 **Status files** (in `<first work folder>\_dashboard\`, e.g. `C:\Sofistik workflow\_dashboard\`):
-`server-<number>.json` is written by each running server, and `checks\<check name>.json` by
-`report_check`. A session without the SOFiSTiK tools can write a check file itself in this format:
+`server-<number>.json` is written by each running server (one closed for a day is removed), and
+`checks\<check name>-<code>.json` by `report_check`. A session without the SOFiSTiK tools can write a
+check file itself (any `.json` name in `checks\`) in this format:
 
 ```json
 {

@@ -585,7 +585,10 @@ async def dashboard_status() -> dict:
     how long it has run, PC CPU and RAM, SOFiSTiK and Claude processes, the checks with their latest
     findings, the last calculations and today's Claude Code token use on this PC."""
     d = await anyio.to_thread.run_sync(_collector.collect)
-    host, port = dashboard.dashboard_options(_settings())
+    try:
+        host, port = dashboard.dashboard_options(_settings())
+    except config.SettingsError:
+        host, port = "127.0.0.1", dashboard.DEFAULT_PORT
     lan = f" (same Wi-Fi: http://{d.get('host')}:{port})" if host != "127.0.0.1" else ""
     d["page"] = f"http://localhost:{port}{lan}"
     for c in d.get("checks") or []:

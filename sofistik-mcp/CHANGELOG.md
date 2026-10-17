@@ -16,6 +16,12 @@ All notable changes to the SOFiSTiK MCP server. Versions follow `VERSION` in
   `dashboard_status` (the dashboard's data, for answering "how is the run going?"). 24 tools.
 - Status files in `<first work folder>\_dashboard\` (format in README).
 - Dependency: psutil 7.1.3 (CPU, RAM, processes). Run install.bat again to get it.
+- Independent review before release (fixed): exclusive port bind on Windows, rename retried while a
+  reader holds a status file, a lock file for check updates from two processes, one lock around page
+  collection, token use counted once across resumed sessions, closed servers' jobs shown as
+  "not finished" and their files removed after a day, process-number reuse, module shown only for
+  programs started by sps.exe, generic program names dropped, Host header check (DNS rebinding),
+  Claude Code under node.exe listed, README corrections.
 
 ### Fixed
 - Self-test report printed "(? load cases)" instead of the count (cosmetic).

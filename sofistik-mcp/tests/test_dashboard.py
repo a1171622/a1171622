@@ -99,7 +99,10 @@ def test_state_dir_without_work_folders():
 def test_report_check_creates_and_appends(s):
     r = dashboard.report_check(s, "26016 member checks", "running", "AQUA", "1 of 3",
                                [{"level": "pass", "text": "sections read"}])
-    assert r["check"]["status"] == "running" and os.path.basename(r["saved"]) == "26016-member-checks.json"
+    assert r["check"]["status"] == "running"
+    assert os.path.basename(r["saved"]) == dashboard.check_file_name("26016 member checks")
+    assert os.path.basename(r["saved"]).startswith("26016-member-checks-")
+    assert not os.path.exists(r["saved"] + ".lock")
     r = dashboard.report_check(s, "26016 member checks", step="ASE",
                                findings=["plain text finding", {"level": "FAIL", "text": "B81 ratio 1.12"}])
     c = r["check"]
@@ -116,8 +119,12 @@ def test_report_check_defaults_and_limits(s):
     assert r["check"]["status"] == "running"
     assert len(r["check"]["findings"]) == dashboard.MAX_FINDINGS
     assert r["check"]["findings"][-1]["text"] == f"f{dashboard.MAX_FINDINGS + 6}"
-    assert dashboard.check_file_name("../..\\evil:name") == "evil-name.json"
-    assert dashboard.check_file_name("...") == "check.json"
+    n = dashboard.check_file_name("../..\\evil:name")
+    assert n.startswith("evil-name-") and n.endswith(".json") and "/" not in n and "\\" not in n
+    assert dashboard.check_file_name("...").startswith("check-")
+    # names that differ only in punctuation or non-ASCII letters get their own files
+    assert dashboard.check_file_name("26016 member/checks") != dashboard.check_file_name("26016 member checks")
+    assert dashboard.check_file_name("Prüfung") != dashboard.check_file_name("Prüfüng")
 
 
 @pytest.mark.parametrize("kw, msg", [
@@ -132,7 +139,7 @@ def test_report_check_refuses_bad_input(s, kw, msg):
 
 
 def test_report_check_replaces_an_unreadable_file(s):
-    p = os.path.join(folder(s), "checks", "a.json")
+    p = os.path.join(folder(s), "checks", dashboard.check_file_name("a"))
     os.makedirs(os.path.dirname(p))
     open(p, "w").write("[1, 2")
     assert dashboard.report_check(s, "a", "done")["check"]["status"] == "done"
@@ -162,7 +169,9 @@ def test_servers_and_checks(s, tmp_path):
     servers = {x["pid"]: x for x in col.servers(f)}
     assert set(servers) == {os.getpid(), 999999}
     assert servers[os.getpid()]["alive"] and servers[os.getpid()]["job"]["elapsed_s"] >= 64
-    assert not servers[999999]["alive"] and "closed" in servers[999999]["job"]["note"]
+    dead = servers[999999]
+    assert not dead["alive"] and dead["job"] is None
+    assert dead["recent_runs"][0]["status"] == "not finished" and "closed" in dead["recent_runs"][0]["reason"]
     checks = col.checks(f)
     assert [c["check"] for c in checks] == ["new", "old"]
     assert checks[1]["findings"] == [{"text": "a"}]
@@ -246,7 +255,7 @@ def test_running_module():
     assert dashboard.running_module(rows) == "ASE"
     assert dashboard.running_module(rows[:1]) == "SPS"
     assert dashboard.running_module([rows[3]]) is None
-    assert dashboard.running_module([{"pid": 7, "name": "BDK", "create_time": 1, "ppid": 99}]) == "BDK"
+    assert dashboard.running_module([{"pid": 7, "name": "BDK", "create_time": 1, "ppid": 99}]) is None   # no sps
     assert dashboard.running_module([]) is None
 
 
@@ -419,3 +428,147 @@ def test_start_dashboard_logs(server_mod, monkeypatch, caplog):
     monkeypatch.setattr(server_mod.dashboard, "start", lambda *a: None)
     server_mod._start_dashboard()
     assert "dashboard on" in caplog.text and "not started here" in caplog.text
+
+
+# ------------------------------------------------------------------------------- review round fixes
+
+def test_old_dead_server_files_are_removed_and_reused_pids_are_not_alive(s, tmp_path):
+    f = folder(s)
+    old = os.path.join(f, "server-999997.json")
+    write(old, {"pid": 999997, "job": None, "recent_runs": [{"dat": "x.dat", "status": "ok"}]})
+    os.utime(old, (time.time() - 2 * 86400,) * 2)
+    write(os.path.join(f, "server-reused.json"), {"pid": os.getpid(), "pid_started": 12345.0, "job": None,
+                                                  "recent_runs": [{"dat": "y.dat", "status": "ok"}]})
+    col = dashboard.Collector(lambda: s, claude_dir=str(tmp_path / "none"))
+    servers = col.servers(f)
+    assert not os.path.exists(old)
+    assert [x["alive"] for x in servers] == [False]                    # same number, other process
+
+
+def test_resumed_session_counts_a_message_once(s, tmp_path):
+    proj = tmp_path / "projects" / "p"
+    proj.mkdir(parents=True)
+    first, resumed = proj / "a.jsonl", proj / "b.jsonl"
+    first.write_text(usage_line("m1", iso_today(), 100, session="aaaaaaaa1") + "\n")
+    resumed.write_text(usage_line("m1", iso_today(), 100, session="bbbbbbbb1") + "\n" +
+                       usage_line("m2", iso_today(2), 5, session="bbbbbbbb1") + "\n")
+    os.utime(first, (time.time() - 60,) * 2)
+    col = dashboard.Collector(lambda: s, claude_dir=str(tmp_path / "projects"))
+    t = col.tokens()
+    assert t["today"]["output"] == 105
+    rows = {r["session"]: r["output"] for r in t["sessions"]}
+    assert rows == {"aaaaaaaa": 100, "bbbbbbbb": 5}
+    os.utime(first, (time.time() - 3 * 86400,) * 2)                    # leaves the window: forgotten
+    col._files_cache = (0.0, [])
+    col.tokens()
+    assert str(first) not in col._token_files
+
+
+def test_collect_is_serialised(s, tmp_path):
+    import threading
+    col = dashboard.Collector(lambda: s, claude_dir=str(tmp_path / "none"))
+    inside, peak = [0], [0]
+    real = col._collect
+
+    def slow():
+        inside[0] += 1
+        peak[0] = max(peak[0], inside[0])
+        time.sleep(0.05)
+        inside[0] -= 1
+        return real()
+    col._collect = slow
+    ts = [threading.Thread(target=col.collect) for _ in range(4)]
+    for t in ts:
+        t.start()
+    for t in ts:
+        t.join()
+    assert peak[0] == 1
+
+
+def test_write_json_retries_while_a_reader_holds_the_file(tmp_path, monkeypatch):
+    target = str(tmp_path / "d" / "x.json")
+    real, calls = os.replace, [0]
+
+    def flaky(a, b):
+        calls[0] += 1
+        if calls[0] < 3:
+            raise PermissionError("[WinError 5] Access is denied")
+        return real(a, b)
+    monkeypatch.setattr(dashboard.os, "replace", flaky)
+    monkeypatch.setattr(dashboard.time, "sleep", lambda t: None)
+    dashboard._write_json(target, {"a": 1})
+    assert json.load(open(target)) == {"a": 1} and calls[0] == 3
+    monkeypatch.setattr(dashboard.os, "replace", lambda a, b: (_ for _ in ()).throw(PermissionError("locked")))
+    with pytest.raises(PermissionError):
+        dashboard._write_json(target, {"a": 2})
+    assert [n for n in os.listdir(tmp_path / "d") if n.endswith(".tmp")] == []    # no tmp file left
+
+
+def test_file_lock_waits_takes_over_stale_and_times_out(tmp_path, monkeypatch):
+    p = str(tmp_path / "c.json")
+    with dashboard._FileLock(p):
+        assert os.path.exists(p + ".lock")
+        with pytest.raises(TimeoutError):
+            with dashboard._FileLock(p, timeout_s=0.2):
+                pass
+    assert not os.path.exists(p + ".lock")
+    open(p + ".lock", "w").close()
+    os.utime(p + ".lock", (time.time() - 60,) * 2)                     # left by a crash
+    with dashboard._FileLock(p, timeout_s=0.5):
+        pass
+
+
+@pytest.mark.parametrize("host, lan, ok", [
+    ("localhost:8765", False, True), ("127.0.0.1:8765", False, True), ("[::1]:8765", False, True),
+    (socket.gethostname() + ":8765", False, True), ("evil.example.com:8765", False, False), (None, False, False),
+    ("192.168.1.20:8765", False, False), ("192.168.1.20:8765", True, True), ("evil.example.com", True, False),
+    ("app.localhost", False, True),
+])
+def test_host_allowed(host, lan, ok):
+    assert dashboard.host_allowed(host, lan) is ok
+
+
+def test_rebinding_request_is_refused(s, tmp_path):
+    port = free_port()
+    httpd = dashboard.start(dashboard.Collector(lambda: s, claude_dir=str(tmp_path / "none")), "127.0.0.1", port)
+    try:
+        req = urllib.request.Request(f"http://127.0.0.1:{port}/api/state", headers={"Host": "attacker.example"})
+        try:
+            urllib.request.urlopen(req, timeout=10)
+            code = 200
+        except urllib.error.HTTPError as e:
+            code = e.code
+        assert code == 403
+    finally:
+        httpd.shutdown()
+        httpd.server_close()
+
+
+def test_main_port_switched_off(monkeypatch, capsys, s):
+    monkeypatch.setattr(dashboard.config, "load_settings", lambda: {**s, "dashboard_port": 0})
+    assert dashboard.main(["--no-browser"]) == 0
+    assert "switched off" in capsys.readouterr().out
+
+
+def test_claude_code_running_under_node_is_listed(s, tmp_path, monkeypatch):
+    class NodeProc(FakeProc):
+        def __init__(self, pid, args):
+            super().__init__(pid, "node.exe", r"C:\\node\\node.exe")
+            self.args = args
+
+        def cmdline(self):
+            return self.args
+    procs = [NodeProc(20, ["node", r"C:\\npm\\node_modules\\@anthropic-ai\\claude-code\\cli.js"]),
+             NodeProc(21, ["node", "server.js"])]
+    monkeypatch.setattr(dashboard.psutil, "process_iter", lambda attrs=None: list(procs))
+    col = dashboard.Collector(lambda: s, claude_dir=str(tmp_path / "none"))
+    assert [r["pid"] for r in col.processes()["claude"]] == [20]
+    assert dashboard._is_claude_node(object()) is False
+
+
+def test_dashboard_status_with_broken_settings(server_mod, monkeypatch):
+    def bad():
+        raise server_mod.config.SettingsError("typing error")
+    monkeypatch.setattr(server_mod, "_settings", bad)
+    d = run(server_mod.dashboard_status())
+    assert d["page"] == "http://localhost:8765" and "typing error" in d["notes"][0]

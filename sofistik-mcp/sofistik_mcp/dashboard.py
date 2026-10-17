@@ -15,8 +15,11 @@ What it shows, and where each number comes from
                       limit is not visible anywhere on the PC.
 
 The page is served by the MCP server itself (a thread, started when Claude starts the server) and by
-dashboard.bat (on its own, for when Claude is closed).  Whichever binds the port first serves it.
-Only GET requests for the page and its JSON are answered; nothing on the page can change anything.
+dashboard.bat (on its own, for when Claude is closed).  The first to bind the port serves it (bound
+exclusively, so a second copy notices and steps aside).
+Only GET requests for the page and its JSON are answered, and only when the browser addressed this PC
+by its own name or address (blocks web pages that try to read it via a look-alike domain); nothing on
+the page can change anything.
 By default only this PC can open it (http://localhost:8765).  "dashboard_lan": true in settings.json
 lets a phone or laptop on the same Wi-Fi open http://<PC name>:8765 (Windows asks once to allow it).
 """
@@ -24,6 +27,7 @@ from __future__ import annotations
 
 import datetime
 import glob
+import hashlib
 import json
 import os
 import re
@@ -49,10 +53,10 @@ CHECK_STATUSES = ("running", "passed", "failed", "attention", "waiting", "done")
 FINDING_LEVELS = ("info", "pass", "warn", "fail")
 # SOFiSTiK GUI programs: shown in the list, never "the module running now"
 GUI_PROGRAMS = {"ssd", "teddy", "wingraf", "animator", "sofiplus", "resultviewer", "sofistik"}
+# known by name when the program folder cannot be read (distinctive names only: a generic name such
+# as template.exe could be any program)
 SOFISTIK_NAMES = {"sps", "aqua", "aqb", "sofimsha", "sofimshb", "sofimshc", "sofiload", "ase", "bdk", "maxima",
-                  "dyna", "csm", "template", "talpa", "hydra", "sir", "sofilod", "tendon", "geos", "ell", "bemess",
-                  "result", "wingraf", "teddy", "ssd", "animator", "dolfyn", "simulate", "colu", "foot",
-                  "plbconverter"}
+                  "talpa", "wingraf", "teddy", "ssd", "plbconverter"}
 
 CHECK_FORMAT = """\
 {
@@ -85,12 +89,62 @@ def _now() -> str:
 
 
 def _write_json(path: str, data) -> None:
-    """Write via a temporary file and rename, so a reader never sees half a file."""
+    """Write via a temporary file and rename, so a reader never sees half a file.  On Windows the rename
+    fails while a reader has the file open for a moment, so it is retried for up to about 2 s."""
     os.makedirs(os.path.dirname(path), exist_ok=True)
     tmp = f"{path}.{os.getpid()}.{threading.get_ident()}.tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=1, ensure_ascii=False)
-    os.replace(tmp, path)
+    try:
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=1, ensure_ascii=False)
+        for attempt in range(40):
+            try:
+                os.replace(tmp, path)
+                return
+            except PermissionError:
+                if attempt == 39:
+                    raise
+                time.sleep(0.05)
+    finally:
+        if os.path.exists(tmp):
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
+
+
+class _FileLock:
+    """A lock file shared by every process (two Claude windows, or a session writing a check file),
+    so a read-change-write of one check never loses the other's findings.  A lock older than 10 s
+    was left by a crash and is taken over."""
+
+    def __init__(self, path: str, timeout_s: float = 5.0):
+        self.path, self.timeout_s = path + ".lock", timeout_s
+        self.fd: int | None = None
+
+    def __enter__(self):
+        deadline = time.time() + self.timeout_s
+        while True:
+            try:
+                self.fd = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                return self
+            except FileExistsError:
+                try:
+                    if time.time() - os.path.getmtime(self.path) > 10:
+                        os.remove(self.path)
+                        continue
+                except OSError:
+                    pass
+                if time.time() > deadline:
+                    raise TimeoutError(f"{self.path} is held by another process") from None
+                time.sleep(0.05)
+
+    def __exit__(self, *exc):
+        if self.fd is not None:
+            os.close(self.fd)
+        try:
+            os.remove(self.path)
+        except OSError:
+            pass
 
 
 def _read_json(path: str):
@@ -111,7 +165,8 @@ class ServerState:
 
     def __init__(self, settings_fn, version: str):
         self._settings_fn = settings_fn
-        self.data: dict = {"pid": os.getpid(), "host": socket.gethostname(), "version": version,
+        self.data: dict = {"pid": os.getpid(), "pid_started": _process_start(os.getpid()),
+                           "host": socket.gethostname(), "version": version,
                            "started": _now(), "updated": _now(), "job": None, "recent_runs": []}
 
     def path(self) -> str | None:
@@ -186,8 +241,11 @@ def _first_error(r: dict) -> str | None:
 # ------------------------------------------------------------------------------------------------
 
 def check_file_name(check: str) -> str:
-    slug = re.sub(r"[^A-Za-z0-9._-]+", "-", str(check).strip()).strip("-.")[:80]
-    return (slug or "check") + ".json"
+    """A safe file name for a check: readable part plus a short hash of the exact name, so names that
+    differ only in punctuation or non-ASCII letters never share a file."""
+    name = str(check).strip()
+    slug = re.sub(r"[^A-Za-z0-9._-]+", "-", name).strip("-.")[:60]
+    return f"{slug or 'check'}-{hashlib.sha1(name.encode('utf-8')).hexdigest()[:6]}.json"
 
 
 def report_check(settings: dict, check: str, status: str | None = None, step: str | None = None,
@@ -209,7 +267,8 @@ def report_check(settings: dict, check: str, status: str | None = None, step: st
             return {"error": f"finding level must be one of {', '.join(FINDING_LEVELS)}."}
         new.append({"time": _now(), "level": level, "text": str(f["text"]).strip()[:500]})
     path = os.path.join(state_dir(settings), "checks", check_file_name(check))
-    with _lock:
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with _lock, _FileLock(path):
         old = _read_json(path)
         cur = old if isinstance(old, dict) else {}
         cur["check"] = str(check).strip()
@@ -240,7 +299,9 @@ class Collector:
         self._root_fn = sofistik_root_fn
         self.claude_dir = claude_dir or os.path.join(os.path.expanduser("~"), ".claude", "projects")
         self._procs: dict = {}
-        self._token_files: dict = {}                 # path -> {"size", "offset", "msgs": {id: (ts, usage)}, ...}
+        self._token_files: dict = {}                 # path -> {"offset", "msgs": {id: (ts, usage)}, ...}
+        self._files_cache: tuple = (0.0, [])         # (time, jsonl files) - the folder is listed every 30 s
+        self._busy = threading.Lock()                # page requests and dashboard_status share this object
         if psutil is not None:
             psutil.cpu_percent(None)
 
@@ -271,7 +332,7 @@ class Collector:
                 info = p.info
                 name = info.get("name") or ""
                 low = name.lower()
-                is_claude = low.startswith("claude")
+                is_claude = low.startswith("claude") or (low in ("node", "node.exe") and _is_claude_node(p))
                 if not is_claude and not self._is_sofistik(name, info.get("exe") or "", root):
                     continue
                 pid = info["pid"]
@@ -304,16 +365,30 @@ class Collector:
             data = _read_json(path)
             if not isinstance(data, dict):
                 continue
-            pid = data.get("pid")
-            alive = _pid_alive(pid)
-            if not alive and not data.get("recent_runs"):
-                continue
+            alive = _pid_alive(data.get("pid"), data.get("pid_started"))
+            if not alive:
+                # a closed server: its runs stay visible for a day, a job it was running is not "running"
+                try:
+                    old = time.time() - os.path.getmtime(path) > 24 * 3600
+                except OSError:
+                    old = True
+                if old or not data.get("recent_runs"):
+                    if old:
+                        try:
+                            os.remove(path)
+                        except OSError:
+                            pass
+                    continue
+                if data.get("job"):
+                    runs = list(data.get("recent_runs") or [])
+                    runs.insert(0, {"dat": data["job"].get("dat"), "finished": data.get("updated"),
+                                    "status": "not finished", "errors": 0, "warnings": 0, "seconds": None,
+                                    "reason": "Claude or the server closed while it ran"})
+                    data["recent_runs"], data["job"] = runs[:RECENT_RUNS], None
             data["alive"] = alive
             job = data.get("job")
             if isinstance(job, dict) and job.get("t0"):
                 job["elapsed_s"] = round(time.time() - float(job["t0"]))
-                if not alive:
-                    job["note"] = "the server that ran it has closed"
             out.append(data)
         return out
 
@@ -328,22 +403,37 @@ class Collector:
         return sorted(out, key=lambda c: str(c.get("updated") or ""), reverse=True)
 
     # --- Claude Code token usage -----------------------------------------------------------------
+    def _jsonl_files(self) -> list[str]:
+        t, files = self._files_cache
+        if time.time() - t > 30:
+            files = glob.glob(os.path.join(self.claude_dir, "**", "*.jsonl"), recursive=True)
+            self._files_cache = (time.time(), files)
+        return files
+
     def tokens(self) -> dict:
         today = datetime.date.today()
         cutoff = time.time() - TOKEN_WINDOW_S
         sessions: list[dict] = []
         tot = {"input": 0, "output": 0, "cache_write": 0, "cache_read": 0}
-        files = glob.glob(os.path.join(self.claude_dir, "**", "*.jsonl"), recursive=True)
-        for path in files:
+        recent = []
+        for path in self._jsonl_files():
             try:
                 st = os.stat(path)
             except OSError:
                 continue
-            if st.st_mtime < cutoff:
-                continue
-            rec = self._read_tokens(path, st.st_size)
+            if st.st_mtime >= cutoff:
+                recent.append((st.st_mtime, path, st.st_size))
+        for path in [p for p in self._token_files if p not in {r[1] for r in recent}]:
+            self._token_files.pop(path, None)        # out of the window: forget it
+        # oldest file first: a message copied into a resumed session counts once, for the session it was in
+        seen: set = set()
+        for _, path, size in sorted(recent):
+            rec = self._read_tokens(path, size)
             day = {"input": 0, "output": 0, "cache_write": 0, "cache_read": 0}
-            for ts, u in rec["msgs"].values():
+            for key, (ts, u) in rec["msgs"].items():
+                if key in seen:
+                    continue
+                seen.add(key)
                 if ts and ts.date() == today:
                     for k in day:
                         day[k] += u[k]
@@ -386,7 +476,7 @@ class Collector:
                 continue
             usage = msg["usage"]
             ts = _parse_ts(d.get("timestamp"))
-            key = msg.get("id") or d.get("requestId") or d.get("uuid") or f"{rec['offset']}-{len(rec['msgs'])}"
+            key = (msg.get("id") or d.get("uuid") or f"{path}:{rec['offset']}:{len(rec['msgs'])}", d.get("requestId"))
             rec["msgs"][key] = (ts, {"input": _int(usage.get("input_tokens")),
                                      "output": _int(usage.get("output_tokens")),
                                      "cache_write": _int(usage.get("cache_creation_input_tokens")),
@@ -400,6 +490,10 @@ class Collector:
 
     # --- everything ------------------------------------------------------------------------------
     def collect(self) -> dict:
+        with self._busy:
+            return self._collect()
+
+    def _collect(self) -> dict:
         notes = []
         try:
             settings = self._settings_fn()
@@ -414,24 +508,42 @@ class Collector:
                 "status_folder": folder, "notes": notes}
 
 
+def _is_claude_node(p) -> bool:
+    """Claude Code installed with npm runs as node.exe."""
+    try:
+        return any("claude" in str(a).lower() for a in p.cmdline()[1:3])
+    except Exception:
+        return False
+
+
 def running_module(sofistik_rows: list[dict]) -> str | None:
-    """The SOFiSTiK program doing the work now: the newest process started by sps.exe, else the newest
-    non-GUI SOFiSTiK process other than sps.exe."""
+    """The SOFiSTiK program doing the work now: the newest process started by sps.exe (a calculation
+    from Claude, Teddy or SSD always runs through sps.exe); 'SPS' between programs; None when idle."""
     sps = {r["pid"] for r in sofistik_rows if r["name"] == "SPS"}
-    work = [r for r in sofistik_rows if r["name"] != "SPS" and r["name"].lower() not in GUI_PROGRAMS]
-    children = [r for r in work if r.get("ppid") in sps]
-    pick = children or work
-    if not pick:
-        return "SPS" if sps else None
-    return max(pick, key=lambda r: r["create_time"])["name"]
+    children = [r for r in sofistik_rows if r.get("ppid") in sps and r["name"] != "SPS"
+                and r["name"].lower() not in GUI_PROGRAMS]
+    if children:
+        return max(children, key=lambda r: r["create_time"])["name"]
+    return "SPS" if sps else None
 
 
-def _pid_alive(pid) -> bool:
+def _process_start(pid: int) -> float | None:
+    try:
+        return psutil.Process(pid).create_time() if psutil is not None else None
+    except Exception:                                # pragma: no cover
+        return None
+
+
+def _pid_alive(pid, started=None) -> bool:
+    """The process is still running (and, when its start time is known, is the same process: Windows
+    reuses process numbers)."""
     if not isinstance(pid, int) or psutil is None:
         return False
     try:
-        return psutil.pid_exists(pid)
-    except Exception:                                # pragma: no cover
+        if not psutil.pid_exists(pid):
+            return False
+        return started is None or abs(psutil.Process(pid).create_time() - float(started)) < 1
+    except Exception:
         return False
 
 
@@ -466,7 +578,20 @@ def _project_name(path: str) -> str:
 PAGE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dashboard.html")
 
 
-def make_handler(collector: Collector):
+def host_allowed(host: str | None, lan: bool) -> bool:
+    """Only answer requests that name this PC: blocks a web page that points its own domain at
+    127.0.0.1 (DNS rebinding) from reading the dashboard through the engineer's browser."""
+    if not host:
+        return False
+    h = host.strip().lower()
+    h = h[1:].split("]", 1)[0] if h.startswith("[") else h.rsplit(":", 1)[0] if h.count(":") == 1 else h
+    me = socket.gethostname().lower()
+    if h in ("localhost", "127.0.0.1", "::1", me, me + ".local") or h.endswith(".localhost"):
+        return True
+    return lan and bool(re.fullmatch(r"\d{1,3}(\.\d{1,3}){3}", h))
+
+
+def make_handler(collector: Collector, lan: bool = False):
     class Handler(BaseHTTPRequestHandler):
         server_version = "sofistik-dashboard"
 
@@ -483,6 +608,9 @@ def make_handler(collector: Collector):
             self.wfile.write(body)
 
         def do_GET(self):
+            if not host_allowed(self.headers.get("Host"), lan):
+                return self._send(403, b"Open this page as http://localhost:<port> (or the PC's name).",
+                                  "text/plain; charset=utf-8")
             route = self.path.split("?", 1)[0]
             if route in ("/", "/index.html"):
                 try:
@@ -530,7 +658,7 @@ def start(collector: Collector, host: str, port: int):
     if not port:
         return None
     try:
-        httpd = _Server((host, port), make_handler(collector))
+        httpd = _Server((host, port), make_handler(collector, lan=host != "127.0.0.1"))
     except OSError:
         return None
     threading.Thread(target=httpd.serve_forever, name="dashboard", daemon=True).start()
@@ -551,8 +679,11 @@ def main(argv=None) -> int:
 
     settings = config.load_settings()
     host, port = dashboard_options(settings)
-    httpd = start(Collector(config.load_settings, root), host, port or DEFAULT_PORT)
-    url = f"http://localhost:{port or DEFAULT_PORT}"
+    if not port:
+        print('The dashboard is switched off ("dashboard_port": 0 in settings.json).')
+        return 0
+    httpd = start(Collector(config.load_settings, root), host, port)
+    url = f"http://localhost:{port}"
     if httpd is None:
         print(f"The dashboard is already running (Claude serves it): {url}")
     else:
