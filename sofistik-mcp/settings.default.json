@@ -1,0 +1,14 @@
+{
+  "_help": "Settings for the SOFiSTiK MCP server. Edit in Notepad, save, then fully quit and restart Claude. Use double backslashes in paths.",
+  "sofistik_dir": "",
+  "_sofistik_dir": "Leave empty to find SOFiSTiK 2027/2026/2025 automatically, or give the folder that holds sps.exe, e.g. C:\\Program Files\\SOFiSTiK\\2027\\SOFiSTiK 2027",
+  "work_folders": ["C:\\Sofistik workflow"],
+  "_work_folders": "Claude may write .dat files and run calculations only inside these folders. Add your project folders here, e.g. \"D:\\26016 HPC Kier BAM JV\".",
+  "read_folders": [],
+  "_read_folders": "Extra folders Claude may read (results, .dat, .prt) but never change.",
+  "allow_sys_commands": false,
+  "_allow_sys_commands": "false = refuse to run any .dat containing +SYS (which runs Windows commands). Only set true if you need it.",
+  "run_timeout_minutes": 60,
+  "examples_folders": ["C:\\Sofistik workflow"],
+  "manual_folders": ["C:\\Sofistik workflow"]
+}

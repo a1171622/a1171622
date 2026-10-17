@@ -1,0 +1,31 @@
+$ SOFiSTiK MCP self-test 2: the same HEA 200 cantilever, 6 m, built from a structural line
+$ (SOFiMSHC, SLN 7, group 3, 6 elements) with a uniform load of 1 kN/m.
+$ Hand calculation: reaction = w L = 6 kN, fixed-end moment = w L^2 / 2 = 18 kNm,
+$ tip deflection = w L^4 / (8 E Iy) (+ shear part).  Checks that the server finds beams by SLN and group.
+
++PROG AQUA urs:1
+HEAD MCP self-test structural line
+NORM DC "DIN" NDC "EN199X-200X" COUN 49
+STEE 1 S 355
+SECT 1 ; PROF TYPE HEA 200
+END
+
++PROG SOFIMSHC urs:2
+HEAD MCP self-test structural line
+SYST SPAC GDIV 1000 POSZ
+CTRL MESH 1 ; CTRL HMIN 1.0
+SPT 1 X 0 0 0 FIX F
+SPT 2 X 6 0 0
+SLN 7 NPA 1 NPE 2 SNO 1 GRP 3 STYP B SDIV -6
+END
+
++PROG SOFILOAD urs:3
+HEAD MCP self-test load
+LC 1 TYPE 'NONE' TITL 'self-test 1 kN/m'
+  BEAM GRP 3 TYPE PZZ PA 1.0 PE 1.0
+END
+
++PROG ASE urs:4
+HEAD MCP self-test linear analysis
+LC 1
+END

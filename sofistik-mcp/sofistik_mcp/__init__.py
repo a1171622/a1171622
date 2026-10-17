@@ -1,0 +1,1 @@
+"""SOFiSTiK MCP server package."""
