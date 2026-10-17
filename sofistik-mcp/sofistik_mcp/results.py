@@ -34,9 +34,16 @@ MAX_NR = 99999
 LC_KIND_NAMES = {0: "load case", 1: "load case", 2: "superposition / envelope (MAXIMA)", 4: "eigenmode"}
 LC_KINDS_WITH_FACTORS = (0, 1)
 LC_KIND_EIGEN = 4
-# CGRP.m_typ (element code) of beam groups, = the beam key 100/00.  Ranges of other element types
+LC_KIND_SUPERPOSITION = 2
+SUPERPOSITION_NOTE = ("Load cases {lcs} are MAXIMA superposition results (CLC_CTRL kind 2): they are already "
+                      "envelopes or combinations of other load cases, so their values are included as they are; "
+                      "do not combine them again with the load cases they were made from.")
+# CGRP.m_typ (element code) of groups whose element range may hold beams: 100 (the beam key 100/00), and
+# 0 and 101 as well, because the field-tested report reader (sofrep cdb_reader.py, run on real SOFiSTiK
+# 2027 .cdb files) matched beam groups with (0, 100, 101); sofistik_daten.py documents m_typ only as
+# "element code".  The self-test prints the m_typ values of its .cdb.  Ranges of other element types
 # (trusses 150, cables 160, springs 170, quads 200, ...) are never used to place a beam in a group.
-BEAM_ELEMENT_CODES = (100,)
+BEAM_ELEMENT_CODES = (0, 100, 101)
 EIGEN_WARNING = ("Load case {lc} is an eigenmode (CLC_CTRL kind 4): these values are a normalised mode "
                  "shape with an arbitrary scale, not design results.")
 EXTREMES_NOTE = ("Each component's max / min is found on its own: the maxima of different components "
@@ -440,6 +447,11 @@ def _group_of(nr, grp_list, gdiv, sln_group=None):
         return nr // gdiv
     if sln_group is not None:
         return sln_group
+    return _range_group(nr, grp_list)
+
+
+def _range_group(nr, grp_list):
+    """Rule 3 alone: the one beam group (BEAM_ELEMENT_CODES) whose 11/00 element range holds nr, else None."""
     gs = {g["group"] for g in grp_list
           if g["element_code"] in BEAM_ELEMENT_CODES and g["min_element"] <= nr <= g["max_element"]}
     return gs.pop() if len(gs) == 1 else None
@@ -450,6 +462,23 @@ def _beam_ctx(cdb, daten):
     gdiv = system_info(cdb, daten).get("group_divisor", 0)
     sln_groups = {} if gdiv > 0 else _sln_groups(cdb, daten, {v["sln"] for v in idx.values() if v.get("sln")})
     return {"idx": idx, "groups": groups(cdb, daten), "gdiv": gdiv, "sln_groups": sln_groups}
+
+
+def beam_group_rules(cdb, daten) -> dict:
+    """Each beam's group by each rule of _group_of on its own (the self-test compares them on a real .cdb):
+    rule1_gdiv (element number // GDIV, None when GDIV <= 0), rule2_sln (CSLN_BEAM m_nog of the beam's
+    structural line, None when there is none), rule3_range (the one beam group whose 11/00 range holds
+    the beam, None when none or several), and the raw 11/00 records (cgrp) with their m_typ codes."""
+    idx = _beam_index(cdb, daten)
+    gdiv = system_info(cdb, daten).get("group_divisor", 0)
+    grp_list = groups(cdb, daten)
+    sln_groups = _sln_groups(cdb, daten, {v["sln"] for v in idx.values() if v.get("sln")})
+    beams = [{"beam": nr, "sln": idx[nr]["sln"], "rule1_gdiv": nr // gdiv if gdiv > 0 else None,
+              "rule2_sln": sln_groups.get(idx[nr]["sln"]), "rule3_range": _range_group(nr, grp_list)}
+             for nr in sorted(idx)]
+    return {"group_divisor": gdiv, "beams": beams, "beam_element_codes": list(BEAM_ELEMENT_CODES),
+            "cgrp": [{k: g[k] for k in ("group", "element_code", "count", "min_element", "max_element")}
+                     for g in grp_list]}
 
 
 SLN_NOTE = ("Structural line numbers are taken from each beam's reference axis (CBEAM m_nref). The self-test "
@@ -471,6 +500,7 @@ def beam_forces(cdb, daten, lc, beams=None, groups_=None, slns=None, max_rows=30
     idx, grp_list, gdiv, sln_groups = ctx["idx"], ctx["groups"], ctx["gdiv"], ctx.get("sln_groups", {})
     rows = []
     unknown_group: set = set()
+    range_differs: dict = {}                  # beam -> (GDIV group, 11/00 range group) where they differ
     for rec in cdb.records(102, lc):
         if first_int(rec) <= 0:
             continue
@@ -482,6 +512,10 @@ def beam_forces(cdb, daten, lc, beams=None, groups_=None, slns=None, max_rows=30
         if want_s is not None and info.get("sln") not in want_s:
             continue
         g = _group_of(nr, grp_list, gdiv, sln_groups.get(info.get("sln")))
+        if gdiv > 0:
+            rg = _range_group(nr, grp_list)
+            if rg is not None and rg != g:
+                range_differs[nr] = (g, rg)
         if want_g is not None and g not in want_g:
             if g is None:
                 unknown_group.add(nr)
@@ -515,6 +549,15 @@ def beam_forces(cdb, daten, lc, beams=None, groups_=None, slns=None, max_rows=30
                         "them), so they were left out of the group filter: "
                         + ", ".join(map(str, u[:60])) + (" ..." if len(u) > 60 else "")
                         + ". Select them by beam number instead.")
+    if range_differs:
+        d = sorted(range_differs.items())
+        extra["beams_where_group_range_differs"] = [{"beam": b, "gdiv_group": g, "range_group": r} for b, (g, r) in d]
+        warnings.append(f"For {len(d)} beam(s) the group from SYST GDIV (element number // {gdiv}) is not the beam "
+                        "group whose element range in 11/00 holds them: "
+                        + ", ".join(f"beam {b} GDIV group {g} / range group {r}" for b, (g, r) in d[:30])
+                        + (" ..." if len(d) > 30 else "")
+                        + ". The GDIV group is used (SOFiSTiK's definition); check the groups of these beams "
+                          "(with GDIV < 0 SOFiMSHC chooses the group bases itself, sofimshc_1.pdf p. 3-14).")
     out = {**extra, "lc": lc, "stations": len(rows), "beams": len({r["beam"] for r in rows}), "extremes": ext,
            "extremes_note": EXTREMES_NOTE, "rows": rows[:max_rows], "truncated": len(rows) > max_rows,
            "units": {"x": "m from beam start", "N,Vy,Vz": "kN", "Mt,My,Mz": "kNm"},
@@ -557,7 +600,8 @@ def envelope(cdb, daten, lcs, what="beam", ids=None, groups_=None, slns=None) ->
         return {"error": "Give the load cases, e.g. 101-118."}
     kwh = {"beam": 102, "node": 24, "support": 24, "truss": 152, "cable": 162}[what]
     present = [lc for lc in sorted(lcset) if cdb.kexist(kwh, lc) >= 1]
-    eigen = [lc for lc in present if lc_kind(cdb, daten, lc) == LC_KIND_EIGEN]   # normalised mode shapes
+    kinds = {lc: lc_kind(cdb, daten, lc) for lc in present}
+    eigen = [lc for lc in present if kinds[lc] == LC_KIND_EIGEN]   # normalised mode shapes
     present = [lc for lc in present if lc not in eigen]
     warnings: list = []
     per_lc: dict = {}
@@ -597,6 +641,10 @@ def envelope(cdb, daten, lcs, what="beam", ids=None, groups_=None, slns=None) ->
     if without:
         warnings.append("Load cases " + ", ".join(map(str, without)) + " gave no values (no results stored, or "
                         "the filters matched nothing in them); the envelope does not cover them.")
+    supe = [lc for lc in found if kinds.get(lc) == LC_KIND_SUPERPOSITION]
+    if supe:
+        out["superposition_load_cases"] = supe
+        out["superposition_note"] = SUPERPOSITION_NOTE.format(lcs=", ".join(map(str, supe)))
     if eigen:
         out["eigen_load_cases_skipped"] = eigen
         warnings.append("Eigenmode load cases " + ", ".join(map(str, eigen)) + " were left out: mode shapes "

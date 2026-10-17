@@ -38,6 +38,7 @@ OPS: dict[str, Callable[[Any, Any, dict], Any]] = {
                                                          ids=a.get("ids"), max_rows=a.get("max_rows", 300)),
     "envelope": lambda c, d, a: results.envelope(c, d, a["lcs"], what=a.get("what", "beam"), ids=a.get("ids"),
                                                  groups_=a.get("groups"), slns=a.get("slns")),
+    "group_rules": lambda c, d, a: results.beam_group_rules(c, d),
     "read_key": lambda c, d, a: results.read_key(c, d, a["kwh"], a["kwl"], class_name=a.get("class_name"),
                                                  max_records=a.get("max_records", 20), skip=a.get("skip", 0)),
 }

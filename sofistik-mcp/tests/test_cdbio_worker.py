@@ -238,6 +238,9 @@ def test_every_op(fake_cdb_frame):
         "axial_forces": ({"lc": 1, "element_type": "cable"}, lambda r: r["rows"][0]["N"] == 80.0),
         "envelope": ({"lcs": "1-2", "what": "beam", "slns": "7"},
                      lambda r: r["overall"]["My"]["max"]["value"] == 50.0),
+        "group_rules": ({}, lambda r: r["group_divisor"] == 1000
+                        and [(b["beam"], b["rule1_gdiv"], b["rule3_range"]) for b in r["beams"]][:2]
+                        == [(1001, 1, 1), (1002, 1, 1)]),
         "read_key": ({"kwh": 152, "kwl": 1, "class_name": "CTRUS_RES", "max_records": 1, "skip": 1},
                      lambda r: r["records"][0]["m_nr"] == 5002),
     }

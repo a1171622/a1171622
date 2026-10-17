@@ -400,10 +400,12 @@ def test_lock_file_written_during_run_and_removed(tmp_path, sps):
 
     def look(proc):
         lock = tmp_path / ("m" + solver.LOCK_EXT)
-        seen["pids"] = [int(x) for x in lock.read_text().split()]
+        seen["lock"] = json.loads(lock.read_text())
         seen["proc"] = proc.pid
     r = solver.run(w(tmp_path / "m.dat", "+PROG ASE\nEND\n"), sps, 60, on_start=look)
-    assert r["status"] == "ok" and seen["pids"] == [os.getpid(), seen["proc"]]
+    assert r["status"] == "ok" and [p for p, _ in seen["lock"]["procs"]] == [os.getpid(), seen["proc"]]
+    assert seen["lock"]["host"] == solver.HOST and seen["lock"]["started"]
+    assert seen["lock"]["procs"][0][1] == solver.proc_start_time(os.getpid())
     assert not list(tmp_path.glob("*" + solver.LOCK_EXT))
 
 
@@ -450,13 +452,14 @@ def test_cleanup_at_exit_kills_and_unlocks(tmp_path):
 
 # ================================================================ 6. run status
 
-def test_nonzero_exit_code_is_not_ok(tmp_path, sps):
+def test_nonzero_exit_code_with_a_clean_protocol_is_a_warning(tmp_path, sps):
+    # round 3 (R1): sps.exe's exit codes are not documented, so a clean protocol decides the status
     r = solver.run(w(tmp_path / "m.dat", "+PROG ASE\nEND\n$ FAKE mode=warnings\n$ FAKE exit=3\n"), sps, 60)
-    assert r["status"] == "check: exit code 3" and r["exit_code"] == 3 and r["messages"][0]["number"] == 2430
-    assert "exit code 3" in r["reason"]
+    assert r["status"] == "ok with warnings" and r["exit_code"] == 3 and r["messages"][0]["number"] == 2430
+    assert "sps.exe exit code 3, meaning not verified" in r["server_warnings"][0] and "reason" not in r
 
 
-def test_program_without_totals_or_stop_is_not_finished():
+def test_program_without_stop_is_not_finished_without_totals_is_a_note():
     txt = ("*** Start: Program Calculation\n*** Start: Program ASE\n    +++++    0 errors and    0 warnings +++++\n"
            "*** Stop : Program ASE\n*** Start: Program AQB\n*** Stop : Program AQB\n*** End of Calculation!\n")
     import tempfile
@@ -465,10 +468,13 @@ def test_program_without_totals_or_stop_is_not_finished():
         with open(p, "w") as f:
             f.write(txt)
         r = messages.summarize_run(p)
-        assert r["status"] == "not finished" and r["unfinished_programs"] == ["AQB"]
+        # round 3 (R1): a missing totals line is only a note; a missing Stop line still means not finished
+        assert r["status"] == "ok" and r["unfinished_programs"] == [] and r["programs_without_totals"] == ["AQB"]
+        assert "AQB" in r["notes"][0]
         with open(p, "w") as f:
             f.write(txt.replace("*** Stop : Program AQB\n", "    +++++    0 errors and    0 warnings +++++\n"))
-        assert messages.summarize_run(p)["unfinished_programs"] == ["AQB"]
+        r = messages.summarize_run(p)
+        assert r["status"] == "not finished" and r["unfinished_programs"] == ["AQB"] and "notes" not in r
 
 
 def test_protocol_written_just_before_the_run_is_not_fresh(tmp_path, sps, fast_clock):
@@ -623,7 +629,7 @@ def test_install_bat_quotes_cd_and_checks_errorlevels():
             assert '"%CD%"' in ln, ln               # & and ( ) in the folder name stay literal
     lines = text.split("\n")
     i = lines.index('".venv\\Scripts\\python.exe" -m sofistik_mcp.configure_clients')
-    assert lines[i + 1] == "if errorlevel 1 goto regfailed"
+    assert lines[i + 1] == "if %errorlevel% neq 0 goto regfailed"
     assert ":regfailed" in lines and "exit /b 1" in lines[lines.index(":regfailed"):]
 
 
@@ -737,17 +743,26 @@ def test_include_deleted_during_run_counts_as_changed(tmp_path, sps):
 
 
 def test_containment_problem_is_reported(tmp_path, sps, monkeypatch):
-    monkeypatch.setattr(solver, "_contain", lambda proc: "no job object here")
+    monkeypatch.setattr(solver, "_new_job", lambda: solver._NoJob("no job object here"))
     r = solver.run(w(tmp_path / "m.dat", "+PROG ASE\nEND\n"), sps, 60)
     assert r["status"] == "ok" and "no job object here" in r["server_warnings"][0]
-    monkeypatch.setattr(solver, "_contain", lambda proc: 1 / 0)
+    monkeypatch.setattr(solver, "_new_job", lambda: 1 / 0)                  # creating the job fails
     r = solver.run(str(tmp_path / "m.dat"), sps, 60)
     assert r["status"] == "ok" and "ZeroDivisionError" in r["server_warnings"][0]
+
+    class BadAssign(solver._NoJob):
+        def assign(self, proc):
+            raise OSError("assign failed")
+    monkeypatch.setattr(solver, "_new_job", BadAssign)
+    r = solver.run(str(tmp_path / "m.dat"), sps, 60)
+    assert r["status"] == "ok" and "assign failed" in r["server_warnings"][0]
 
 
 def test_lock_races(tmp_path, sps, monkeypatch):
     dat = w(tmp_path / "m.dat", "+PROG ASE\nEND\n")
-    monkeypatch.setattr(solver, "live_lock", lambda folder: None)          # both servers checked at once
+    real = solver.live_lock
+    # both servers checked at once (the check before the lock is written saw nothing)
+    monkeypatch.setattr(solver, "live_lock", lambda folder, skip=None: None if skip is None else real(folder, skip))
     (tmp_path / ("m" + solver.LOCK_EXT)).write_text("")
     r = solver.run(dat, sps, 60)
     assert r["status"] == "not run" and "appeared just now" in r["reason"]

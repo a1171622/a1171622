@@ -9,26 +9,33 @@ programs run), name.erg (output of the whole analysis), name.plb (report browser
 
 Safety (CADINP manual cadinp_1.pdf, 1.9 "Starting an Analysis"):
   * "+SYS cmd" always and "*SYS cmd" (if the last PROG was active) make SOFiSTiK run any Windows
-    command.  $(name) text substitution is active on every line, so a line that starts with $(...)
-    or a #define value containing SYS can build such a command.  Unless settings.json says
+    command.  $(name) text substitution is active on every line, so a record whose first word holds
+    $(...) ("$(X) calc", "+S$(Y) calc"), a #define value starting with SYS or containing ';', and SYS
+    beyond the 255-character line limit can build such a command.  Unless settings.json says
     "allow_sys_commands": true, every such line (also in files pulled in by #INCLUDE or +APPLY, three
-    levels deep) refuses the run before anything starts.  The rule is deliberately broad.
+    levels deep) refuses the run before anything starts, and so does a file that cannot be decoded for
+    certain (NUL bytes, an unknown byte order mark).  The rule is deliberately broad.
   * Every file SPS could open for an #INCLUDE / +APPLY is scanned (name and name.dat, next to the
     including file and next to the main .dat); one that cannot be found or checked refuses the run.
     One outside the folders this server may read is always refused: SOFiSTiK copies included text
     into the .erg, which Claude can read.
-  * sps.exe runs in a Windows job object that is closed (killing sps.exe and the programs it
-    started) when the server process ends, and a <name>.mcp-running lock file next to the .dat stops
-    a second server from starting a calculation in the same folder.
+  * Each run's sps.exe runs in its own Windows job object (made before sps.exe starts): a stop or
+    time-out ends the whole job (also programs whose parent has already ended), and Windows closes it,
+    killing what is left, when the server process ends.  A <name>.mcp-running lock file (PC name,
+    process numbers and start times) next to the .dat stops a second server from starting a
+    calculation in the same folder.
 """
 from __future__ import annotations
 
 import atexit
+import datetime
 import glob
 import hashlib
+import json
 import ntpath
 import os
 import re
+import socket
 import subprocess
 import sys
 import threading
@@ -47,18 +54,28 @@ LOCK_EXT = ".mcp-running"
 # --- line rules (applied to a cleaned copy of each line, see _clean) ---------------------------------
 # +SYS / *SYS (any spelling, also +SYSTEM: sps may only look at the first letters) and a bare SYS word
 SYS_RE = re.compile(r"^\s*(?:[+*]\s*sys|sys(?![a-z0-9_]))", re.IGNORECASE)
-# a line whose first word is built by $(...) substitution
-DOLLAR_FIRST_RE = re.compile(r"^\s*[+*]?\s*\$\(", re.IGNORECASE)
+# a record whose first word (after an optional + / * sign) is built, wholly or partly, by $(...)
+# substitution: "$(X) calc", "+S$(Y) calc" with Y = YS, "+SY$(UNDEFINED)S", "*S$(NAME)" ...
+DOLLAR_FIRST_RE = re.compile(r"^\s*[+*]?\s*[^\s;]*\$\(")
+FIRST_WORD_RE = re.compile(r"^\s*[+*]?\s*([^\s;]*)")
 DEFINE_RE = re.compile(r"^\s*#\s*define\s+([^\s=]+)\s*(?:=(.*))?$", re.IGNORECASE)
 ENDDEF_RE = re.compile(r"^\s*#\s*enddef\b", re.IGNORECASE)
 UNDEF_RE = re.compile(r"^\s*#\s*undef\s+(\S+)", re.IGNORECASE)
 BLOCK_OLD_RE = re.compile(r"^\s*\$\s*block\b", re.IGNORECASE)          # old $BLOCK BEG/END/SET form
-INCLUDE_RE = re.compile(r"^\s*(?:#\s*incl\w*|\+?\s*apply)\s+(.+)$", re.IGNORECASE)
+# #INCLUDE and APPLY, also abbreviated to their first four letters (#INCL, APPL: CADINP compares the first
+# four characters of a name, cadinp_1.pdf 1.1.4; the manual gives no shorter form), with or without the
+# + sign (and *, which is not documented for APPLY but costs nothing to follow).  -APPLY is skipped by SPS.
+INCLUDE_RE = re.compile(r"^\s*(?:#\s*incl\w*|[+*]?\s*appl\w*)\s+(.+)$", re.IGNORECASE)
 # +PROG name and, as in the manual's examples (cadinp_1 p. 1-2), PROG name without the sign
 PROG_RE = re.compile(r"^\s*(?:\+\s*)?prog(?:\s+(\S+)(.*))?$", re.IGNORECASE)
 REF_RE = re.compile(r"\$\(([^()$]*)\)")
 COMMENT_LINE_RE = re.compile(r"^\s*(?:\$(?:\s|$)|!|//)")
 SAFE_VALUE_RE = re.compile(r"^[0-9.\s+\-*/(),eE]*$")
+# a #define value that puts SYS into the first word of a record: "+SYS", "*sys", "SYSTEM", "X+SYS"
+VALUE_SYS_RE = re.compile(r"^\s*[+*]?\s*[^\s;]*sys", re.IGNORECASE)
+# CADINP: "Each line contains up to 255 characters" (cadinp_1.pdf 1.1.1).  What SPS does with the rest of
+# a longer line is not documented (cut off, or read as a new line?), so SYS after it refuses the run.
+LINE_LIMIT = 255
 _BLANK_CATEGORIES = {"Zs", "Zl", "Zp", "Cc", "Cf"}
 
 
@@ -74,6 +91,18 @@ def _strip_value_comment(v: str) -> str:
     return re.split(r"\s(?:\$|!|//)(?:\s|$)", " " + v)[0].strip()
 
 
+def _beyond_line_limit(line: str, enc: str = "utf-8") -> str:
+    """The part of line after its first LINE_LIMIT bytes in enc (UTF-8 for UTF-8 and cp1252 files: never
+    fewer bytes than characters, so both readings are covered), with two characters before it; '' for a
+    line within the limit."""
+    n = 0
+    for i, ch in enumerate(line):
+        n += len(ch.encode(enc, "surrogatepass"))
+        if n > LINE_LIMIT:
+            return line[max(0, i - 2):]
+    return ""
+
+
 def sys_lines_in_text(text: str, file: str, readable=None) -> list[dict]:
     """+SYS-like lines of a text about to be written as `file` (write_dat_file), with the same rules as
     scan_dat.  Include files that already exist are read too (their #define values count for the
@@ -81,7 +110,6 @@ def sys_lines_in_text(text: str, file: str, readable=None) -> list[dict]:
     sc = _Scanner(main=file, readable=readable)
     sc.seen.add(os.path.normcase(os.path.realpath(os.path.abspath(file))))     # not the old version of itself
     sc.scan_text(text, file, depth=INCLUDE_DEPTH)
-    sc.finish()
     return sc.out["sys_lines"]
 
 
@@ -94,8 +122,7 @@ class _Scanner:
         self.max_bytes = SCAN_MAX_BYTES if max_bytes is None else max_bytes
         self.seen: set = set()
         self.blocks: set = set()               # #define NAME ... #enddef blocks in memory
-        self.defines: dict = {}                # name -> [values] (every definition seen anywhere)
-        self.dollar_lines: list = []           # lines whose first word is $(...), judged in finish()
+        self.defines: dict = {}                # name -> [values] of the definitions read so far (scan order)
         self.out: dict = {"sys_lines": [], "programs": [], "includes": [], "missing_includes": [],
                           "blocked_includes": [], "hashes": {}}
 
@@ -128,16 +155,57 @@ class _Scanner:
             self._blocked(label, path, f"it cannot be read ({e.strerror or e})", "unscannable")
             return
         self.out["hashes"][path] = hashlib.sha256(raw).hexdigest()
-        self.scan_text(messages.decode_text(raw), path, depth)
+        try:
+            text, enc = messages.decode_input(raw)
+        except ValueError as e:
+            self._blocked(label, path, str(e), "unscannable")
+            return
+        self.scan_text(text, path, depth, enc=enc)
 
     # -- lines ------------------------------------------------------------------------------------
     def _flag(self, file, line_no, original, why):
-        self.out["sys_lines"].append({"file": file, "line": line_no, "text": original.strip().lstrip("﻿"),
+        self.out["sys_lines"].append({"file": file, "line": line_no,
+                                      "text": original.strip().lstrip("\ufeff").replace("\x00", "")[:300],
                                       "why": why})
 
-    def scan_text(self, text: str, file: str, depth: int, follow: bool = True) -> None:
+    def _safe_ref(self, ref: str, stack=()) -> bool:
+        """True if $(ref) can only expand to numbers: it is defined before this line (scan order) and
+        every definition read so far is numeric."""
+        key = ref.strip().casefold()
+        if key in stack or key not in self.defines:
+            return False
+        for v in self.defines[key]:
+            v = _strip_value_comment(v)
+            for inner in REF_RE.findall(v):
+                if not self._safe_ref(inner, stack + (key,)):
+                    return False
+            if not SAFE_VALUE_RE.match(REF_RE.sub("", v)):
+                return False
+        return True
+
+    def _dollar_record_is_safe(self, seg: str) -> bool:
+        """A record whose first word holds $(...): safe only when no letter is glued to the references in
+        that first word (only digits and signs such as "#(" ",9.3)") and every reference in the record is
+        numeric, defined before this line: "$(NRQ)  1  2" table rows and "#($(sig_x1),9.3)" report
+        lines of the shipped examples.  Numbers and signs can never spell SYS or a command."""
+        fw = FIRST_WORD_RE.match(seg)
+        if not fw or re.search(r"[^\W\d_]", REF_RE.sub("", fw.group(1))):
+            return False
+        literal = REF_RE.sub("", seg)
+        return ("$(" not in literal and "sys" not in literal.casefold()
+                and all(self._safe_ref(r) for r in REF_RE.findall(seg)))
+
+    def scan_text(self, text: str, file: str, depth: int, follow: bool = True, enc: str = "utf-8") -> None:
         for i, original in enumerate(text.split("\n")):
             n = i + 1
+            if "\x00" in original:
+                self._flag(file, n, original, "NUL character (SOFiSTiK may read this line differently)")
+                continue
+            if "sys" in _clean(_beyond_line_limit(original, enc)).casefold():
+                self._flag(file, n, original, f"line longer than {LINE_LIMIT} characters with SYS after character "
+                                              f"{LINE_LIMIT} (CADINP lines have at most {LINE_LIMIT} characters; "
+                                              "what SOFiSTiK does with the rest is not known)")
+                continue
             ln = _clean(original)
             if not ln.strip():
                 continue
@@ -148,9 +216,12 @@ class _Scanner:
                     self.blocks.add(dname)
                 else:
                     self.defines.setdefault(dname, []).append(value)
-                    if "sys" in value.casefold():
-                        self._flag(file, n, original, "#define value containing SYS ($(...) substitution "
-                                                      "can turn it into a +SYS command)")
+                    if ";" in value:
+                        self._flag(file, n, original, "#define value containing ';' ($(...) substitution can start "
+                                                      "a new record with it)")
+                    elif VALUE_SYS_RE.match(_strip_value_comment(value)):
+                        self._flag(file, n, original, "#define value starting with SYS ($(...) substitution can "
+                                                      "turn it into a +SYS command)")
                 continue
             if ENDDEF_RE.match(ln):
                 continue
@@ -164,12 +235,14 @@ class _Scanner:
                 continue
             if COMMENT_LINE_RE.match(ln):
                 continue
-            for seg in ln.split(";"):
+            segs = ln.split(";")
+            for seg in segs:
                 if SYS_RE.match(seg):
                     self._flag(file, n, original, "+SYS / *SYS operating system command")
                     break
-                if DOLLAR_FIRST_RE.match(seg):
-                    self.dollar_lines.append((file, n, original, seg))
+                if DOLLAR_FIRST_RE.match(seg) and not self._dollar_record_is_safe(seg):
+                    self._flag(file, n, original, "record whose first word is built by $(...) substitution, "
+                                                  "which could make a +SYS command")
                     break
             m = PROG_RE.match(ln)
             if m and m.group(1):
@@ -181,9 +254,12 @@ class _Scanner:
                     self.out["programs"].append({"program": prog.upper(), "urs": int(urs.group(1)) if urs else None,
                                                  "file": os.path.basename(file), "line": n})
                 continue
-            m = INCLUDE_RE.match(ln)
-            if m and follow:
-                self.include(m.group(1), file, depth)
+            if not follow:
+                continue
+            for seg in segs:                          # "END;+APPLY x": every record of the line
+                m = INCLUDE_RE.match(seg)
+                if m:
+                    self.include(m.group(1), file, depth)
 
     def include(self, arg: str, including: str, depth: int) -> None:
         name = re.split(r"\s\$(?:\s|$)|\s//|[;!]", arg)[0].strip().strip("\"'").strip()
@@ -228,32 +304,6 @@ class _Scanner:
             self.out["includes"].append(c)
             self.scan_file(c, depth - 1, name)
 
-    # -- after all files ---------------------------------------------------------------------------
-    def _safe_ref(self, ref: str, stack=()) -> bool:
-        """True if $(ref) can only expand to numbers (every definition in the files is numeric)."""
-        key = ref.strip().casefold()
-        if key in stack or key not in self.defines:
-            return False
-        for v in self.defines[key]:
-            v = _strip_value_comment(v)
-            for inner in REF_RE.findall(v):
-                if not self._safe_ref(inner, stack + (key,)):
-                    return False
-            if not SAFE_VALUE_RE.match(REF_RE.sub("", v)):
-                return False
-        return True
-
-    def finish(self) -> None:
-        for file, n, original, seg in self.dollar_lines:
-            refs = REF_RE.findall(seg)
-            literal = REF_RE.sub("", seg)
-            if (refs and "$(" not in literal and all(self._safe_ref(r) for r in refs)
-                    and "sys" not in literal.casefold()):
-                continue
-            self._flag(file, n, original, "line starting with $(...) substitution, which could build a +SYS "
-                                          "command")
-        self.dollar_lines = []
-
 
 def scan_dat(path: str, depth: int = INCLUDE_DEPTH, readable=None, max_bytes: int | None = None) -> dict:
     """+SYS-like lines, active PROG blocks and included files of a .dat (follows #INCLUDE / +APPLY).
@@ -263,7 +313,6 @@ def scan_dat(path: str, depth: int = INCLUDE_DEPTH, readable=None, max_bytes: in
     and hashes ({path: sha256} of every file read, for the changed-during-run check)."""
     sc = _Scanner(path, readable, max_bytes)
     sc.scan_file(path, depth)
-    sc.finish()
     return sc.out
 
 
@@ -282,7 +331,25 @@ def _sha(path: str) -> str | None:
 _ACTIVE: set = set()          # running sps processes (killed when the server exits)
 _ACTIVE_LOCK = threading.Lock()   # held from Popen until the process is in _ACTIVE (and at exit)
 _LOCKS: set = set()           # lock files this server process wrote
-_JOB: dict = {"handle": None, "error": None}
+_RUN_JOBS: list = []          # the job object of every run, kept open until the server process ends
+HOST = socket.gethostname() or "?"
+
+
+class _NoJob:
+    """Stand-in where there is no Win32 job object (POSIX, or creating one failed): a stop falls back to
+    killing the process group (POSIX) or taskkill /T (Windows)."""
+    handle = None
+
+    def __init__(self, error: str | None = None):
+        self.error = error
+        self.assigned = False
+
+    def assign(self, proc) -> str | None:
+        return self.error
+
+    def terminate(self) -> bool:
+        return False
+
 
 # Each branch runs (and is tested) only on its own OS, so neither counts for coverage; the Windows
 # branch is exercised by tests/test_review_safety.py on windows-latest in CI.
@@ -324,47 +391,61 @@ if sys.platform == "win32":  # pragma: no cover
     _k32.QueryInformationJobObject.restype = wintypes.BOOL
     _k32.AssignProcessToJobObject.argtypes = [wintypes.HANDLE, wintypes.HANDLE]
     _k32.AssignProcessToJobObject.restype = wintypes.BOOL
+    _k32.TerminateJobObject.argtypes = [wintypes.HANDLE, wintypes.UINT]
+    _k32.TerminateJobObject.restype = wintypes.BOOL
     _k32.IsProcessInJob.argtypes = [wintypes.HANDLE, wintypes.HANDLE, ctypes.POINTER(wintypes.BOOL)]
     _k32.IsProcessInJob.restype = wintypes.BOOL
     _k32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
     _k32.OpenProcess.restype = wintypes.HANDLE
     _k32.GetExitCodeProcess.argtypes = [wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD)]
     _k32.GetExitCodeProcess.restype = wintypes.BOOL
+    _k32.GetProcessTimes.argtypes = [wintypes.HANDLE] + [ctypes.POINTER(wintypes.FILETIME)] * 4
+    _k32.GetProcessTimes.restype = wintypes.BOOL
     _k32.CloseHandle.argtypes = [wintypes.HANDLE]
     _k32.CloseHandle.restype = wintypes.BOOL
 
-    def _job_handle():
-        """The server's job object (created once, never closed: Windows closes it when the server
-        process ends, and KILL_ON_JOB_CLOSE then ends every process in it)."""
-        if _JOB["handle"] is None and _JOB["error"] is None:
+    class _Job(_NoJob):
+        """A Win32 job object for one run, made before sps.exe starts.  Every process sps.exe starts is
+        in it too (also when its own parent has ended), so TerminateJobObject stops them all.  The handle
+        stays open until the server process ends: Windows then closes it, and KILL_ON_JOB_CLOSE ends every
+        process still in the job (also when the server is killed outright)."""
+
+        def __init__(self):
+            super().__init__()
             h = _k32.CreateJobObjectW(None, None)
             if not h:
-                _JOB["error"] = f"CreateJobObject failed ({ctypes.get_last_error()})"
-                return None
+                self.error = f"CreateJobObject failed ({ctypes.get_last_error()})"
+                return
             info = _EXTENDED_LIMIT()
             info.BasicLimitInformation.LimitFlags = _JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
             if not _k32.SetInformationJobObject(h, _JOB_OBJECT_EXTENDED_LIMIT_INFORMATION,
                                                 ctypes.byref(info), ctypes.sizeof(info)):
-                _JOB["error"] = f"SetInformationJobObject failed ({ctypes.get_last_error()})"
+                self.error = f"SetInformationJobObject failed ({ctypes.get_last_error()})"
                 _k32.CloseHandle(h)
-                return None
-            _JOB["handle"] = h
-        return _JOB["handle"]
+                return
+            self.handle = h
+            _RUN_JOBS.append(self)
 
-    def _contain(proc) -> str | None:
-        """Put proc in the job object.  None if done, else why not."""
-        job = _job_handle()
-        if job is None:
-            return _JOB["error"]
-        h = _k32.OpenProcess(_PROCESS_SET_QUOTA | _PROCESS_TERMINATE, False, proc.pid)
-        if not h:
-            return f"OpenProcess failed ({ctypes.get_last_error()})"
-        try:
-            if not _k32.AssignProcessToJobObject(job, h):
-                return f"AssignProcessToJobObject failed ({ctypes.get_last_error()})"
-        finally:
-            _k32.CloseHandle(h)
-        return None
+        def assign(self, proc) -> str | None:
+            if self.handle is None:
+                return self.error
+            h = _k32.OpenProcess(_PROCESS_SET_QUOTA | _PROCESS_TERMINATE, False, proc.pid)
+            if not h:
+                return f"OpenProcess failed ({ctypes.get_last_error()})"
+            try:
+                if not _k32.AssignProcessToJobObject(self.handle, h):
+                    return f"AssignProcessToJobObject failed ({ctypes.get_last_error()})"
+            finally:
+                _k32.CloseHandle(h)
+            self.assigned = True
+            return None
+
+        def terminate(self) -> bool:
+            """Kill every process in the job.  False if sps.exe is not in it (then taskkill is used)."""
+            return bool(self.assigned and self.handle and _k32.TerminateJobObject(self.handle, 1))
+
+    def _new_job() -> _NoJob:
+        return _Job()
 
     def pid_alive(pid: int) -> bool:
         h = _k32.OpenProcess(_PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
@@ -376,17 +457,33 @@ if sys.platform == "win32":  # pragma: no cover
         finally:
             _k32.CloseHandle(h)
 
+    def proc_start_time(pid: int) -> int | None:
+        """Creation time of process pid (100 ns since 1601), None if it cannot be read."""
+        h = _k32.OpenProcess(_PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+        if not h:
+            return None
+        try:
+            t = [wintypes.FILETIME() for _ in range(4)]
+            if not _k32.GetProcessTimes(h, *[ctypes.byref(x) for x in t]):
+                return None
+            return (t[0].dwHighDateTime << 32) | t[0].dwLowDateTime
+        finally:
+            _k32.CloseHandle(h)
+
     def _popen_kw() -> dict:
         return {"creationflags": CREATE_NO_WINDOW}
 
     def _kill_group(proc) -> None:
+        job = getattr(proc, "_mcp_job", None)
+        if job is not None and job.terminate():
+            return
         subprocess.run(["taskkill", "/F", "/T", "/PID", str(proc.pid)],
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=30)
 else:  # pragma: no cover
     import signal
 
-    def _contain(proc) -> str | None:
-        return None                                          # start_new_session + atexit (below)
+    def _new_job() -> _NoJob:
+        return _NoJob()                                      # start_new_session + atexit (below)
 
     def pid_alive(pid: int) -> bool:
         try:
@@ -397,10 +494,21 @@ else:  # pragma: no cover
             return True
         return True
 
+    def proc_start_time(pid: int) -> int | None:
+        """Start time of process pid in clock ticks after boot (Linux /proc), None if not known."""
+        try:
+            with open(f"/proc/{int(pid)}/stat", encoding="ascii", errors="replace") as f:
+                return int(f.read().rsplit(")", 1)[1].split()[19])
+        except (OSError, IndexError, ValueError):
+            return None
+
     def _popen_kw() -> dict:
         return {"start_new_session": True}
 
     def _kill_group(proc) -> None:
+        job = getattr(proc, "_mcp_job", None)
+        if job is not None and job.terminate():
+            return
         try:
             os.killpg(proc.pid, signal.SIGKILL)              # sps and everything it started
         except (ProcessLookupError, PermissionError):
@@ -444,35 +552,79 @@ def _remove(path):
     _LOCKS.discard(path)
 
 
-def _lock_pids(path) -> list[int]:
+# --- lock files ----------------------------------------------------------------------------------
+# <name>.mcp-running holds one JSON line: {"host": PC name, "procs": [[pid, start time], ...] (the server,
+# then sps.exe), "started": local time}.  Older servers wrote only the process numbers.
+
+def _lock_content(pids) -> str:
+    return json.dumps({"host": HOST, "procs": [[p, proc_start_time(p)] for p in pids],
+                       "started": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}) + "\n"
+
+
+def _read_lock(path) -> dict | None:
+    """{host (None in an old lock), procs [[pid, start or None]], started} or None if unreadable."""
     try:
-        with open(path, encoding="ascii", errors="replace") as f:
-            return [int(x) for x in re.findall(r"\d+", f.read())[:2]]
+        with open(path, encoding="utf-8", errors="replace") as f:
+            text = f.read(4096)
     except OSError:
-        return []
+        return None
+    try:
+        d = json.loads(text)
+        procs = [[int(p[0]), None if p[1] is None else int(p[1])] for p in d.get("procs", [])]
+        return {"host": str(d["host"]) if d.get("host") else None, "procs": procs, "started": d.get("started")}
+    except (ValueError, TypeError, KeyError, IndexError, AttributeError):
+        return {"host": None, "procs": [[int(x), None] for x in re.findall(r"\d+", text)[:2]], "started": None}
 
 
-def live_lock(folder: str) -> str | None:
-    """A lock file in folder whose process is still running (stale ones are removed)."""
+def _lock_holder(path: str, info: dict | None) -> str | None:
+    """Why the lock is live ('another PC' / 'running'), or None when it is stale."""
+    if info is not None and info["host"] and info["host"].casefold() != HOST.casefold():
+        return "another PC"                    # its processes cannot be checked from here: never stale
+    procs = info["procs"] if info else []
+    if not procs:                              # being written by another server right now, or garbage
+        try:
+            return "running" if time.time() - os.path.getmtime(path) < 10 else None
+        except OSError:
+            return None
+    me = os.getpid()
+    for pid, start in procs:
+        now = proc_start_time(pid) if start is not None else None
+        if pid == me and (start is None or now in (None, start)):
+            if path in _LOCKS:
+                return "running"               # this server's own run
+            continue
+        if pid_alive(pid) and (start is None or now is None or now == start):
+            return "running"                   # alive, and not a later process that got the same number
+    return None
+
+
+def lock_message(path: str, info: dict | None, what: str = "Another calculation is running in this folder") -> str:
+    name = os.path.basename(path)
+    if info is not None and info["host"] and info["host"].casefold() != HOST.casefold():
+        return (f"{what}, started from the PC '{info['host']}'" + (f" at {info['started']}" if info["started"]
+                                                                   else "") +
+                f" (lock file {path}). This server cannot see that PC's programs, so it never removes this lock "
+                f"by itself. If nothing is running on '{info['host']}' any more, delete {name} by hand.")
+    return (f"{what} ({name}, started by another Claude window or server). Wait for it to finish, or delete "
+            "the lock file if you are sure nothing is running.")
+
+
+def live_lock(folder: str, skip: str | None = None) -> tuple[str, dict | None] | None:
+    """(path, contents) of a lock file in folder that is still live (stale ones are removed)."""
     for p in sorted(glob.glob(os.path.join(glob.escape(folder), "*" + LOCK_EXT))):
-        pids = _lock_pids(p)
-        alive = any(pid_alive(pid) for pid in pids if pid != os.getpid())
-        if os.getpid() in pids and p in _LOCKS:
-            alive = True
-        if not pids:                     # being written by another server right now, or garbage
-            try:
-                alive = time.time() - os.path.getmtime(p) < 10
-            except OSError:
-                continue
-        if alive:
-            return p
-        _remove(p)
+        if skip is not None and os.path.normcase(p) == os.path.normcase(skip):
+            continue
+        info = _read_lock(p)
+        if _lock_holder(p, info):
+            return p, info
+        if skip is None:
+            _remove(p)
     return None
 
 
 def _write_lock(path: str, pids) -> None:
-    with open(path, "w", encoding="ascii") as f:
-        f.write(" ".join(str(p) for p in pids) + "\n")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(_lock_content(pids))
 
 
 # ------------------------------------------------------------------------------------------------
@@ -480,16 +632,20 @@ def _write_lock(path: str, pids) -> None:
 # ------------------------------------------------------------------------------------------------
 
 def _launch(cmd, folder, timeout_s, on_start, cap: int = CONSOLE_TAIL_BYTES):
-    """Start sps.exe, wait for it (killing the whole process tree on timeout).
+    """Start sps.exe in a new job object, wait for it (killing the whole process tree on timeout).
     -> (proc, output tail, timed_out, containment problem or None)"""
+    try:
+        job = _new_job()                                    # before sps.exe exists
+    except Exception as e:                                  # never fail the run over it
+        job = _NoJob(f"{type(e).__name__}: {e}")
     with _ACTIVE_LOCK:
         proc = subprocess.Popen(cmd, cwd=folder, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT, **_popen_kw())
         _ACTIVE.add(proc)
-    problem = None
+    setattr(proc, "_mcp_job", job)                          # noqa: B010 - Popen has no such attribute
     try:
-        problem = _contain(proc)
-    except Exception as e:                                  # never fail the run over it
+        problem = job.assign(proc)
+    except Exception as e:
         problem = f"{type(e).__name__}: {e}"
     buf = bytearray()
     stdout = proc.stdout
@@ -554,12 +710,10 @@ def run(dat_path: str, sps: str, timeout_s: float, allow_sys: bool = False,
     if not sps or not os.path.isfile(sps):
         return {"status": "not run", "reason": f"sps.exe not found ({sps}). Set \"sofistik_dir\" in settings.json."}
     folder, name = os.path.split(dat_path)
-    lock = live_lock(folder)
-    if lock:
-        return {"status": "not run", "lock_file": lock,
-                "reason": f"Another calculation is running in this folder ({os.path.basename(lock)}, started by "
-                          "another Claude window or server). Wait for it to finish, or delete the lock file if "
-                          "you are sure nothing is running."}
+    held = live_lock(folder)
+    if held:
+        return {"status": "not run", "lock_file": held[0], "lock_host": (held[1] or {}).get("host"),
+                "reason": lock_message(*held)}
     scan = scan_dat(dat_path, readable=readable)
     outside = [b for b in scan["blocked_includes"] if b["kind"] == "outside"]
     if outside:
@@ -611,7 +765,7 @@ def run(dat_path: str, sps: str, timeout_s: float, allow_sys: bool = False,
     try:
         fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
         try:
-            os.write(fd, f"{os.getpid()}\n".encode("ascii"))
+            os.write(fd, _lock_content([os.getpid()]).encode("utf-8"))
         finally:
             os.close(fd)
     except FileExistsError:
@@ -619,15 +773,11 @@ def run(dat_path: str, sps: str, timeout_s: float, allow_sys: bool = False,
                 "reason": f"{os.path.basename(lock_path)} appeared just now: another calculation is starting here."}
     _LOCKS.add(lock_path)
     try:
-        other = None
-        for p in glob.glob(os.path.join(glob.escape(folder), "*" + LOCK_EXT)):
-            if os.path.normcase(p) != os.path.normcase(lock_path) and any(
-                    pid_alive(x) for x in _lock_pids(p) if x != os.getpid()):
-                other = p
+        other = live_lock(folder, skip=lock_path)
         if other:
-            return {"status": "not run", "lock_file": other,
-                    "reason": "Another calculation started in this folder at the same moment "
-                              f"({os.path.basename(other)})."}
+            return {"status": "not run", "lock_file": other[0], "lock_host": (other[1] or {}).get("host"),
+                    "reason": lock_message(*other, what="Another calculation started in this folder at the same "
+                                                        "moment")}
 
         def started(proc):
             try:
@@ -676,9 +826,9 @@ def run(dat_path: str, sps: str, timeout_s: float, allow_sys: bool = False,
     elif not fresh(prt):
         summary["reason"] = "sps.exe wrote no new .prt protocol, so the calculation did not run."
     elif summary["status"] in OK_STATUSES and exit_code not in (0, None):
-        summary["status"] = f"check: exit code {exit_code}"
-        summary["reason"] = (f"sps.exe ended with exit code {exit_code} although the protocol shows no errors. "
-                             "Do not use the results until the .prt / .erg have been checked.")
+        # SOFiSTiK does not document sps.exe's exit codes, so a clean protocol decides the status
+        server_warnings.append(f"sps.exe exit code {exit_code}, meaning not verified (SOFiSTiK does not document "
+                               "sps.exe's exit codes; the protocol shows no errors).")
     changed = [p for p, h in scan["hashes"].items() if _sha(p) != h]
     if changed:
         server_warnings.append("These input files changed while the calculation ran, so SOFiSTiK may have read "

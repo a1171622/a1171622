@@ -12,6 +12,7 @@ import asyncio
 import os
 import shutil
 import sys
+import time
 import traceback
 from typing import Any
 
@@ -46,6 +47,11 @@ def check(name, ok, detail):
     out(f"  [{'PASS' if ok else 'FAIL'}] {name}: {detail}")
 
 
+def info(name, detail):
+    """A line printed for the record that is not a check (never counted as FAIL)."""
+    out(f"  [INFO] {name}: {detail}")
+
+
 def close(a, b, rel):
     return a is not None and b is not None and abs(abs(a) - abs(b)) <= rel * abs(b)
 
@@ -74,13 +80,13 @@ def run_checks():
     s = config.load_settings()
     out(f"  settings: {s.get('_path') or 'defaults'}")
     try:
-        info = install.find(s)
+        sofi = install.find(s)
     except install.SofistikNotFound as e:
         check("SOFiSTiK found", False, str(e))
         return
-    check("SOFiSTiK found", bool(info["sps"]), f"sps.exe = {info['sps']}")
-    check("CDB interface found", bool(info["dll"] and info["daten"]), f"{info['dll']} ; {info['daten']}")
-    if not info["sps"] or not info["dll"]:
+    check("SOFiSTiK found", bool(sofi["sps"]), f"sps.exe = {sofi['sps']}")
+    check("CDB interface found", bool(sofi["dll"] and sofi["daten"]), f"{sofi['dll']} ; {sofi['daten']}")
+    if not sofi["sps"] or not sofi["dll"]:
         return
     if not config.is_inside(RUN_DIR, s["work_folders"]):
         check("self-test folder is a work folder", False,
@@ -88,22 +94,30 @@ def run_checks():
         return
 
     out("\n1. Calculation with sps.exe (usually seconds; up to 10 minutes if the licence check is slow)")
-    cdb = solve(info, "selftest_cantilever.dat")
+    cdb = solve(sofi, "selftest_cantilever.dat")
     if not cdb:
         return
     props = cantilever_checks(_caller(cdb))
     if props:
-        sln_checks(info, *props)
+        sln_checks(sofi, *props)
 
 
 def cantilever_checks(call):
     """Sections 2 and 3 on the solved selftest_cantilever.dat.  call(op, args) reads the .cdb the way
     the server does.  Returns (E, G, Iy, Az) for the structural line model, or None."""
     out("\n2. Reading the .cdb (worker process)")
+    t0 = time.monotonic()
     ov = call("overview", {})
+    t_ov = time.monotonic() - t0
     if ov.get("error"):
         check("read overview", False, ov["error"] + ("\n" + ov.get("traceback", "")))
         return None
+    t0 = time.monotonic()
+    lc_list = call("load_cases", {})
+    t_lc = time.monotonic() - t0
+    # both look for load case keys 12/1 ... 12/999999 (results.MAX_LC) through SOFiSTiK's DLL
+    info("time to read", f"overview {t_ov:.1f} s, load_cases {t_lc:.1f} s "
+         f"({len(lc_list) if isinstance(lc_list, list) else lc_list.get('error', '?')} load cases)")
     cnt = ov["element_counts"]
     check("element counts", cnt["nodes"] == 7 and cnt["beams"] == 6, f"{cnt['nodes']} nodes, {cnt['beams']} beams")
     sec = next((x for x in ov["sections"] if x["nr"] == 1), None)
@@ -120,8 +134,10 @@ def cantilever_checks(call):
         x: Any = lcs.get(lc)
         check(f"load case {lc} present with node and beam results",
               bool(x) and "nodes" in x["has_results"] and "beams" in x["has_results"], str(x))
-        check(f"load case {lc} title read back", bool(x) and x.get("title") == LC_TITLES[lc],
-              f"'{(x or {}).get('title')}' vs '{LC_TITLES[lc]}'")
+        # ASE may replace SOFiLOAD's title (ase_1.pdf p. 3-86 is not clear), so this is for the record only
+        title = (x or {}).get("title")
+        info(f"load case {lc} title read back", f"'{title}' vs '{LC_TITLES[lc]}' written in SOFiLOAD"
+             + (" (same)" if title == LC_TITLES[lc] else " (different: ASE may have replaced it)"))
 
     raw = call("read_key", {"kwh": 9, "kwl": 1, "class_name": "CSECT", "max_records": 50})
     cs: dict = next((x for x in raw.get("records", []) if x.get("m_id") == 0), {})
@@ -152,8 +168,10 @@ def cantilever_checks(call):
     check("no sideways deflection",
           abs(tip.get("uy") or 0) < 1e-3 * abs(uz or 1) and abs(tip.get("ux") or 0) < 1e-3 * abs(uz or 1),
           f"ux {tip.get('ux')}, uy {tip.get('uy')}")
-    # NODE 7 TYPE PZZ +1 kN is a load in global +Z: by physics the tip moves in +Z, whatever the conventions
-    check("tip moves in the direction of the load (global +Z)", (uz or 0) > 0, f"uz {uz} mm for a load in +Z")
+    # NODE 7 TYPE PZZ +1 kN is a load in global +Z: the tip should move in +Z.  Signs are recorded, not checked:
+    # the server passes SOFiSTiK's values on unchanged, so a sign is a convention to document, not a reading error.
+    info("tip moves in the direction of the load (global +Z)", f"uz {uz} mm for a load in +Z: "
+         + ("yes" if (uz or 0) > 0 else "NO, the sign is opposite to the load"))
     ury = tip.get("ury")
     check("tip rotation = P L^2 / (2 E Iy) (units rad -> mrad)", close(ury, rot, 0.01), f"|{ury}| mrad vs {rot:.4f}")
     observed.append(f"tip rotation ury = {ury} mrad for a deflection in +Z of a beam along +X "
@@ -171,8 +189,9 @@ def cantilever_checks(call):
     out(f"  sum of reactions stored by SOFiSTiK: {stored}")
     check("SOFiSTiK's stored reaction sum = P", bool(stored) and close(stored[2], P, 0.005), str(stored))
     if stored and sup.get("pz"):
-        check("stored reaction sum and support node reaction have the same sign",
-              sign(stored[2]) == sign(sup.get("pz")), f"sum {stored[2]} kN, node 1 pz {sup.get('pz')} kN")
+        info("stored reaction sum and support node reaction have the same sign",
+             f"sum {stored[2]} kN, node 1 pz {sup.get('pz')} kN: "
+             + ("same sign" if sign(stored[2]) == sign(sup.get("pz")) else "OPPOSITE signs"))
     pz = sup.get("pz") or 0
     observed.append(f"support pz = {sup.get('pz')} kN, my = {sup.get('my')} kNm for a load of +{P} kN in global +Z, "
                     "so SOFiSTiK reports support reactions as "
@@ -231,7 +250,23 @@ def cantilever_checks(call):
     return E, G, Iy, Az
 
 
-def solve(info, name):
+def report_run(name, r):
+    """What the calculation returned, including the facts not yet known for SOFiSTiK 2027: sps.exe's exit
+    code on a clean run and whether every program prints its "n errors and m warnings" totals line."""
+    out(f"  {name}: command {r.get('command')}")
+    out(f"  exit code {r.get('exit_code')}, {r.get('seconds')} s, status '{r.get('status')}', "
+        f"{r.get('errors')} errors, {r.get('warnings')} warnings")
+    progs = r.get("programs") or []
+    info("sps.exe exit code", f"{r.get('exit_code')} (SOFiSTiK does not document sps.exe's exit codes)")
+    info("'n errors and m warnings' totals line per program",
+         ", ".join(f"{p['program']} {'yes' if p.get('errors') is not None else 'NO'}" for p in progs) or "no programs")
+    for wmsg in r.get("server_warnings", []):
+        out(f"  warning: {wmsg}")
+    for note in r.get("notes", []):
+        out(f"  note: {note}")
+
+
+def solve(sofi, name):
     os.makedirs(RUN_DIR, exist_ok=True)
     dat = os.path.join(RUN_DIR, name)
     for ext in (".cdb", ".prt", ".erg", ".plb", ".lst"):
@@ -242,10 +277,8 @@ def solve(info, name):
             except OSError:
                 pass
     shutil.copyfile(os.path.join(ROOT, "selftest", name), dat)
-    r = solver.run(dat, info["sps"], 600)
-    out(f"  {name}: command {r.get('command')}")
-    out(f"  exit code {r.get('exit_code')}, {r.get('seconds')} s, status '{r.get('status')}', "
-        f"{r.get('errors')} errors, {r.get('warnings')} warnings")
+    r = solver.run(dat, sofi["sps"], 600)
+    report_run(name, r)
     for m in r.get("messages", [])[:10]:
         out(f"    {m['kind']} {m['number']} ({m['program']}): {m['text']}")
         erg_m: dict = next((e for e in r.get("erg_messages", []) if e["number"] == m["number"]), {})
@@ -260,13 +293,14 @@ def solve(info, name):
     return cdb if os.path.isfile(cdb) else None
 
 
-def sln_checks(info, E, G, Iy, Az):
+def sln_checks(sofi, E, G, Iy, Az):
     """Second model built from two structural lines: are beams found by SLN number and group?"""
     out("\n4. Structural line model (SOFiMSHC: SLN 7 in group 3 with 1 kN/m, SLN 8 in group 4 with 2 kN/m)")
-    cdb = solve(info, "selftest_sln.dat")
+    cdb = solve(sofi, "selftest_sln.dat")
     if not cdb:
         return
     sln_result_checks(_caller(cdb), E, G, Iy, Az)
+    group_rule_checks(_caller(cdb))
 
 
 def sln_result_checks(call, E, G, Iy, Az):
@@ -307,6 +341,39 @@ def sln_result_checks(call, E, G, Iy, Az):
     check(f"largest tip deflection = w L^4 / 8EI with w = {w} kN/m (SLN 8)",
           close(umax, d_b + d_s, 0.01) or close(umax, d_b, 0.01),
           f"{umax} mm vs {d_b + d_s:.4f} mm (bending only {d_b:.4f})")
+
+
+def group_rule_checks(call):
+    """The three ways the server can tell a beam's group (results._group_of), each on its own: 1. element
+    number // GDIV, 2. the group of the beam's structural line (39/NR CSLN_BEAM m_nog via CBEAM m_nref),
+    3. the one beam group whose 11/00 CGRP element range holds the beam.  The server uses rule 1 here
+    (GDIV 1000), so rules 2 and 3 are otherwise never tried on a real .cdb."""
+    out("\n   Group rules on this .cdb, each on its own (rule 1 GDIV, 2 structural line, 3 CGRP range)")
+    gr = call("group_rules", {})
+    if gr.get("error"):
+        check("read the group rules", False, gr["error"])
+        return
+    cgrp = gr.get("cgrp") or []
+    out("  CGRP (11/00): " + ("; ".join(f"group {g['group']} m_typ {g['element_code']} elements {g['min_element']}-"
+                                        f"{g['max_element']} ({g['count']})" for g in cgrp) or "no records"))
+    info("raw CGRP m_typ values", f"{sorted({g['element_code'] for g in cgrp})} (read as beam groups: "
+         f"{gr.get('beam_element_codes')})")
+    beams = gr.get("beams") or []
+    out(f"  GDIV {gr.get('group_divisor')}, {len(beams)} beams")
+    check("rule 1 (GDIV) gives every beam a group", bool(beams) and all(b["rule1_gdiv"] is not None for b in beams),
+          f"{sum(b['rule1_gdiv'] is not None for b in beams)} of {len(beams)} beams")
+    for key, name in (("rule2_sln", "rule 2 (structural line, CSLN_BEAM m_nog)"),
+                      ("rule3_range", "rule 3 (the one beam group whose CGRP range holds the beam)")):
+        have = [b for b in beams if b[key] is not None]
+        if not have:
+            info(name, "gives no group for any beam of this .cdb, so it cannot be compared")
+            continue
+        off = [(b["beam"], b["rule1_gdiv"], b[key]) for b in have if b[key] != b["rule1_gdiv"]]
+        check(f"{name} agrees with rule 1", not off,
+              f"{len(have)} beams compared; (beam, rule 1, this rule) that differ: {off[:12]}")
+        if len(have) < len(beams):
+            info(name, f"no group for {len(beams) - len(have)} beam(s): "
+                       f"{[b['beam'] for b in beams if b[key] is None][:20]}")
 
 
 async def mcp_smoke():

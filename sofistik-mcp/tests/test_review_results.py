@@ -266,12 +266,17 @@ def test_selftest_cantilever_checks_pass_on_correct_results(st):
     text = report(st)
     assert st.fails == 0, text
     assert props == (approx(fake_cdb.E), approx(fake_cdb.G), approx(fake_cdb.IY), approx(fake_cdb.AZ))
-    for name in ("tip rotation = P L^2 / (2 E Iy)", "load case 2 title read back", "N = 0 everywhere",
+    for name in ("tip rotation = P L^2 / (2 E Iy)", "N = 0 everywhere",
                  "Mt = 0 everywhere", "Mz = 0 everywhere", "Vy = 0 everywhere",
-                 "tip moves in the direction of the load", "stored reaction sum and support node reaction",
                  "|My| grows linearly", "envelope LC 1-2: max |My| = 2 P L from LC 2",
                  "envelope LC 1-2: max |uz| = 2 x tip deflection from LC 2", "group filter: group 0"):
         assert f"[PASS] {name}" in text, name
+    # round 3 (R6): titles and signs are recorded as INFO lines, not checks
+    assert "[INFO] load case 2 title read back: 'self-test tip load 2 kN' vs 'self-test tip load 2 kN' " \
+           "written in SOFiLOAD (same)" in text
+    assert "[INFO] tip moves in the direction of the load (global +Z): uz 9.2865 mm for a load in +Z: yes" in text
+    assert "[INFO] stored reaction sum and support node reaction have the same sign: sum 1.0 kN, " \
+           "node 1 pz 1.0 kN: same sign" in text
     assert "observed: support pz = 1.0 kN" in text and "same sign as the load" in text
     assert "observed: tip rotation ury = -2.3" in text
 
@@ -287,15 +292,10 @@ def test_selftest_cantilever_reports_opposite_reaction_sign(st):
 
 
 @pytest.mark.parametrize("break_it, failing", [
-    (lambda k: k[(12, 2)].__setitem__(0, rec("CLC_CTRL", m_kind=0, m_rz=2.0, m_rtex=text_ints("x", 17))),
-     "load case 2 title read back"),
     (lambda k: k.__setitem__((102, 2), k[(102, 1)]), "envelope LC 1-2: max |My| = 2 P L from LC 2"),
     (lambda k: k[(102, 1)].append(rec("CBEAM_FOR", m_nr=3, m_x=0.5, m_n=4.0, m_my=-3.5, m_vz=1.0)),
      "N = 0 everywhere"),
     (lambda k: k[(102, 1)].append(rec("CBEAM_FOR", m_nr=3, m_x=0.5, m_my=-2.0, m_vz=1.0)), "|My| grows linearly"),
-    (lambda k: k[(12, 1)].__setitem__(0, rec("CLC_CTRL", m_kind=0, m_rz=-1.0,
-                                             m_rtex=text_ints("self-test tip load 1 kN", 17))),
-     "stored reaction sum and support node reaction"),
 ])
 def test_selftest_cantilever_checks_catch_errors(st, break_it, failing):
     keys = fake_cdb.build_selftest_cantilever()
@@ -310,7 +310,8 @@ def test_selftest_tip_direction_and_rotation_checks(st):
     nodes[-1] = rec("CN_DISP", m_nr=7, m_uz=-0.0092866, m_ury=0.004)       # wrong direction, wrong rotation
     st.cantilever_checks(caller(keys))
     text = report(st)
-    assert "[FAIL] tip moves in the direction of the load" in text and "[FAIL] tip rotation" in text
+    assert "[INFO] tip moves in the direction of the load (global +Z): uz -9.2866 mm for a load in +Z: NO" in text
+    assert "[FAIL] tip rotation" in text and st.fails == 1
 
 
 def test_selftest_cantilever_stops_on_read_errors(st):

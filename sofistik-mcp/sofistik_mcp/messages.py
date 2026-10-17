@@ -35,6 +35,10 @@ def read_text(path: str, max_bytes: int = 50_000_000) -> str:
     return decode_text(raw)
 
 
+def _lines(txt: str) -> str:
+    return txt.replace("\r\n", "\n").replace("\r", "\n").replace("\f", "\n")
+
+
 def decode_text(raw: bytes) -> str:
     """Bytes of a SOFiSTiK text file -> text, as read_text (a UTF-8 BOM is dropped)."""
     raw = raw.replace(b"\x00", b"")
@@ -48,7 +52,41 @@ def decode_text(raw: bytes) -> str:
             continue
     else:
         txt = raw.decode("latin-1", errors="replace")
-    return txt.replace("\r\n", "\n").replace("\r", "\n").replace("\f", "\n")
+    return _lines(txt)
+
+
+# byte order marks: UTF-32 before UTF-16 (FF FE 00 00 starts with FF FE)
+UNICODE_BOMS = ((b"\x00\x00\xfe\xff", "utf-32-be"), (b"\xff\xfe\x00\x00", "utf-32-le"),
+                (b"\xfe\xff", "utf-16-be"), (b"\xff\xfe", "utf-16-le"))
+# marks of encodings an input file is never checked in (UTF-7, UTF-1, UTF-EBCDIC, SCSU, BOCU-1, GB 18030)
+OTHER_BOMS = (b"\x2b\x2f\x76", b"\xf7\x64\x4c", b"\xdd\x73\x66\x73", b"\x0e\xfe\xff", b"\xfb\xee\x28",
+              b"\x84\x31\x95\x33")
+
+
+def decode_input(raw: bytes) -> tuple[str, str]:
+    """Bytes of a .dat (or #INCLUDE / +APPLY file) -> (text for the +SYS check, encoding whose byte counts
+    apply to its lines).  UTF-16 / UTF-32 with a byte order mark are decoded by it; otherwise as
+    decode_text (UTF-8, else cp1252; counted as UTF-8, which never has fewer bytes).  Raises ValueError
+    (the reason) for a file that cannot be read for certain the way SOFiSTiK reads it: NUL bytes without
+    a UTF-16 / UTF-32 mark, a mark of another encoding, or bytes that are not valid in the marked encoding."""
+    for bom, enc in UNICODE_BOMS:
+        if raw.startswith(bom):
+            try:
+                txt = raw[len(bom):].decode(enc)
+            except UnicodeDecodeError as e:
+                raise ValueError(f"it starts with a {enc.upper()} byte order mark but is not valid {enc.upper()} "
+                                 f"(byte {e.start + len(bom)})") from None
+            if "\x00" in txt:
+                raise ValueError(f"it contains NUL characters ({enc.upper()} text)")
+            return _lines(txt), enc
+    if raw.startswith(OTHER_BOMS):
+        raise ValueError("it starts with the byte order mark of an encoding that is not checked (UTF-7 or "
+                         "similar); save it as UTF-8 or ANSI")
+    nul = raw.find(b"\x00")
+    if nul >= 0:
+        raise ValueError(f"it contains NUL bytes (first at byte {nul}; UTF-16 without a byte order mark?); "
+                         "save it as UTF-8 or ANSI")
+    return decode_text(raw), "utf-8"
 
 
 def parse_protocol(text: str, context_before: int = 0, max_messages: int = 200) -> dict:
@@ -137,9 +175,15 @@ def summarize_run(prt_path: str | None, erg_path: str | None = None) -> dict:
         e = parse_protocol(read_text(out["erg"]), context_before=6, max_messages=60)
         out["erg_messages"] = [m for m in e["messages"] if m["kind"] == "error"][:30] + \
                               [m for m in e["messages"] if m["kind"] == "warning"][:30]
-    # a program without its "*** Stop" line or its "n errors and m warnings" totals did not finish
-    out["unfinished_programs"] = [x["program"] for x in p["programs"]
-                                  if x["stop_line"] is None or x["errors"] is None]
+    # A program without its "*** Stop" line did not finish.  The "n errors and m warnings" totals line is
+    # only a note: no clean SOFiSTiK 2027 protocol has been seen yet to prove it is printed on every run
+    # (the self-test report shows whether it was there), so its absence must not fail a good run.
+    out["unfinished_programs"] = [x["program"] for x in p["programs"] if x["stop_line"] is None]
+    out["programs_without_totals"] = [x["program"] for x in p["programs"]
+                                      if x["stop_line"] is not None and x["errors"] is None]
+    if out["programs_without_totals"]:
+        out["notes"] = [("No 'n errors and m warnings' line for " + ", ".join(out["programs_without_totals"]) +
+                         "; the counts come from the messages found in the protocol.")]
     if not out["prt"]:
         out["status"] = "no protocol"
     elif out["errors"] or out["aborted"]:

@@ -36,16 +36,19 @@ then as structural lines 7 (group 3, 1 kN/m) and 8 (group 4, 2 kN/m) (SOFiMSHC).
 | Tip rotation | P L² / 2EIy ≈ 2.32 mrad |
 | Forces that must be zero | N, Vy, Mt, Mz ≈ 0 |
 | Envelope over load cases 1-2 | governed by LC 2, twice the LC 1 values |
-| Load case titles | read back as written |
-| Signs | tip moves in the load direction; the report states the reaction sign SOFiSTiK uses |
 | Support reaction, moment | 1 kN, 6 kNm |
 | Max beam moment, shear | 6 kNm, 1 kN, and 0 at the free end |
 | SOFiSTiK's own stored reaction sum | 1 kN |
 | Structural line model: SLN 7 / group 3 and SLN 8 / group 4 | each gives only its own 6 beams |
 | Structural line model: moment, deflection, reaction sum | 18 and 36 kNm, w L⁴ / 8EIy ≈ 20.9 mm, 18 kN |
+| Structural line model: each beam's group by GDIV, by its structural line and by the group ranges | the three agree (a rule the `.cdb` gives no answer for is an INFO line) |
 | The server starts and answers like it will for Claude | 22 tools |
 
-The window ends with **ALL CHECKS PASSED** or lists what failed. The same text is saved in
+Lines marked **INFO** are recorded but never fail the test: the load case titles read back (ASE may
+replace SOFiLOAD's titles), the signs SOFiSTiK uses (tip direction, reaction sign), sps.exe's exit code
+and whether each program printed its "n errors and m warnings" line, how long the `.cdb` overview and
+load case list take to read, and the raw group codes in the `.cdb`. They settle facts that could not be
+checked without SOFiSTiK. The window ends with **ALL CHECKS PASSED** or lists what failed. The same text is saved in
 `selftest\selftest_report.txt`; if anything fails, send that file to Claude.
 
 ## What Claude can do with it
@@ -79,9 +82,13 @@ Open `settings.json` in Notepad to change them, then restart Claude. Use double 
   `"work_folders": ["C:\\Sofistik workflow", "D:\\26016 HPC Kier BAM JV"]`.
 - **read_folders**: extra folders Claude may read but never change.
 - **allow_sys_commands**: `false` (default) refuses any `.dat` that could make SOFiSTiK run a
-  Windows command: `+SYS` and `*SYS` lines (also a bare `SYS` word at the start of a line), a line
-  that starts with a `$(...)` substitution, and a `#define` value containing `SYS`. The rule is
-  deliberately broad; if a model really needs such a line, set it to `true` and restart Claude.
+  Windows command: `+SYS` and `*SYS` lines (also a bare `SYS` word at the start of a line, and after
+  a `;`), a record whose first word is built with a `$(...)` substitution (`$(X) ...`, `+S$(Y) ...`;
+  only numbers defined earlier in the file, with no letters next to them, are allowed), a `#define`
+  value that starts with `SYS` or contains `;`, `SYS` beyond character 255 of a line (CADINP's line
+  limit), and a file that cannot be read for certain (NUL bytes, an unknown byte order mark; UTF-16
+  and UTF-32 files with a byte order mark are read). The rule is deliberately broad; if a model
+  really needs such a line, set it to `true` and restart Claude.
   `write_dat_file` refuses to write such content too, so it cannot be left for you to run by hand.
 - **run_timeout_minutes**: a calculation is stopped after this long (default 60).
 - Every folder in `settings.json` must be a full path with the drive (e.g. `D:\\26016 HPC`);
@@ -92,17 +99,23 @@ Open `settings.json` in Notepad to change them, then restart Claude. Use double 
   If the project is open in SSD, Teddy or WinGRAF the `.cdb` may be locked: close it there first.
 - A run writes `<name>.mcp-running` next to the `.dat` while it runs, so a second Claude window
   cannot start a calculation in the same folder. If Claude or the server is closed during a run,
-  SOFiSTiK is stopped too. A lock file left by a crash is removed automatically.
+  SOFiSTiK is stopped too, and so is everything it started (each run has its own Windows job object,
+  which a stop or time-out ends as a whole). The lock file names the PC and the process (number and
+  start time); one left by a crash on this PC is removed automatically, one written by another PC
+  (a shared network folder) never is: the message names that PC, and you delete the file by hand once
+  nothing runs there.
 - A run replaces that model's earlier `.cdb` / `.prt` / `.erg`, as running it in Teddy does.
 - Claude cannot change files in the server's own folder. File names with `:` after the drive,
   a trailing dot or space, a device name (`CON`, `NUL`, `COM1` ...) or a leading `-` are refused.
-- `#INCLUDE` / `+APPLY` files are checked for `+SYS` too: every file SOFiSTiK could open is
+- `#INCLUDE` / `+APPLY` files (also written `#INCL`, `APPL`, or after a `;`) are checked for `+SYS` too: every file SOFiSTiK could open is
   checked (`name` and `name.dat`, next to the including file and next to the main `.dat`;
   `$(NAME)` is the `.dat`'s name). A file that cannot be found or checked refuses the run, and so
   does one outside the folders the server may read (SOFiSTiK copies included text into the `.erg`).
 - A status other than `ok` / `ok with warnings` means the results are not valid yet: `errors`,
-  `not finished` (a program has no end or totals line), `check: exit code n` (sps.exe reported a
-  failure the protocol does not show), `timed out`, `stopped`. Results read from a `.cdb` that is
+  `not finished` (a program has no `*** Stop` line, or the calculation no end line), `timed out`,
+  `stopped`. A non-zero sps.exe exit code with a clean protocol does not change the status (SOFiSTiK
+  does not document sps.exe's exit codes); it is shown as a warning, and the self-test report prints
+  the exit code of its runs. Results read from a `.cdb` that is
   older than its `.prt` / `.dat`, or whose last run here was not clean, carry a
   `stale_results_warning`.
 
