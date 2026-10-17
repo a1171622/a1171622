@@ -27,7 +27,7 @@ def _used_class_names():
     names = set()
     for path in files:
         with open(path, encoding="utf-8") as f:
-            names |= set(re.findall(r'"(C[A-Z][A-Z0-9_]+)"', f.read()))
+            names |= set(re.findall(r'"(C[A-Z][A-Z0-9_]{2,})"', f.read()))
     # strings in the source that are not sofistik_daten classes
     return {n for n in names if not n.startswith(("CDB", "CREATE"))}
 

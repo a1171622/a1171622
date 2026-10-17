@@ -1,7 +1,9 @@
-$ SOFiSTiK MCP self-test 2: the same HEA 200 cantilever, 6 m, built from a structural line
-$ (SOFiMSHC, SLN 7, group 3, 6 elements) with a uniform load of 1 kN/m.
-$ Hand calculation: reaction = w L = 6 kN, fixed-end moment = w L^2 / 2 = 18 kNm,
-$ tip deflection = w L^4 / (8 E Iy) (+ shear part).  Checks that the server finds beams by SLN and group.
+$ SOFiSTiK MCP self-test 2: two HEA 200 cantilevers, 6 m, built from structural lines (SOFiMSHC):
+$ SLN 7 in group 3 at y = 0 with 1 kN/m, and the parallel SLN 8 in group 4 at y = 2 m with 2 kN/m,
+$ each fixed at x = 0 and divided into 6 elements.
+$ Hand calculation: reactions = (1 + 2) kN/m x 6 m = 18 kN, fixed-end moment = w L^2 / 2 = 18 kNm
+$ (group 3) and 36 kNm (group 4), largest tip deflection = w L^4 / (8 E Iy) (+ shear part) with w = 2.
+$ Checks that the server finds exactly the beams of each line by SLN number and by group.
 
 +PROG AQUA urs:1
 HEAD MCP self-test structural line
@@ -12,17 +14,26 @@ END
 
 +PROG SOFIMSHC urs:2
 HEAD MCP self-test structural line
+$ GDIV 1000: group = element number // 1000 (sofimshc_1.pdf p. 3-13, "GDIV> 0")
 SYST SPAC GDIV 1000 POSZ
 CTRL MESH 1 ; CTRL HMIN 1.0
+$ SPT NO X Y Z ... FIX: sofimshc_1.pdf p. 5-3 "SPT - Structural point"
 SPT 1 X 0 0 0 FIX F
 SPT 2 X 6 0 0
+SPT 3 X 0 2 0 FIX F
+SPT 4 X 6 2 0
+$ SLN NO NPA NPE ... SDIV (<0: number of elements) GRP STYP SNO: sofimshc_1.pdf p. 5-14 "SLN - Structural line"
 SLN 7 NPA 1 NPE 2 SNO 1 GRP 3 STYP B SDIV -6
+SLN 8 NPA 3 NPE 4 SNO 1 GRP 4 STYP B SDIV -6
 END
 
 +PROG SOFILOAD urs:3
 HEAD MCP self-test load
-LC 1 TYPE 'NONE' TITL 'self-test 1 kN/m'
+$ BEAM GRP <group> TYPE PZZ PA PE: sofiload_1.pdf p. 3-26 "BEAM - Distributed Beam Loading"
+$ ("Instead of a number FROM you may enter the literal GRP and the group number at TO")
+LC 1 TYPE 'NONE' TITL 'self-test 1 and 2 kN/m'
   BEAM GRP 3 TYPE PZZ PA 1.0 PE 1.0
+  BEAM GRP 4 TYPE PZZ PA 2.0 PE 2.0
 END
 
 +PROG ASE urs:4

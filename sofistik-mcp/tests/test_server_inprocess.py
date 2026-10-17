@@ -9,7 +9,7 @@ import os
 import time
 
 import pytest
-from conftest import ROOT, run, write_hook_config
+from conftest import ROOT, core, run, write_hook_config
 
 from sofistik_mcp import config
 
@@ -203,7 +203,9 @@ def test_stop_calculation(server_mod, settings):
     assert first["status"] == "running"
     t0 = time.time()
     r = run(server_mod.stop_calculation())
-    assert r["status"] == "stopped" and "stopped on request" in r["reason"] and time.time() - t0 < 30
+    assert r["status"] in ("stopped", "stopping") and time.time() - t0 < 15
+    r = run(server_mod.get_job_result(first["job_id"], 30))
+    assert r["status"] == "stopped" and "stopped on request" in r["reason"] and time.time() - t0 < 45
     assert server_mod._calc["proc"] is None and not (work(settings) / "long.prt").exists()
     nxt = run(server_mod.run_calculation(dat(settings, "next.dat", "+PROG ASE\nEND\n")))
     assert nxt["status"] == "ok"                                                   # stop flag reset
@@ -265,7 +267,7 @@ def test_cdb_tools_through_worker(server_mod, cdb_env):
     assert run(s.cdb_truss_cable_forces(cdb_env, 1))["rows"][1]["N"] == -7.25
     assert run(s.cdb_truss_cable_forces(cdb_env, 2, element_type="cable"))["rows"][0]["N"] == 95.0
     env = run(s.cdb_envelope(cdb_env, "1-2", what="beam", groups="1"))
-    assert env["overall"]["My"]["max"] == {"value": 50.0, "beam": 1002, "x": 4.0, "sln": 7, "group": 1, "lc": 2}
+    assert core(env["overall"]["My"]["max"]) == {"value": 50.0, "beam": 1002, "x": 4.0, "sln": 7, "group": 1, "lc": 2}
     assert run(s.cdb_envelope(cdb_env, "1-2", what="support"))["overall"]["pz"]["max"]["value"] == 100.0
     k = run(s.cdb_read_key(cdb_env, 12, 2001, class_name="CLC_EIGE", max_records=9999, skip=-4))
     assert k["records"][0]["m_nr_mode"] == 1 and k["records"][0]["m_rtex"] == "eigenmode 1"

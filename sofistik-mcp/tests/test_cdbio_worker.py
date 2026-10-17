@@ -328,3 +328,39 @@ def test_truncation_warning_on_list_result(monkeypatch):
     a = cdb_worker.handle(req("load_cases"))
     assert a["ok"] and a["result"]["warning_truncated_records"] == 1
     assert isinstance(a["result"]["rows"], list) and a["result"]["rows"]
+
+
+# ---------------------------------------------------------------- review: sof_cdb_get error codes
+
+@pytest.mark.parametrize("code", [-1, -7, 4, 99])
+def test_cdb_get_error_code_stops_the_key_and_is_recorded(windows_cdb, code):
+    """A return value other than 0 / 1 (record) or 2 / 3 (end, no key) is an error, never a record."""
+    good = b"\x01\x00\x00\x00" + b"a" * 8
+    dll = windows_cdb["dll"] = make_dll({(24, 1): [good, good, good]})
+    real_get = dll.sof_cdb_get.fn
+    n = {"calls": 0}
+
+    def get(*a):
+        n["calls"] += 1
+        return code if n["calls"] == 2 else real_get(*a)
+    dll.sof_cdb_get = CallableAttr(get)
+    c = cdbio.Cdb(windows_cdb["cdb"], windows_cdb["info"])
+    assert c.records(24, 1) == [good] and n["calls"] == 2          # stopped at the error, nothing appended
+    assert c.read_errors == [(24, 1, code)]
+
+
+def test_cdb_get_end_codes_are_not_errors(windows_cdb):
+    windows_cdb["dll"] = make_dll({(24, 1): [b"\x01\x00\x00\x00"]})
+    c = cdbio.Cdb(windows_cdb["cdb"], windows_cdb["info"])
+    assert c.records(24, 1) == [b"\x01\x00\x00\x00"] and c.records(7, 7) == [] and c.read_errors == []
+
+
+def test_worker_reports_read_errors(monkeypatch):
+    c = fake_cdb.FakeCdb(fake_cdb.build_frame())
+    c.read_errors = [(102, 1, -1)]
+    monkeypatch.setattr(cdbio, "Cdb", lambda path, info: c)
+    a = cdb_worker.handle(req("beam_forces", lc=1))
+    assert a["ok"] and "102/1 (code -1)" in a["result"]["warning_read_errors"]
+    assert "warning_truncated_records" not in a["result"]
+    lst = cdb_worker.handle(req("load_cases"))                        # list result is wrapped, not crashed
+    assert lst["result"]["rows"] and "warning_read_errors" in lst["result"]

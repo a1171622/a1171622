@@ -21,10 +21,14 @@ from . import server as srv
 ROOT = config.ROOT
 RUN_DIR = os.path.join(ROOT, "selftest", "run")
 
-P = 1.0          # kN tip load
+P = 1.0          # kN tip load, LC 1 (LC 2: P2)
+P2 = 2.0         # kN tip load, LC 2
 L = 6.0          # m
+N_BEAMS = 6      # beams 1..6, each L / 6 long, numbered from the support (node 1) to the tip (node 7)
 TABLE = {"A_cm2": 53.8, "Iy_cm4": 3692.0}   # HEA 200, Euronorm 53-62 tables
 E_EXPECT = 2.1e8                            # kN/m2 (210 000 N/mm2)
+LC_TITLES = {1: "self-test tip load 1 kN", 2: "self-test tip load 2 kN"}   # as in selftest_cantilever.dat
+SLN_MODEL = ((7, 3, 1.0), (8, 4, 2.0))      # selftest_sln.dat: (structural line, group, w [kN/m])
 
 lines: list[str] = []
 fails = 0
@@ -44,6 +48,24 @@ def check(name, ok, detail):
 
 def close(a, b, rel):
     return a is not None and b is not None and abs(abs(a) - abs(b)) <= rel * abs(b)
+
+
+def absmax(ext, comp):
+    """(|value|, extreme) of the larger of max / min of comp in an 'extremes' / 'overall' dict."""
+    e = ext.get(comp) or {}
+    cands = [x for x in (e.get("max"), e.get("min")) if x and x.get("value") is not None]
+    if not cands:
+        return 0.0, {}
+    best = max(cands, key=lambda x: abs(x["value"]))
+    return abs(best["value"]), best
+
+
+def sign(v):
+    return 0 if not v else (1 if v > 0 else -1)
+
+
+def _caller(cdb):
+    return lambda op, args: srv._cdb_call(op, cdb, args)
 
 
 def run_checks():
@@ -69,30 +91,41 @@ def run_checks():
     cdb = solve(info, "selftest_cantilever.dat")
     if not cdb:
         return
+    props = cantilever_checks(_caller(cdb))
+    if props:
+        sln_checks(info, *props)
 
+
+def cantilever_checks(call):
+    """Sections 2 and 3 on the solved selftest_cantilever.dat.  call(op, args) reads the .cdb the way
+    the server does.  Returns (E, G, Iy, Az) for the structural line model, or None."""
     out("\n2. Reading the .cdb (worker process)")
-    ov = srv._cdb_call("overview", cdb, {})
+    ov = call("overview", {})
     if ov.get("error"):
         check("read overview", False, ov["error"] + ("\n" + ov.get("traceback", "")))
-        return
+        return None
     cnt = ov["element_counts"]
     check("element counts", cnt["nodes"] == 7 and cnt["beams"] == 6, f"{cnt['nodes']} nodes, {cnt['beams']} beams")
     sec = next((x for x in ov["sections"] if x["nr"] == 1), None)
     if not sec:
         check("section 1 present", False, str(ov["sections"])[:300])
-        return
+        return None
     out(f"  section 1: '{sec['title']}' A {sec['A_cm2']} cm2, Iy {sec['Iy_cm4']} cm4, Iz {sec['Iz_cm4']} cm4")
     check("section area (units m2 -> cm2)", close(sec["A_cm2"], TABLE["A_cm2"], 0.03),
           f"{sec['A_cm2']} cm2 vs table {TABLE['A_cm2']}")
     check("section Iy (units m4 -> cm4)", close(sec["Iy_cm4"], TABLE["Iy_cm4"], 0.03),
           f"{sec['Iy_cm4']} cm4 vs table {TABLE['Iy_cm4']}")
-    lc1: Any = next((x for x in ov["load_cases"] if x["lc"] == 1), None)
-    check("load case 1 present with node and beam results",
-          bool(lc1) and "nodes" in lc1["has_results"] and "beams" in lc1["has_results"], str(lc1))
+    lcs = {x["lc"]: x for x in ov["load_cases"]}
+    for lc in (1, 2):
+        x: Any = lcs.get(lc)
+        check(f"load case {lc} present with node and beam results",
+              bool(x) and "nodes" in x["has_results"] and "beams" in x["has_results"], str(x))
+        check(f"load case {lc} title read back", bool(x) and x.get("title") == LC_TITLES[lc],
+              f"'{(x or {}).get('title')}' vs '{LC_TITLES[lc]}'")
 
-    raw = srv._cdb_call("read_key", cdb, {"kwh": 9, "kwl": 1, "class_name": "CSECT", "max_records": 50})
+    raw = call("read_key", {"kwh": 9, "kwl": 1, "class_name": "CSECT", "max_records": 50})
     cs: dict = next((x for x in raw.get("records", []) if x.get("m_id") == 0), {})
-    mat = srv._cdb_call("read_key", cdb, {"kwh": 1, "kwl": 1, "class_name": "CMAT_STEE", "max_records": 50})
+    mat = call("read_key", {"kwh": 1, "kwl": 1, "class_name": "CMAT_STEE", "max_records": 50})
     ms: dict = next((x for x in mat.get("records", []) if x.get("m_id") == 1), {})
     E = ms.get("m_emod") or cs.get("m_em")
     G = ms.get("m_gmod") or cs.get("m_gm")
@@ -100,15 +133,17 @@ def run_checks():
     out(f"  raw CDB values: E {E} kN/m2, G {G} kN/m2, Iy {Iy} m4, Iz {Iz} m4, Az {Az} m2")
     check("E modulus stored in kN/m2", close(E, E_EXPECT, 0.01), f"{E} vs {E_EXPECT}")
     if not (E and Iy):
-        return
+        return None
 
     out("\n3. Results against the hand calculation")
+    observed: list[str] = []
     d_bend = P * L ** 3 / (3 * E * Iy) * 1000                       # mm
     d_shear = (P * L / (G * Az) * 1000) if (G and Az) else 0.0
+    rot = P * L ** 2 / (2 * E * Iy) * 1000                           # mrad (shear does not rotate the section)
     out(f"  expected tip deflection: bending {d_bend:.4f} mm + shear {d_shear:.4f} mm = {d_bend + d_shear:.4f} mm")
-    nr = srv._cdb_call("node_results", cdb, {"lc": 1, "ids": "7"})
+    nr = call("node_results", {"lc": 1, "ids": "7"})
     tip = (nr.get("rows") or [{}])[0]
-    out(f"  node 7: ux {tip.get('ux')} uy {tip.get('uy')} uz {tip.get('uz')} mm")
+    out(f"  node 7: ux {tip.get('ux')} uy {tip.get('uy')} uz {tip.get('uz')} mm, ury {tip.get('ury')} mrad")
     uz = tip.get("uz")
     ok = close(uz, d_bend + d_shear, 0.01) or close(uz, d_bend, 0.01)
     check("tip deflection (units m -> mm)", ok, f"{uz} mm vs {d_bend + d_shear:.4f} mm (bending only {d_bend:.4f})")
@@ -117,7 +152,14 @@ def run_checks():
     check("no sideways deflection",
           abs(tip.get("uy") or 0) < 1e-3 * abs(uz or 1) and abs(tip.get("ux") or 0) < 1e-3 * abs(uz or 1),
           f"ux {tip.get('ux')}, uy {tip.get('uy')}")
-    sr = srv._cdb_call("support_reactions", cdb, {"lc": 1})
+    # NODE 7 TYPE PZZ +1 kN is a load in global +Z: by physics the tip moves in +Z, whatever the conventions
+    check("tip moves in the direction of the load (global +Z)", (uz or 0) > 0, f"uz {uz} mm for a load in +Z")
+    ury = tip.get("ury")
+    check("tip rotation = P L^2 / (2 E Iy) (units rad -> mrad)", close(ury, rot, 0.01), f"|{ury}| mrad vs {rot:.4f}")
+    observed.append(f"tip rotation ury = {ury} mrad for a deflection in +Z of a beam along +X "
+                    "(the right-hand rule about +Y predicts a negative value)")
+
+    sr = call("support_reactions", {"lc": 1})
     rows = sr.get("rows") or []
     sup: dict = next((x for x in rows if x["node"] == 1), {})
     out(f"  support node 1: px {sup.get('px')} py {sup.get('py')} pz {sup.get('pz')} kN, "
@@ -128,22 +170,65 @@ def run_checks():
     stored: Any = sr.get("sum_stored_by_sofistik_kN")
     out(f"  sum of reactions stored by SOFiSTiK: {stored}")
     check("SOFiSTiK's stored reaction sum = P", bool(stored) and close(stored[2], P, 0.005), str(stored))
-    bf = srv._cdb_call("beam_forces", cdb, {"lc": 1})
+    if stored and sup.get("pz"):
+        check("stored reaction sum and support node reaction have the same sign",
+              sign(stored[2]) == sign(sup.get("pz")), f"sum {stored[2]} kN, node 1 pz {sup.get('pz')} kN")
+    pz = sup.get("pz") or 0
+    observed.append(f"support pz = {sup.get('pz')} kN, my = {sup.get('my')} kNm for a load of +{P} kN in global +Z, "
+                    "so SOFiSTiK reports support reactions as "
+                    + ("the force the structure puts on the support (same sign as the load)" if pz > 0 else
+                       "the force the support puts on the structure (opposite sign to the load)" if pz < 0 else
+                       "zero (unexpected)"))
+    observed.append(f"stored reaction sum (12/LC CLC_CTRL m_rz) = {stored[2] if stored else None} kN")
+
+    bf = call("beam_forces", {"lc": 1})
     ext = bf.get("extremes", {})
     my = ext.get("My", {})
-    vz = ext.get("Vz", {})
-    mmax = max(abs(my.get("max", {}).get("value") or 0), abs(my.get("min", {}).get("value") or 0))
-    vmax = max(abs(vz.get("max", {}).get("value") or 0), abs(vz.get("min", {}).get("value") or 0))
+    mmax, _ = absmax(ext, "My")
+    vmax, _ = absmax(ext, "Vz")
     out(f"  beam forces: {bf.get('beams')} beams, {bf.get('stations')} stations; "
         f"max |My| {mmax} kNm, max |Vz| {vmax} kN")
     out(f"    My extremes {my}")
     check("max beam moment = P L", close(mmax, P * L, 0.005), f"{mmax} kNm vs {P * L}")
     check("beam shear = P", close(vmax, P, 0.005), f"{vmax} kN vs {P}")
-    at_tip = [r for r in bf.get("rows", []) if r["My"] is not None and abs(r["My"]) < 1e-3]
-    check("moment is zero at the free end", bool(at_tip), f"{len(at_tip)} station(s) with My = 0")
+    brows = bf.get("rows", [])
+    for comp in ("N", "Vy", "Mt", "Mz"):
+        worst = max((abs(r.get(comp) or 0) for r in brows), default=0.0)   # None (undefined) counts as 0
+        check(f"{comp} = 0 everywhere", bool(brows) and worst <= 1e-3 * P, f"max |{comp}| {worst}")
+    seg = L / N_BEAMS
+    at_tip = [r for r in brows if r["beam"] == N_BEAMS and r["x"] is not None and abs(r["x"] - seg) < 1e-3]
+    check("moment is zero at the free end", bool(at_tip) and all(abs(r["My"] or 0) < 1e-3 for r in at_tip),
+          f"My at beam {N_BEAMS} x = {seg} m: {[r['My'] for r in at_tip]}")
+    bad = [(r["beam"], r["x"], r["My"]) for r in brows
+           if r["x"] is None or r["My"] is None
+           or abs(abs(r["My"]) - P * (L - ((r["beam"] - 1) * seg + r["x"]))) > 0.005 * P * L]
+    signs = {sign(r["My"]) for r in brows if r["My"] and abs(r["My"]) > 1e-3}
+    check("|My| grows linearly from the free end to the support (|My| = P (L - x))",
+          bool(brows) and not bad and len(signs) <= 1, f"{len(brows)} stations, off: {bad[:5]}, signs {signs}")
+    my_sup = next((r["My"] for r in brows if r["beam"] == 1 and r["x"] == 0), None)
+    observed.append(f"beam My at the support = {my_sup} kNm (hogging moment of a cantilever under +Z load)")
+    gr0 = call("beam_forces", {"lc": 1, "groups": "0"})
+    gr1 = call("beam_forces", {"lc": 1, "groups": "1"})
+    check("group filter: group 0 (GDIV 1000, beams 1-6) has all beams, group 1 none",
+          gr0.get("beams") == 6 and gr1.get("beams") == 0, f"group 0: {gr0.get('beams')}, group 1: {gr1.get('beams')}")
+
+    env = call("envelope", {"lcs": "1-2", "what": "beam"})
+    e_my, e_best = absmax(env.get("overall", {}), "My")
+    check("envelope LC 1-2: both load cases used", env.get("load_cases_found") == [1, 2],
+          str(env.get("load_cases_found")))
+    check("envelope LC 1-2: max |My| = 2 P L from LC 2", e_best.get("lc") == 2 and close(e_my, P2 * L, 0.005),
+          f"{e_my} kNm from LC {e_best.get('lc')} vs {P2 * L} from LC 2")
+    env_n = call("envelope", {"lcs": "1-2", "what": "node"})
+    e_uz, n_best = absmax(env_n.get("overall", {}), "uz")
+    check("envelope LC 1-2: max |uz| = 2 x tip deflection from LC 2, node 7",
+          n_best.get("lc") == 2 and n_best.get("node") == 7 and close(e_uz, 2 * (uz or 0), 0.005),
+          f"{e_uz} mm at node {n_best.get('node')} from LC {n_best.get('lc')} vs {2 * (uz or 0):.4f}")
     out("  (the shear part is about 0.4 % of the deflection, inside the 1 % tolerance, so this test does not")
     out("   tell whether SOFiSTiK includes shear deformation; it does check the units and the axis)")
-    sln_checks(info, E, G, Iy, Az)
+    out("  Observed signs (for documenting SOFiSTiK's conventions; not checked against a convention):")
+    for o in observed:
+        out(f"    observed: {o}")
+    return E, G, Iy, Az
 
 
 def solve(info, name):
@@ -176,13 +261,16 @@ def solve(info, name):
 
 
 def sln_checks(info, E, G, Iy, Az):
-    """Second model built from a structural line: are beams found by SLN number and group?"""
-    w = 1.0
-    out("\n4. Structural line model (SOFiMSHC, SLN 7, group 3, 1 kN/m)")
+    """Second model built from two structural lines: are beams found by SLN number and group?"""
+    out("\n4. Structural line model (SOFiMSHC: SLN 7 in group 3 with 1 kN/m, SLN 8 in group 4 with 2 kN/m)")
     cdb = solve(info, "selftest_sln.dat")
     if not cdb:
         return
-    bf = srv._cdb_call("beam_forces", cdb, {"lc": 1})
+    sln_result_checks(_caller(cdb), E, G, Iy, Az)
+
+
+def sln_result_checks(call, E, G, Iy, Az):
+    bf = call("beam_forces", {"lc": 1})
     if bf.get("error"):
         check("read beam forces", False, bf["error"])
         return
@@ -190,25 +278,34 @@ def sln_checks(info, E, G, Iy, Az):
     slns = sorted({r["sln"] for r in rows}, key=lambda v: (v is None, v))
     grps = sorted({str(r["group"]) for r in rows})
     out(f"  {bf.get('beams')} beams; structural line numbers seen: {slns}; groups seen: {grps}")
-    check("beams know their structural line (m_nref = SLN 7)", slns == [7], f"{slns}")
-    by_sln = srv._cdb_call("beam_forces", cdb, {"lc": 1, "slns": "7"})
-    check("filter by structural line 7", by_sln.get("beams") == bf.get("beams") and (bf.get("beams") or 0) >= 6,
-          f"{by_sln.get('beams')} of {bf.get('beams')} beams")
-    by_grp = srv._cdb_call("beam_forces", cdb, {"lc": 1, "groups": "3"})
-    check("filter by group 3", by_grp.get("beams") == bf.get("beams") and (bf.get("beams") or 0) >= 6,
-          f"{by_grp.get('beams')} of {bf.get('beams')} beams")
-    my = bf.get("extremes", {}).get("My", {})
-    mmax = max(abs(my.get("max", {}).get("value") or 0), abs(my.get("min", {}).get("value") or 0))
-    check("fixed-end moment = w L^2 / 2", close(mmax, w * L * L / 2, 0.005), f"{mmax} kNm vs {w * L * L / 2}")
-    sr = srv._cdb_call("support_reactions", cdb, {"lc": 1})
+    check("beams know their structural line (m_nref = SLN 7 and 8)", slns == [7, 8], f"{slns}")
+    total_w = 0.0
+    for sln, grp, w in SLN_MODEL:
+        total_w += w
+        mine = {r["beam"] for r in rows if r["sln"] == sln}
+        out(f"  SLN {sln}: beams {sorted(mine)}")
+        by_sln = call("beam_forces", {"lc": 1, "slns": str(sln)})
+        got = {r["beam"] for r in by_sln.get("rows", [])}
+        check(f"filter by structural line {sln} returns exactly its beams", len(mine) >= 6 and got == mine,
+              f"{len(got)} beams {sorted(got)[:12]} vs {len(mine)} on SLN {sln}")
+        by_grp = call("beam_forces", {"lc": 1, "groups": str(grp)})
+        got_g = {r["beam"] for r in by_grp.get("rows", [])}
+        check(f"filter by group {grp} returns exactly the beams of SLN {sln}", len(mine) >= 6 and got_g == mine,
+              f"{len(got_g)} beams {sorted(got_g)[:12]}; other lines' beams included: {sorted(got_g - mine)[:12]}"
+              + (f"; warning: {by_grp['warning']}" if by_grp.get("warning") else ""))
+        mmax, _ = absmax(by_grp.get("extremes", {}), "My")
+        check(f"group {grp}: fixed-end moment = w L^2 / 2 with w = {w} kN/m", close(mmax, w * L * L / 2, 0.005),
+              f"{mmax} kNm vs {w * L * L / 2}")
+    sr = call("support_reactions", {"lc": 1})
     pz = (sr.get("sum_kN") or {}).get("pz")
-    check("sum of reactions = w L", close(pz, w * L, 0.005), f"{pz} kN vs {w * L}")
-    nr = srv._cdb_call("node_results", cdb, {"lc": 1})
-    uz = nr.get("extremes", {}).get("uz", {})
-    umax = max(abs(uz.get("max", {}).get("value") or 0), abs(uz.get("min", {}).get("value") or 0))
+    check("sum of reactions = (w7 + w8) L", close(pz, total_w * L, 0.005), f"{pz} kN vs {total_w * L}")
+    nr = call("node_results", {"lc": 1})
+    umax, _ = absmax(nr.get("extremes", {}), "uz")
+    w = max(x[2] for x in SLN_MODEL)
     d_b = w * L ** 4 / (8 * E * Iy) * 1000
     d_s = (w * L * L / (2 * G * Az) * 1000) if (G and Az) else 0.0
-    check("tip deflection = w L^4 / 8EI", close(umax, d_b + d_s, 0.01) or close(umax, d_b, 0.01),
+    check(f"largest tip deflection = w L^4 / 8EI with w = {w} kN/m (SLN 8)",
+          close(umax, d_b + d_s, 0.01) or close(umax, d_b, 0.01),
           f"{umax} mm vs {d_b + d_s:.4f} mm (bending only {d_b:.4f})")
 
 

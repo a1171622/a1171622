@@ -26,6 +26,7 @@ CLASSES = (
     'CBEAM_FOR',
     'CTRUS_RES',
     'CCABL_RES',
+    'CSLN_BEAM',
 )
 
 
@@ -437,4 +438,29 @@ class CCABL_RES(Structure):  # 162/LC:+  results of cables
         ('m_lex', c_float),
         ('m_effs', c_float),
         ('m_damm', c_float * 6),
+    ]
+
+
+class CSLN_BEAM(Structure):  # 39/NR:101  Properties of beams
+    _fields_ = [
+        ('m_id', c_int),
+        ('m_typ', c_int),
+        ('m_nog', c_int),
+        ('m_nq', c_int * 2),
+        ('m_np', c_int),
+        ('m_ibc', c_int * 4),
+        ('m_div', c_int),
+        ('m_kr', c_float),
+        ('m_r12', c_float),
+        ('m_r13', c_float),
+        ('m_r14', c_float),
+        ('m_r15', c_float),
+        ('m_exa', c_float),
+        ('m_eya', c_float),
+        ('m_eza', c_float),
+        ('m_exe', c_float),
+        ('m_eye', c_float),
+        ('m_eze', c_float),
+        ('m_trot', c_float),
+        ('m_tal', c_float * 3),
     ]

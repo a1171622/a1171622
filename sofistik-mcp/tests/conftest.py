@@ -106,3 +106,8 @@ def fast_clock(monkeypatch):
     clock = FastClock()
     monkeypatch.setattr(solver, "time", clock)
     return clock
+
+
+def core(extreme: dict) -> dict:
+    """An extreme value without its "concurrent" components, for exact comparisons."""
+    return {k: v for k, v in extreme.items() if k != "concurrent"}

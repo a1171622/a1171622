@@ -32,7 +32,14 @@ def read_text(path: str, max_bytes: int = 50_000_000) -> str:
     """Read a SOFiSTiK text file: NUL bytes removed, CRLF -> LF, UTF-8 or else cp1252."""
     with open(path, "rb") as f:
         raw = f.read(max_bytes)
+    return decode_text(raw)
+
+
+def decode_text(raw: bytes) -> str:
+    """Bytes of a SOFiSTiK text file -> text, as read_text (a UTF-8 BOM is dropped)."""
     raw = raw.replace(b"\x00", b"")
+    if raw.startswith(b"\xef\xbb\xbf"):
+        raw = raw[3:]
     for enc in ("utf-8", "cp1252"):
         try:
             txt = raw.decode(enc)
@@ -130,11 +137,14 @@ def summarize_run(prt_path: str | None, erg_path: str | None = None) -> dict:
         e = parse_protocol(read_text(out["erg"]), context_before=6, max_messages=60)
         out["erg_messages"] = [m for m in e["messages"] if m["kind"] == "error"][:30] + \
                               [m for m in e["messages"] if m["kind"] == "warning"][:30]
+    # a program without its "*** Stop" line or its "n errors and m warnings" totals did not finish
+    out["unfinished_programs"] = [x["program"] for x in p["programs"]
+                                  if x["stop_line"] is None or x["errors"] is None]
     if not out["prt"]:
         out["status"] = "no protocol"
     elif out["errors"] or out["aborted"]:
         out["status"] = "errors"
-    elif not out["finished"]:
+    elif not out["finished"] or out["unfinished_programs"]:
         out["status"] = "not finished"
     elif out["warnings"]:
         out["status"] = "ok with warnings"

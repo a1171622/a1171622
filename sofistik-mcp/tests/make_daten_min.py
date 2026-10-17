@@ -32,6 +32,7 @@ CLASSES = (
     "CBEAM_FOC", "CBEAM_FOR",               # 102/LC   beam forces
     "CTRUS_RES",                            # 152/LC   truss results
     "CCABL_RES",                            # 162/LC   cable results
+    "CSLN_BEAM",                            # 39/NR:101 structural line beam properties (group m_nog)
 )
 
 DEFAULT_SOURCES = (

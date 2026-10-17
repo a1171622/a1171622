@@ -52,10 +52,17 @@ def handle(req: dict) -> dict:
     cdb = cdbio.Cdb(req["cdb"], info)
     try:
         res = OPS[op](cdb, daten, req.get("args") or {})
-        if getattr(cdb, "truncated", 0):
+        errs = getattr(cdb, "read_errors", None) or []
+        if getattr(cdb, "truncated", 0) or errs:
             if not isinstance(res, dict):
                 res = {"rows": res}
+        if getattr(cdb, "truncated", 0):
             res["warning_truncated_records"] = cdb.truncated
+        if errs:
+            res["warning_read_errors"] = (
+                "SOFiSTiK's sof_cdb_get returned an error while reading key(s) "
+                + ", ".join(f"{a}/{b} (code {c})" for a, b, c in errs[:20])
+                + "; the records of those keys may be incomplete, so these results may be incomplete.")
         return {"ok": True, "result": res}
     finally:
         cdb.close()

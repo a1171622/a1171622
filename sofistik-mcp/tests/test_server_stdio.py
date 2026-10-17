@@ -12,7 +12,7 @@ import sys
 import fake_cdb
 import fake_sps
 import pytest
-from conftest import HERE, ROOT, write_hook_config
+from conftest import HERE, ROOT, core, write_hook_config
 
 TOOLS = {
     "sofistik_status", "list_folder", "read_text_file", "write_dat_file", "run_calculation", "get_job_result",
@@ -166,7 +166,7 @@ def test_protocol_tools_and_every_call(stdio_env):
     assert [(r["beam"], r["x"], r["My"]) for r in o["beams"]["rows"]] == [
         (1001, 0.0, -20.0), (1001, 5.0, -15.0), (1002, 0.0, -30.0), (1002, 4.0, 12.0)]
     assert o["truss"]["rows"] == [{"element": 5002, "N": -7.25, "axial_disp": -0.4}]
-    assert o["env"]["overall"]["uz"]["min"] == {"value": -21.0, "node": 3, "lc": 2}
+    assert core(o["env"]["overall"]["uz"]["min"]) == {"value": -21.0, "node": 3, "lc": 2}
     assert [r["m_nr"] for r in o["key"]["records"]] == [1, 2] and o["key"]["records"][1]["m_xyz"][0] == 2.5
     assert "Cannot read number list" in o["bad_ids"]["error"]
     assert "outside the folders" in o["cdb_out"]["error"]
@@ -197,7 +197,7 @@ def test_protocol_jobs_running_stop_and_locks(stdio_env):
         out["long"] = await call("run_calculation", dat_path=str(work / "long.dat"))
         out["latest"] = await call("get_job_result", wait_seconds=0.5)
         out["stop"] = await call("stop_calculation")
-        out["again"] = await call("get_job_result", job_id=out["long"]["job_id"], wait_seconds=1)
+        out["again"] = await call("get_job_result", job_id=out["long"]["job_id"], wait_seconds=30)
         return out
 
     o = session(stdio_env, body)
@@ -212,6 +212,7 @@ def test_protocol_jobs_running_stop_and_locks(stdio_env):
     assert o["done"]["files"]["cdb"]["updated_by_this_run"]
     assert o["after"]["system"]["project"] == "FRAME TEST"
     assert o["long"]["status"] == "running" and o["latest"]["job_id"] == o["long"]["job_id"]
-    assert o["stop"]["status"] == "stopped" and "results are incomplete" in o["stop"]["reason"]
-    assert o["again"]["status"] == "stopped"
+    # stop_calculation answers within a few seconds: the result, or "stopping" while the kill finishes
+    assert o["stop"]["status"] in ("stopped", "stopping")
+    assert o["again"]["status"] == "stopped" and "results are incomplete" in o["again"]["reason"]
     assert not (work / "long.prt").exists()

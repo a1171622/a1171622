@@ -8,6 +8,7 @@ import math
 
 import fake_cdb
 import pytest
+from conftest import core
 from fake_cdb import rec
 
 from sofistik_mcp import results
@@ -168,9 +169,10 @@ def test_node_results_units_and_signs(frame):
     assert rows[4]["px"] == -2.5
     assert r["units"] == {"ux,uy,uz,u_total": "mm", "urx,ury,urz": "mrad", "px,py,pz": "kN", "mx,my,mz": "kNm"}
     ex = r["extremes"]
-    assert ex["uz"] == {"max": {"value": 0.0, "node": 1}, "min": {"value": -10.5, "node": 3}}
-    assert ex["u_total"]["max"] == {"value": 10.5, "node": 3}
-    assert ex["urx"]["min"] == {"value": -0.5, "node": 3}
+    assert core(ex["uz"]["max"]) == {"value": 0.0, "node": 1}
+    assert core(ex["uz"]["min"]) == {"value": -10.5, "node": 3}
+    assert core(ex["u_total"]["max"]) == {"value": 10.5, "node": 3}
+    assert core(ex["urx"]["min"]) == {"value": -0.5, "node": 3}
     assert ex["urz"]["max"]["value"] == 0.0 and ex["urz"]["max"]["node"] == 1   # node 5 undefined: skipped
     assert set(ex) == {"ux", "uy", "uz", "urx", "ury", "urz", "u_total"}       # no extremes of forces here
 
@@ -205,8 +207,8 @@ def test_support_reactions(frame):
     assert r["sum_kN"] == {"px": -2.5, "py": 0.0, "pz": 80.0}
     assert r["sum_stored_by_sofistik_kN"] == [-2.5, 0.0, 80.0]             # matches: a good model check
     assert r["rows"][0] == {"node": 1, "px": 0.0, "py": 0.0, "pz": 50.0, "mx": 0.0, "my": -12.0, "mz": 0.0}
-    assert r["extremes"]["pz"]["max"] == {"value": 50.0, "node": 1}
-    assert r["extremes"]["my"]["min"] == {"value": -12.0, "node": 1}
+    assert core(r["extremes"]["pz"]["max"]) == {"value": 50.0, "node": 1}
+    assert core(r["extremes"]["my"]["min"]) == {"value": -12.0, "node": 1}
     assert "ux" not in r["rows"][0] and r["units"]["mx,my,mz"] == "kNm"
     only4 = results.support_reactions(frame, D, 1, ids=[4])
     assert only4["sum_kN"] == {"px": -2.5, "py": 0.0, "pz": 30.0}
@@ -234,10 +236,10 @@ def test_beam_forces_values_and_meta(frame):
     assert [x["x"] for x in col] == [0.0, 1.5, 3.0] and col[0]["sln"] is None and col[0]["group"] == 2
     assert r["rows"][2]["Mz"] is None                                     # undefined value
     ex = r["extremes"]
-    assert ex["My"]["min"] == {"value": -30.0, "beam": 1002, "x": 0.0, "sln": 7, "group": 1}
-    assert ex["My"]["max"] == {"value": 12.0, "beam": 1002, "x": 4.0, "sln": 7, "group": 1}
+    assert core(ex["My"]["min"]) == {"value": -30.0, "beam": 1002, "x": 0.0, "sln": 7, "group": 1}
+    assert core(ex["My"]["max"]) == {"value": 12.0, "beam": 1002, "x": 4.0, "sln": 7, "group": 1}
     assert ex["N"]["min"]["value"] == -100.0 and ex["N"]["max"]["value"] == 25.0      # compression < 0
-    assert ex["Vz"]["min"] == {"value": -4.0, "beam": 1002, "x": 4.0, "sln": 7, "group": 1}
+    assert core(ex["Vz"]["min"]) == {"value": -4.0, "beam": 1002, "x": 4.0, "sln": 7, "group": 1}
     assert ex["Mz"]["max"]["value"] == 3.0
     assert r["units"] == {"x": "m from beam start", "N,Vy,Vz": "kN", "Mt,My,Mz": "kNm"}
     assert "N > 0 tension" in r["note"] and "warning" not in r and "sln_note" not in r
@@ -279,7 +281,7 @@ def test_beam_max_rows(frame):
 def test_beam_cantilever(cant):
     r = results.beam_forces(cant, D, 1)
     ex = r["extremes"]
-    assert ex["My"]["min"] == {"value": -6.0, "beam": 1, "x": 0.0, "sln": None, "group": 0}
+    assert core(ex["My"]["min"]) == {"value": -6.0, "beam": 1, "x": 0.0, "sln": None, "group": 0}
     assert ex["My"]["max"]["value"] == 0.0 and ex["My"]["max"]["beam"] == 6 and ex["My"]["max"]["x"] == 1.0
     assert ex["Vz"]["max"]["value"] == 1.0 and "Mz" not in ex
 
@@ -288,22 +290,27 @@ def test_group_of_rules():
     gl = [{"group": 1, "element_code": 100, "min_element": 1001, "max_element": 1999},
           {"group": 3, "element_code": 100, "min_element": 1500, "max_element": 2500},
           {"group": 9, "element_code": 150, "min_element": 1000, "max_element": 1100}]
-    assert results._group_of(1200, gl, 1000, code=100) == 1
-    assert results._group_of(1050, gl, 1000, code=100) == 1               # code 100 preferred over 150
-    assert results._group_of(1050, gl, 1000) == [1, 9]                    # ambiguous: a list
-    assert results._group_of(1600, gl, 1000, code=100) == [1, 3]
-    assert results._group_of(7001, gl, 1000, code=100) == 7               # no range: divisor
-    assert results._group_of(7001, gl, 0, code=100) is None
-    assert results._group_of(1050, [gl[2]], 1000, code=100) == 9          # only another code: use it
+    assert results._group_of(1600, gl, 1000) == 1                         # GDIV > 0: always nr // GDIV
+    assert results._group_of(7001, gl, 1000, sln_group=4) == 7            # ... even over the SLN group
+    assert results._group_of(1600, gl, 0, sln_group=4) == 4               # GDIV 0: structural line group
+    assert results._group_of(1200, gl, 0) == 1                            # one beam range
+    assert results._group_of(1050, gl, 0) == 1                            # truss range 9 ignored
+    assert results._group_of(1600, gl, 0) is None                         # two beam ranges: ambiguous
+    assert results._group_of(7001, gl, 0) is None                         # in no range
+    assert results._group_of(1050, [gl[2]], 0) is None                    # only a truss range: never used
+    assert results._group_of(1050, gl, -1000) == 1                        # GDIV < 0: ranges
 
 
 def test_beam_group_filter_with_ambiguous_ranges():
     keys = fake_cdb.build_frame()
+    keys[(10, 0)] = [rec("CSYST", m_igdiv=0)]
     keys[(11, 0)] = [rec("CGRP", m_ng=1, m_typ=100, m_min=1001, m_max=2001),
                      rec("CGRP", m_ng=2, m_typ=100, m_min=2001, m_max=2002)]
     c = fake_cdb.FakeCdb(keys)
     r = results.beam_forces(c, D, 1, groups_="2")
-    assert {x["beam"] for x in r["rows"]} == {2001} and r["rows"][0]["group"] == [1, 2]
+    assert r["beams"] == 0 and r["beams_with_unknown_group"] == [2001] and "2001" in r["warning"]
+    r = results.beam_forces(c, D, 1)
+    assert {x["beam"]: x["group"] for x in r["rows"]} == {1001: 1, 1002: 1, 2001: None}
 
 
 # ---------------------------------------------------------------- trusses and cables
@@ -312,7 +319,8 @@ def test_axial_forces(frame):
     r = results.axial_forces(frame, D, 1, "truss")
     assert r["rows"] == [{"element": 5001, "N": 12.5, "axial_disp": 1.0},
                          {"element": 5002, "N": -7.25, "axial_disp": -0.4}]
-    assert r["extremes"]["N"] == {"max": {"value": 12.5, "element": 5001}, "min": {"value": -7.25, "element": 5002}}
+    assert core(r["extremes"]["N"]["max"]) == {"value": 12.5, "element": 5001}
+    assert core(r["extremes"]["N"]["min"]) == {"value": -7.25, "element": 5002}
     assert r["units"] == {"N": "kN (tension +)", "axial_disp": "mm"} and r["type"] == "truss"
     assert results.axial_forces(frame, D, 1, "truss", ids="5002")["count"] == 1
     c = results.axial_forces(frame, D, 2, "cable")
@@ -327,10 +335,10 @@ def test_envelope_beams_governing_lc(frame):
     r = results.envelope(frame, D, "1-3", what="beam")
     assert r["load_cases_found"] == [1, 2] and r["load_cases_missing"] == [3]
     o = r["overall"]
-    assert o["My"]["max"] == {"value": 50.0, "beam": 1002, "x": 4.0, "sln": 7, "group": 1, "lc": 2}
-    assert o["My"]["min"] == {"value": -45.0, "beam": 1002, "x": 0.0, "sln": 7, "group": 1, "lc": 2}
-    assert o["N"]["max"] == {"value": 40.0, "beam": 2001, "x": 0.0, "sln": None, "group": 2, "lc": 2}
-    assert o["N"]["min"] == {"value": -100.0, "beam": 2001, "x": 0.0, "sln": None, "group": 2, "lc": 1}
+    assert core(o["My"]["max"]) == {"value": 50.0, "beam": 1002, "x": 4.0, "sln": 7, "group": 1, "lc": 2}
+    assert core(o["My"]["min"]) == {"value": -45.0, "beam": 1002, "x": 0.0, "sln": 7, "group": 1, "lc": 2}
+    assert core(o["N"]["max"]) == {"value": 40.0, "beam": 2001, "x": 0.0, "sln": None, "group": 2, "lc": 2}
+    assert core(o["N"]["min"]) == {"value": -100.0, "beam": 2001, "x": 0.0, "sln": None, "group": 2, "lc": 1}
     assert o["Vz"]["max"]["value"] == 6.0 and o["Vz"]["max"]["lc"] == 2
     assert r["per_lc"][1]["My"]["max"]["value"] == 12.0 and r["per_lc"][2]["My"]["max"]["value"] == 50.0
     assert r["units"]["moment"] == "kNm"
@@ -347,20 +355,20 @@ def test_envelope_filters(frame):
     r = results.envelope(frame, D, "1-2", what="beam", groups_="1")
     assert r["overall"]["N"]["max"]["value"] == 37.5 and r["overall"]["N"]["max"]["beam"] == 1002
     r = results.envelope(frame, D, "1-2", what="beam", ids="2001")
-    assert r["overall"]["My"]["max"] == {"value": 3.0, "beam": 2001, "x": 0.0, "sln": None, "group": 2, "lc": 2}
+    assert core(r["overall"]["My"]["max"]) == {"value": 3.0, "beam": 2001, "x": 0.0, "sln": None, "group": 2, "lc": 2}
 
 
 def test_envelope_nodes_supports_trusses_cables(frame):
     n = results.envelope(frame, D, "1-2", what="node")
-    assert n["overall"]["uz"]["min"] == {"value": -21.0, "node": 3, "lc": 2}
-    assert n["overall"]["ux"]["max"] == {"value": 2.0, "node": 2, "lc": 2}
+    assert core(n["overall"]["uz"]["min"]) == {"value": -21.0, "node": 3, "lc": 2}
+    assert core(n["overall"]["ux"]["max"]) == {"value": 2.0, "node": 2, "lc": 2}
     s = results.envelope(frame, D, "1-2", what="support")
-    assert s["overall"]["pz"]["max"] == {"value": 100.0, "node": 1, "lc": 2}
-    assert s["overall"]["px"]["min"] == {"value": -5.0, "node": 4, "lc": 2}
+    assert core(s["overall"]["pz"]["max"]) == {"value": 100.0, "node": 1, "lc": 2}
+    assert core(s["overall"]["px"]["min"]) == {"value": -5.0, "node": 4, "lc": 2}
     t = results.envelope(frame, D, "1-2", what="truss")
-    assert t["load_cases_found"] == [1] and t["overall"]["N"]["min"] == {"value": -7.25, "element": 5002, "lc": 1}
+    assert t["load_cases_found"] == [1] and core(t["overall"]["N"]["min"]) == {"value": -7.25, "element": 5002, "lc": 1}
     c = results.envelope(frame, D, "1-2", what="cable")
-    assert c["overall"]["N"]["max"] == {"value": 95.0, "element": 6001, "lc": 2}
+    assert core(c["overall"]["N"]["max"]) == {"value": 95.0, "element": 6001, "lc": 2}
 
 
 def test_envelope_input_errors(frame):

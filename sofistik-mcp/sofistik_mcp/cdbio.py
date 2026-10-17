@@ -5,6 +5,7 @@ decode_text), which follows SOFiSTiK's shipped Python examples (interfaces/examp
   sof_cdb_init(path_utf8, 99)            open an existing database, returns an index (< 0 = failed)
   sof_cdb_kexist(kwh, kwl)               0 missing, 1 key without data, 2 key with data
   sof_cdb_get(index, kwh, kwl, buf, len, 1)   0 ok, 1 record longer than buffer, 2 end of key, 3 no key
+                                         (any other value, e.g. negative, is a read error: stop the key)
   sof_cdb_close(0)                       close all
   sof_lib_ps2cs(ints, buf, size)         SOFiSTiK text (4 chars per int) -> C string
 Record layouts come from SOFiSTiK's sofistik_daten.py of the installed version.
@@ -95,6 +96,7 @@ class Cdb:
         self._buf = ctypes.create_string_buffer(self.BUF)
         self._cache = {}
         self.truncated = 0
+        self.read_errors: list = []            # [(kwh, kwl, return code)] of failed sof_cdb_get calls
 
     def kexist(self, kwh, kwl):
         return int(self.dll.sof_cdb_kexist(int(kwh), int(kwl)))
@@ -111,7 +113,10 @@ class Cdb:
         for _ in range(limit):
             reclen = ctypes.c_int(self.BUF)          # reset the length before every sof_cdb_get
             ie = self.dll.sof_cdb_get(idx, k1, k2, ctypes.byref(self._buf), ctypes.byref(reclen), 1)
-            if ie >= 2:
+            if ie in (2, 3):                         # end of key / key does not exist
+                break
+            if ie not in (0, 1):                     # anything else is an error, never a record
+                self.read_errors.append((key[0], key[1], int(ie)))
                 break
             if ie == 1:
                 self.truncated += 1

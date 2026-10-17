@@ -14,6 +14,7 @@ from __future__ import annotations
 import datetime
 import json
 import os
+import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)                       # folder holding run_server.py and settings.json
@@ -68,18 +69,66 @@ def load_settings(path: str | None = None) -> dict:
                     f"{p}: the folder {x!r} in {k} contains a single backslash before t, n, r, b or f, "
                     r'which JSON reads as a control character. Use double backslashes, e.g. "C:\\temp". '
                     "Fix it in Notepad, save, and restart Claude.")
+    for k in ("work_folders", "read_folders", "examples_folders", "manual_folders"):
+        for x in s[k]:
+            if not is_full_path(x):
+                raise SettingsError(
+                    f"{p}: the folder {x!r} in {k} is not a full path, so it would depend on the folder Claude "
+                    r'was started from. Give the whole path with the drive, e.g. "D:\\26016 HPC". '
+                    "Fix it in Notepad, save, and restart Claude.")
     a = s.get("allow_sys_commands")
     # only a real JSON true (or the word "true") switches the +SYS guard off; "false", 0, "no" never do
     s["allow_sys_commands"] = a is True or (isinstance(a, str) and a.strip().lower() == "true")
     if s.get("sofistik_dir") and any(ord(ch) < 32 for ch in str(s["sofistik_dir"])):
         raise SettingsError(f"{p}: sofistik_dir contains a single backslash before t, n, r, b or f. "
                             "Use double backslashes. Fix it in Notepad, save, and restart Claude.")
+    if s.get("sofistik_dir") and not is_full_path(str(s["sofistik_dir"])):
+        raise SettingsError(f"{p}: sofistik_dir {s['sofistik_dir']!r} is not a full path. Give the whole path, "
+                            r'e.g. "C:\\Program Files\\SOFiSTiK\\2027". Fix it in Notepad, save, and restart Claude.')
     try:
         s["run_timeout_minutes"] = max(1.0, float(s.get("run_timeout_minutes") or 60))
     except (TypeError, ValueError):
         s["run_timeout_minutes"] = 60.0
     s["_path"] = p if os.path.isfile(p) else ""
     return s
+
+
+def is_full_path(p: str) -> bool:
+    """A path that does not depend on the current folder: C:\\x or \\\\server\\share (also /x off Windows).
+    "C:x" (current folder of drive C:) and "\\x" (current drive) are not full paths."""
+    p = os.path.expanduser(str(p).strip())
+    if re.match(r"^[A-Za-z]:[\\/]", p) or re.match(r"^[\\/]{2}[^\\/]", p):
+        return True
+    return os.name != "nt" and p.startswith("/")
+
+
+_RESERVED = {"CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$"} | {
+    f"{d}{i}" for d in ("COM", "LPT") for i in list("123456789") + ["\u00b9", "\u00b2", "\u00b3"]}
+
+
+def bad_file_name(path: str) -> str | None:
+    """Why Windows would not store path as the plain file it looks like (None if it is fine):
+    ':' after the drive (an NTFS alternate data stream), a name ending in '.' or ' ' (Windows drops them),
+    a reserved device name (CON, NUL, COM1, LPT1 ... with any extension), characters Windows forbids,
+    or a file name starting with '-' (sps.exe would read it as an option)."""
+    p = str(path)
+    if p.startswith(("\\\\?\\", "\\\\.\\", "//?/", "//./")):
+        return f"{p}: device paths (\\\\?\\ or \\\\.\\) are not accepted; give a normal path."
+    rest = p[2:] if re.match(r"^[A-Za-z]:", p) else p
+    if ":" in rest:
+        return f"{p}: a ':' is only allowed after the drive letter (it would write a hidden NTFS stream)."
+    if any(ord(ch) < 32 or ch in '<>"|?*' for ch in rest):
+        return (f"{p}: the name contains a character Windows does not allow in file names "
+                "(< > \" | ? * or a control character).")
+    parts = [x for x in re.split(r"[\\/]", rest) if x not in ("", ".", "..")]
+    for part in parts:
+        if part != part.rstrip(". "):
+            return f"{p}: '{part}' ends with a dot or a space, which Windows silently drops."
+        if part.split(".")[0].strip().upper() in _RESERVED:
+            return f"{p}: '{part}' is a reserved Windows device name (CON, PRN, AUX, NUL, COM1-9, LPT1-9)."
+    if parts and parts[-1].startswith("-"):
+        return f"{p}: a file name must not start with '-' (sps.exe would read it as an option)."
+    return None
 
 
 def backup_name(path: str) -> str:

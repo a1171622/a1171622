@@ -18,15 +18,18 @@ def w(path, text):
 
 # ---------------------------------------------------------------- scan_dat: +SYS
 
+SYS_WHY = "+SYS / *SYS operating system command"
+
+
 @pytest.mark.parametrize("line", ["+SYS del *.*", "+sys dir", "   +SYS dir", "\t+ sys dir", "+Sys",
-                                  "  +  SYS copy a b"])
+                                  "  +  SYS copy a b", "+SYSTEM", "*SYS dir", "SYS dir"])
 def test_sys_detected(tmp_path, line):
     sc = solver.scan_dat(w(tmp_path / "m.dat", f"+PROG ASE\nEND\n{line}\n"))
     assert len(sc["sys_lines"]) == 1
-    assert sc["sys_lines"][0] == {"file": str(tmp_path / "m.dat"), "line": 3, "text": line.strip()}
+    assert sc["sys_lines"][0] == {"file": str(tmp_path / "m.dat"), "line": 3, "text": line.strip(), "why": SYS_WHY}
 
 
-@pytest.mark.parametrize("line", ["$ +SYS dir", "! +SYS dir", "HEAD +SYS in a title", "+SYSTEM", "-SYS dir"])
+@pytest.mark.parametrize("line", ["$ +SYS dir", "! +SYS dir", "HEAD +SYS in a title", "-SYS dir", "SYST GIRD"])
 def test_not_a_sys_line(tmp_path, line):
     assert solver.scan_dat(w(tmp_path / "m.dat", f"+PROG ASE\n{line}\n"))["sys_lines"] == []
 
@@ -45,7 +48,8 @@ def test_sys_three_levels_of_includes(tmp_path):
     w(tmp_path / "c.dat", "$ level 3\n\n   +sys rmdir /s x\n")
     sc = solver.scan_dat(str(tmp_path / "m.dat"))
     assert sc["includes"] == [str(tmp_path / n) for n in ("a.dat", "b.dat", "c.dat")]
-    assert sc["sys_lines"] == [{"file": str(tmp_path / "c.dat"), "line": 3, "text": "+sys rmdir /s x"}]
+    assert sc["sys_lines"] == [{"file": str(tmp_path / "c.dat"), "line": 3, "text": "+sys rmdir /s x",
+                                "why": SYS_WHY}]
     assert sc["missing_includes"] == []
 
 
@@ -164,7 +168,7 @@ def test_run_refuses_missing_include(tmp_path, sps):
 
 def test_run_refuses_no_active_prog(tmp_path, sps):
     r = solver.run(w(tmp_path / "m.dat", "-PROG ASE\nEND\n$ +PROG AQUA\n"), sps, 60)
-    assert r["status"] == "not run" and "No active +PROG" in r["reason"]
+    assert r["status"] == "not run" and "No active PROG" in r["reason"]
 
 
 # ---------------------------------------------------------------- run(): end to end with the fake sps

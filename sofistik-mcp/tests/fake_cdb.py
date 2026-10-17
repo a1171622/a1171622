@@ -226,3 +226,96 @@ def build_crash():
     """Stands in for SOFiSTiK's DLL crashing the worker process (prints, then dies without an answer)."""
     print("forrtl: severe (157): Program Exception - access violation", flush=True)
     os._exit(3)
+
+
+# ------------------------------------------------------------------------------------------------
+# models for the review fixes (tests/test_review_results.py) and the self-test checks
+# ------------------------------------------------------------------------------------------------
+
+def build_interleaved(with_sln=True):
+    """GDIV 0, two beam groups numbered alternately: group 1 = beams 1, 3, 5, group 2 = beams 2, 4, 6.
+    Their 11/00 ranges (1-5, 2-6) overlap, so only the structural lines (11 -> group 1, 12 -> group 2,
+    39/NR CSLN_BEAM m_nog) tell beams 2-5 apart.  A truss group 7 covers all numbers."""
+    keys = {}
+    keys[(10, 0)] = [rec("CSYST", m_iprob=30, m_igdiv=0, m_nknot=7, m_mknot=7, m_txt=text_ints("INTERLEAVED", 64))]
+    keys[(11, 0)] = [rec("CGRP", m_ng=1, m_typ=100, m_num=3, m_min=1, m_max=5, m_text=text_ints("odd", 17)),
+                     rec("CGRP", m_ng=2, m_typ=100, m_num=3, m_min=2, m_max=6, m_text=text_ints("even", 17)),
+                     rec("CGRP", m_ng=7, m_typ=150, m_num=2, m_min=1, m_max=6, m_text=text_ints("truss", 17))]
+    keys[(12, 1)] = [rec("CLC_CTRL", m_kind=0, m_fact=1.0, m_rtex=text_ints("LC 1", 17))]
+    beams = []
+    for i in range(1, 7):
+        sln = (11 if i % 2 else 12) if with_sln else 0
+        beams += [rec("CBEAM", m_nr=i, m_node=[i, i + 1], m_np=1, m_dl=1.0, m_nref=sln),
+                  rec("CBEAM_SCT", m_id=0, m_nq=1)]
+    keys[(100, 0)] = beams
+    if with_sln:
+        keys[(39, 11)] = [rec("CSLN_BEAM", m_id=101, m_nog=1, m_nq=[1, 1])]
+        keys[(39, 12)] = [rec("CSLN_BEAM", m_id=101, m_nog=2, m_nq=[1, 1])]
+    keys[(102, 1)] = [rec("CBEAM_FOC", m_id=0)] + [rec("CBEAM_FOR", m_nr=i, m_x=0.0, m_my=float(i))
+                                                   for i in range(1, 7)]
+    return keys
+
+
+def _cantilever_rows(p):
+    """Node results and beam forces of the self-test cantilever under a tip load p [kN] in +Z."""
+    nodes = [rec("CN_DISPC", m_id=0)]
+    for i in range(1, 8):
+        x = i - 1.0
+        kw = dict(m_nr=i, m_uz=p * x * x * (3 * L - x) / (6 * E * IY),
+                  m_ury=-p * x * (2 * L - x) / (2 * E * IY))       # right hand: +w along +x is a -y rotation
+        if i == 1:
+            kw.update(m_pz=p, m_my=p * L)
+        nodes.append(rec("CN_DISP", **kw))
+    forces = [rec("CBEAM_FOC", m_id=0)]
+    for i in range(1, 7):
+        for x in (0.0, 0.5, 1.0):
+            xg = i - 1 + x
+            forces.append(rec("CBEAM_FOR", m_nr=i, m_x=x, m_vz=p, m_my=-(p * (L - xg)), m_mz=0.0))
+    return nodes, forces
+
+
+def build_selftest_cantilever():
+    """selftest_cantilever.dat as the self-test expects it: LC 1 (1 kN) and LC 2 (2 kN) at node 7, +Z."""
+    keys = build()
+    for lc, p in ((1, 1.0), (2, 2.0)):
+        keys[(12, lc)] = [rec("CLC_CTRL", m_kind=0, m_fact=1.0, m_rz=p,
+                              m_rtex=text_ints(f"self-test tip load {p:.0f} kN", 17))]
+        keys[(24, lc)], keys[(102, lc)] = _cantilever_rows(p)
+    del keys[(152, 1)]
+    return keys
+
+
+SLN_LINES = ((7, 3, 1.0, 0.0), (8, 4, 2.0, 2.0))      # (structural line, group, w [kN/m], y [m])
+
+
+def build_selftest_sln():
+    """selftest_sln.dat: SLN 7 (group 3, 1 kN/m, y = 0) and SLN 8 (group 4, 2 kN/m, y = 2), each a 6 m
+    cantilever of 6 beams fixed at x = 0, GDIV 1000 (beams 3001-3006 and 4001-4006)."""
+    keys = {}
+    keys[(10, 0)] = [rec("CSYST", m_iprob=30, m_igdiv=1000, m_nknot=14, m_mknot=14, m_txt=text_ints("SLN", 64))]
+    keys[(1, 1)] = [rec("CMAT_STEE", m_id=1, m_emod=E, m_gmod=G)]
+    keys[(9, 1)] = [rec("CSECT", m_id=0, m_mno=1, m_a=A, m_iy=IY, m_iz=IZ, m_az=AZ, m_em=E, m_gm=G)]
+    keys[(11, 0)] = [rec("CGRP", m_ng=g, m_typ=100, m_num=6, m_min=g * 1000 + 1, m_max=g * 1000 + 6)
+                     for _s, g, _w, _y in SLN_LINES]
+    total = sum(w * L for _s, _g, w, _y in SLN_LINES)
+    keys[(12, 1)] = [rec("CLC_CTRL", m_kind=0, m_fact=1.0, m_rz=total, m_rtex=text_ints("self-test 1 kN/m", 17))]
+    cnodes, beams, disp, forces = [], [], [rec("CN_DISPC", m_id=0)], [rec("CBEAM_FOC", m_id=0)]
+    for k, (sln, grp, w, y) in enumerate(SLN_LINES):
+        base = 100 * (k + 1)
+        for i in range(7):
+            x = float(i)
+            cnodes.append(rec("CNODE", m_nr=base + i, m_xyz=[x, y, 0.0], m_kfix=63 if i == 0 else 0))
+            kw = dict(m_nr=base + i, m_uz=w * x * x * (6 * L * L - 4 * L * x + x * x) / (24 * E * IY))
+            if i == 0:
+                kw.update(m_pz=w * L, m_my=w * L * L / 2)
+            disp.append(rec("CN_DISP", **kw))
+        keys[(39, sln)] = [rec("CSLN_BEAM", m_id=101, m_nog=grp, m_nq=[1, 1])]
+        for i in range(1, 7):
+            nr = grp * 1000 + i
+            beams += [rec("CBEAM", m_nr=nr, m_node=[base + i - 1, base + i], m_np=1, m_dl=1.0, m_nref=sln),
+                      rec("CBEAM_SCT", m_id=0, m_nq=1)]
+            for x in (0.0, 1.0):
+                xg = i - 1 + x
+                forces.append(rec("CBEAM_FOR", m_nr=nr, m_x=x, m_vz=w * (L - xg), m_my=-w * (L - xg) ** 2 / 2))
+    keys[(20, 0)], keys[(100, 0)], keys[(24, 1)], keys[(102, 1)] = cnodes, beams, disp, forces
+    return keys

@@ -25,19 +25,24 @@ when they open.
 
 `selftest.bat` (also run by the installer) makes SOFiSTiK solve two steel cantilevers through the
 server's own code and compares what the server reads from the `.cdb` with a hand calculation:
-HEA 200, 6 m, first with nodes and beams (SOFiMSHA, 1 kN at the tip), then as structural line 7 in
-group 3 (SOFiMSHC, 1 kN/m).
+HEA 200, 6 m, first with nodes and beams (SOFiMSHA, 1 kN and 2 kN at the tip in load cases 1 and 2),
+then as structural lines 7 (group 3, 1 kN/m) and 8 (group 4, 2 kN/m) (SOFiMSHC).
 
 | Check | Expected |
 | --- | --- |
 | Section A, Iy read from the .cdb | 53.8 cm², 3692 cm⁴ (HEA 200 table) |
 | E modulus | 210 000 N/mm² |
 | Tip deflection | P L³ / 3EIy (+ shear part) ≈ 9.3 mm |
+| Tip rotation | P L² / 2EIy ≈ 2.32 mrad |
+| Forces that must be zero | N, Vy, Mt, Mz ≈ 0 |
+| Envelope over load cases 1-2 | governed by LC 2, twice the LC 1 values |
+| Load case titles | read back as written |
+| Signs | tip moves in the load direction; the report states the reaction sign SOFiSTiK uses |
 | Support reaction, moment | 1 kN, 6 kNm |
 | Max beam moment, shear | 6 kNm, 1 kN, and 0 at the free end |
 | SOFiSTiK's own stored reaction sum | 1 kN |
-| Structural line model: beams found by SLN 7 and by group 3 | all 6 beams |
-| Structural line model: reaction, moment, deflection | 6 kN, 18 kNm, w L⁴ / 8EIy ≈ 20.9 mm |
+| Structural line model: SLN 7 / group 3 and SLN 8 / group 4 | each gives only its own 6 beams |
+| Structural line model: moment, deflection, reaction sum | 18 and 36 kNm, w L⁴ / 8EIy ≈ 20.9 mm, 18 kN |
 | The server starts and answers like it will for Claude | 22 tools |
 
 The window ends with **ALL CHECKS PASSED** or lists what failed. The same text is saved in
@@ -73,17 +78,39 @@ Open `settings.json` in Notepad to change them, then restart Claude. Use double 
   `C:\Sofistik workflow`. Add your project folders, for example
   `"work_folders": ["C:\\Sofistik workflow", "D:\\26016 HPC Kier BAM JV"]`.
 - **read_folders**: extra folders Claude may read but never change.
-- **allow_sys_commands**: `false` (default) refuses any `.dat` containing `+SYS`, because `+SYS`
-  makes SOFiSTiK run Windows commands.
+- **allow_sys_commands**: `false` (default) refuses any `.dat` that could make SOFiSTiK run a
+  Windows command: `+SYS` and `*SYS` lines (also a bare `SYS` word at the start of a line), a line
+  that starts with a `$(...)` substitution, and a `#define` value containing `SYS`. The rule is
+  deliberately broad; if a model really needs such a line, set it to `true` and restart Claude.
+  `write_dat_file` refuses to write such content too, so it cannot be left for you to run by hand.
 - **run_timeout_minutes**: a calculation is stopped after this long (default 60).
-- One calculation runs at a time, and its `.cdb` is not read while it runs. If the project is open in
-  SSD, Teddy or WinGRAF the `.cdb` may be locked: close it there first.
+- Every folder in `settings.json` must be a full path with the drive (e.g. `D:\\26016 HPC`);
+  a relative path is refused because it would depend on where Claude was started.
+- One calculation runs at a time. While it runs, `write_dat_file` refuses to write anything (SOFiSTiK
+  reads `#INCLUDE` / `+APPLY` files during the run), and its `.cdb` is not read. If an input file
+  changes during the run anyway, the result says so (status `check: input changed during run`).
+  If the project is open in SSD, Teddy or WinGRAF the `.cdb` may be locked: close it there first.
+- A run writes `<name>.mcp-running` next to the `.dat` while it runs, so a second Claude window
+  cannot start a calculation in the same folder. If Claude or the server is closed during a run,
+  SOFiSTiK is stopped too. A lock file left by a crash is removed automatically.
 - A run replaces that model's earlier `.cdb` / `.prt` / `.erg`, as running it in Teddy does.
-- Claude cannot change files in the server's own folder.
-- `#INCLUDE` / `+APPLY` files must be findable next to the `.dat` (or by full path), so they can be
-  checked for `+SYS` too; otherwise the run is refused.
+- Claude cannot change files in the server's own folder. File names with `:` after the drive,
+  a trailing dot or space, a device name (`CON`, `NUL`, `COM1` ...) or a leading `-` are refused.
+- `#INCLUDE` / `+APPLY` files are checked for `+SYS` too: every file SOFiSTiK could open is
+  checked (`name` and `name.dat`, next to the including file and next to the main `.dat`;
+  `$(NAME)` is the `.dat`'s name). A file that cannot be found or checked refuses the run, and so
+  does one outside the folders the server may read (SOFiSTiK copies included text into the `.erg`).
+- A status other than `ok` / `ok with warnings` means the results are not valid yet: `errors`,
+  `not finished` (a program has no end or totals line), `check: exit code n` (sps.exe reported a
+  failure the protocol does not show), `timed out`, `stopped`. Results read from a `.cdb` that is
+  older than its `.prt` / `.dat`, or whose last run here was not clean, carry a
+  `stale_results_warning`.
 
 ## Limits
+
+- A file that SOFiSTiK itself writes during the run and then reads with `+APPLY` (for example
+  CSM's `+APPLY "$(NAME)_csm.dat"`) cannot be checked before the run: the run is refused while the
+  file does not exist, and reported as `check: input changed during run` when CSM rewrites it.
 
 - If the self-test's structural line check fails, do not rely on filtering beams by SLN number
   (groups and beam numbers still work).
