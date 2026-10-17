@@ -5,6 +5,8 @@ All notable changes to the SOFiSTiK MCP server. Versions follow `VERSION` in
 
 ## Unreleased
 
+## 1.1.0 - 2026-10-17
+
 ### Added
 - Build and quality pipeline: `pyproject.toml` (ruff, mypy, pytest, coverage settings),
   `requirements-dev.txt`, GitHub Actions CI on Windows and Linux (Python 3.10 and 3.13),

@@ -28,7 +28,7 @@ from . import config, docsearch, install, messages, solver
 log = logging.getLogger("sofistik-mcp")
 logging.basicConfig(stream=sys.stderr, level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 
 INSTRUCTIONS = """\
 Tools for SOFiSTiK 2027 on this PC (structural FEA).  Typical loop:
