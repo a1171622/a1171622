@@ -115,9 +115,10 @@ def cantilever_checks(call):
     t0 = time.monotonic()
     lc_list = call("load_cases", {})
     t_lc = time.monotonic() - t0
+    lc_rows = lc_list if isinstance(lc_list, list) else lc_list.get("rows")  # server wraps lists in {"rows": ...}
     # both look for load case keys 12/1 ... 12/999999 (results.MAX_LC) through SOFiSTiK's DLL
     info("time to read", f"overview {t_ov:.1f} s, load_cases {t_lc:.1f} s "
-         f"({len(lc_list) if isinstance(lc_list, list) else lc_list.get('error', '?')} load cases)")
+         f"({len(lc_rows) if isinstance(lc_rows, list) else lc_list.get('error', '?')} load cases)")
     cnt = ov["element_counts"]
     check("element counts", cnt["nodes"] == 7 and cnt["beams"] == 6, f"{cnt['nodes']} nodes, {cnt['beams']} beams")
     sec = next((x for x in ov["sections"] if x["nr"] == 1), None)

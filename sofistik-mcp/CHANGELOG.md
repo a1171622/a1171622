@@ -5,6 +5,13 @@ All notable changes to the SOFiSTiK MCP server. Versions follow `VERSION` in
 
 ## Unreleased
 
+### Fixed
+- Self-test report printed "(? load cases)" instead of the count (cosmetic).
+
+### Documentation
+- README: SOFiSTiK 2027 conventions confirmed by the first PC acceptance run (units, reaction
+  and rotation signs, titles, exit code, group codes). REVIEW-1.1.0.md records the run.
+
 ## 1.1.0 - 2026-10-17
 
 ### Added

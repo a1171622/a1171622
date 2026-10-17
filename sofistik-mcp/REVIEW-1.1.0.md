@@ -50,6 +50,8 @@ Accepted, with reasons:
 - Windows reports a process that ended with exit code 259 as still running; this only makes a lock
   look busy (safe side) and the message says how to remove it.
 
-## Still to be confirmed on the engineer's PC (self-test)
-sps.exe option order and exit codes; whether clean runs print a totals line; CGRP element codes;
-SOFiSTiK's reaction sign convention; the cost of the load-case key scan; that ASE keeps titles.
+## Acceptance test on the engineer's PC (17 Oct 2026): ALL CHECKS PASSED
+SOFiSTiK 2027, Python 3.12.10. Settled: `sps.exe -B0` works, exit code 0; clean runs print no
+totals line (handled); CGRP codes 0 and 100; reactions are the support's force on the structure
+(+Z load gives pz < 0); load-case key scan 0.5 s; ASE keeps titles. One cosmetic fix: the report
+printed "(? load cases)" because it did not count the server's `{"rows": ...}` answer.

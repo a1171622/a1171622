@@ -51,6 +51,22 @@ load case list take to read, and the raw group codes in the `.cdb`. They settle 
 checked without SOFiSTiK. The window ends with **ALL CHECKS PASSED** or lists what failed. The same text is saved in
 `selftest\selftest_report.txt`; if anything fails, send that file to Claude.
 
+### Confirmed on SOFiSTiK 2027 (first PC run, 17 Oct 2026: ALL CHECKS PASSED)
+
+- **Units** read from the `.cdb`: lengths m, forces kN, moments kNm, E in kN/m² (the tools convert
+  to mm, cm², cm⁴ where they say so). Tip deflection, rotation, reactions, moments and shears match
+  the hand calculation exactly.
+- **Support reactions** are the force the support puts on the structure: a load of +1 kN in global
+  +Z gives `pz = -1 kN` at the support. SOFiSTiK's stored reaction sum (`CLC_CTRL m_rz`) has the
+  same sign as the node reactions.
+- **Rotations** follow the right-hand rule (`ury` negative for a +Z deflection of a beam along +X).
+  A cantilever's support moment `My` comes out negative (hogging).
+- **Load case titles** written in SOFiLOAD are kept by ASE.
+- `sps.exe` returns exit code 0 on a clean run, and AQUA, SOFiMSHA/C, SOFiLOAD and ASE print **no**
+  "n errors and m warnings" line on a clean run (the server counts the messages itself).
+- Beam groups: the `.cdb` group codes are `m_typ` 0 and 100. Group by GDIV is what SOFiSTiK models
+  use; the structural line `m_nog` is empty, and the group range rule agrees with GDIV.
+
 ## What Claude can do with it
 
 | Tool | What it does |

@@ -155,6 +155,19 @@ def test_selftest_prints_read_times(st):
     assert "(3 load cases)" in report(st)                                    # 1, 2 and the eigenmode 2001
 
 
+def test_selftest_counts_load_cases_the_server_wraps_as_rows(st):
+    # the real self-test goes through server._cdb_call, which turns a list answer into {"rows": [...]};
+    # the first PC run printed "(? load cases)" because only a bare list was counted
+    inner = caller(fake_cdb.build_selftest_cantilever())
+
+    def wrapped(op, args):
+        res = inner(op, args)
+        return {"rows": res} if isinstance(res, list) else res
+
+    st.cantilever_checks(wrapped)
+    assert "(3 load cases)" in report(st) and "(? load cases)" not in report(st)
+
+
 # ================================================================ R5: envelope over MAXIMA superpositions
 
 def test_envelope_includes_superposition_load_cases_with_a_note():
