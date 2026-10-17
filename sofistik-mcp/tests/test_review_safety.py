@@ -324,6 +324,7 @@ HELPER = textwrap.dedent("""\
     while not (os.path.exists(pidfile) and open(pidfile).read()) and time.time() < t:
         time.sleep(0.05)
     print("ready", flush=True)
+    sys.stdin.readline()                  # the test has seen the child alive
     if sys.argv[3] == "exit":
         sys.exit(0)                       # normal end of the server: atexit
     time.sleep(120)                       # wait to be killed
@@ -346,11 +347,15 @@ def test_sps_dies_with_the_server(tmp_path, how):
     helper = tmp_path / "helper.py"
     helper.write_text(HELPER)
     pidfile = tmp_path / "child.pid"
-    h = subprocess.Popen([sys.executable, str(helper), ROOT, str(pidfile), how], stdout=subprocess.PIPE)
+    h = subprocess.Popen([sys.executable, str(helper), ROOT, str(pidfile), how], stdout=subprocess.PIPE,
+                         stdin=subprocess.PIPE)
     try:
         assert h.stdout is not None and h.stdout.readline().strip() == b"ready"
         child = int(pidfile.read_text())
         assert solver.pid_alive(child)
+        assert h.stdin is not None
+        h.stdin.write(b"go\n")
+        h.stdin.flush()
         if how == "kill":
             h.kill()
         h.wait(30)
@@ -360,24 +365,7 @@ def test_sps_dies_with_the_server(tmp_path, how):
             h.kill()
 
 
-@pytest.mark.skipif(not WINDOWS, reason="Win32 job objects exist only on Windows")
-def test_windows_job_object_has_kill_on_close(tmp_path):
-    import ctypes
-    from ctypes import wintypes
-    p = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
-    try:
-        assert solver._contain(p) is None
-        k32 = solver._k32
-        inside = wintypes.BOOL()
-        h = k32.OpenProcess(0x1000, False, p.pid)
-        assert k32.IsProcessInJob(h, solver._JOB["handle"], ctypes.byref(inside)) and inside.value
-        k32.CloseHandle(h)
-        info = solver._EXTENDED_LIMIT()
-        assert k32.QueryInformationJobObject(solver._JOB["handle"], 9, ctypes.byref(info), ctypes.sizeof(info), None)
-        assert info.BasicLimitInformation.LimitFlags & 0x2000
-    finally:
-        p.kill()
-        p.wait()
+# the per-run job object is tested in test_round3_safety.test_windows_job_per_run_kill_on_close_and_terminate
 
 
 @pytest.mark.skipif(WINDOWS, reason="POSIX: sps runs in its own session so its whole group can be killed")
