@@ -3,7 +3,19 @@
 All notable changes to the SOFiSTiK MCP server. Versions follow `VERSION` in
 `sofistik_mcp/server.py`, which must equal `version` in `pyproject.toml` (CI checks this).
 
-## Unreleased
+## 1.2.0 - 2026-10-17
+
+### Added
+- Live dashboard (`sofistik_mcp/dashboard.py`, `dashboard.html`): a read-only page at
+  http://localhost:8765, served by the server while Claude is open and by `dashboard.bat` on its own.
+  It shows the SOFiSTiK module running now, the calculation and its time, PC CPU/RAM, SOFiSTiK and
+  Claude processes, checks with their key findings, the last 20 runs and today's Claude Code token
+  use on the PC. `"dashboard_lan": true` opens it to phones on the same Wi-Fi; `"dashboard_port": 0`
+  switches it off.
+- Tools `report_check` (a checking session posts status, step, progress and findings) and
+  `dashboard_status` (the dashboard's data, for answering "how is the run going?"). 24 tools.
+- Status files in `<first work folder>\_dashboard\` (format in README).
+- Dependency: psutil 7.1.3 (CPU, RAM, processes). Run install.bat again to get it.
 
 ### Fixed
 - Self-test report printed "(? load cases)" instead of the count (cosmetic).

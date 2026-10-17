@@ -20,6 +20,7 @@ when they open.
    - runs the **self-test** (below).
 4. Open Claude again.
 5. Ask Claude: *"Use the sofistik tools and show me the status."*
+6. Open the live dashboard: http://localhost:8765 (or double-click `dashboard.bat`).
 
 ## The self-test
 
@@ -42,7 +43,7 @@ then as structural lines 7 (group 3, 1 kN/m) and 8 (group 4, 2 kN/m) (SOFiMSHC).
 | Structural line model: SLN 7 / group 3 and SLN 8 / group 4 | each gives only its own 6 beams |
 | Structural line model: moment, deflection, reaction sum | 18 and 36 kNm, w L⁴ / 8EIy ≈ 20.9 mm, 18 kN |
 | Structural line model: each beam's group by GDIV, by its structural line and by the group ranges | the three agree (a rule the `.cdb` gives no answer for is an INFO line) |
-| The server starts and answers like it will for Claude | 22 tools |
+| The server starts and answers like it will for Claude | 24 tools |
 
 Lines marked **INFO** are recorded but never fail the test: the load case titles read back (ASE may
 replace SOFiLOAD's titles), the signs SOFiSTiK uses (tip direction, reaction sign), sps.exe's exit code
@@ -86,8 +87,55 @@ checked without SOFiSTiK. The window ends with **ALL CHECKS PASSED** or lists wh
 | `cdb_read_key` | Advanced: any record in the database |
 | `search_manuals`, `read_manual_page`, `list_manuals`, `index_manual` | Search the English manuals |
 | `search_examples` | Search the shipped example `.dat` files |
+| `report_check` | A checking session puts its progress and key findings on the live dashboard |
+| `dashboard_status` | What the dashboard shows right now, as data (for "how is the run going?") |
 
 Units returned: mm, mrad, kN, kNm, m. The `.cdb` is read with SOFiSTiK's own DLL and record layouts.
+
+## Live dashboard
+
+While Claude is open, the server also serves a live page on this PC: **http://localhost:8765**.
+Bookmark it, or double-click **`dashboard.bat`** (it also works when Claude is closed). The page
+refreshes every 3 seconds and shows:
+
+| Panel | What it shows | Where it comes from |
+| --- | --- | --- |
+| Now running | The SOFiSTiK module working now (AQUA, SOFIMSHA, SOFILOAD, ASE, BDK, MAXIMA ...) and the calculation with its running time | The programs running from the SOFiSTiK folder, and the server's own job |
+| PC resources | CPU and RAM of the PC, with the last 10 minutes | Windows, via psutil |
+| Checks and key findings | Each check's status (running, passed, failed, attention, waiting, done), its current step and its findings, newest first | `report_check` calls from the checking session |
+| Processes | Every SOFiSTiK program and Claude window with its CPU and RAM | Windows, via psutil |
+| Claude token usage today | Output, new input and cache tokens, per session | The usage Claude Code records on this PC |
+| Recent calculations | Last 20 runs: status, errors, warnings, time, first error | The server's run results |
+
+What it cannot show: token use of Claude Desktop chats and of claude.ai / cloud sessions (they record
+nothing on this PC), and how much of the plan's usage limit is left (claude.ai shows that under
+Settings > Usage).
+
+**From your phone.** On the same Wi-Fi: set `"dashboard_lan": true` in `settings.json`, restart Claude,
+allow Python when Windows asks, then open `http://<PC name>:8765` on the phone (the PC name is shown at
+the top of the page). Anyone on that network can then read the page; nothing on it can change anything.
+Away from the PC's network: ask Claude in the project "how is the SOFiSTiK run going?". A session on the
+PC calls `dashboard_status` and answers with the same information.
+
+**Status files** (in `<first work folder>\_dashboard\`, e.g. `C:\Sofistik workflow\_dashboard\`):
+`server-<number>.json` is written by each running server, and `checks\<check name>.json` by
+`report_check`. A session without the SOFiSTiK tools can write a check file itself in this format:
+
+```json
+{
+  "check": "26016 member checks",
+  "status": "running",
+  "step": "ASE: ULS combinations 101-154",
+  "progress": "3 of 7",
+  "updated": "2026-10-17T23:20:00",
+  "findings": [
+    {"time": "2026-10-17T23:18:00", "level": "fail", "text": "B81 UB 457x191x89: LTB ratio 1.12 (LC 118)"}
+  ]
+}
+```
+
+`status` is one of running, passed, failed, attention, waiting, done; `level` one of info, pass,
+warn, fail. `"dashboard_port": 0` in `settings.json` switches the page off.
 
 ## Safety rules (settings.json)
 

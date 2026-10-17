@@ -23,12 +23,12 @@ import uuid
 import anyio
 from mcp.server.fastmcp import FastMCP
 
-from . import config, docsearch, install, messages, solver
+from . import config, dashboard, docsearch, install, messages, solver
 
 log = logging.getLogger("sofistik-mcp")
 logging.basicConfig(stream=sys.stderr, level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 
 INSTRUCTIONS = """\
 Tools for SOFiSTiK 2027 on this PC (structural FEA).  Typical loop:
@@ -46,7 +46,12 @@ Units returned: displacements mm, rotations mrad, forces kN, moments kNm, coordi
 Results are only as good as the input: report errors and warnings to the engineer, check that the
 sum of support reactions matches the applied load, and never present unchecked numbers as final.
 Writing and running is limited to the work folders in settings.json; files are never overwritten
-without overwrite=true (a .bak copy is kept)."""
+without overwrite=true (a .bak copy is kept).
+Dashboard: the engineer watches a live page (http://localhost:8765) showing the running module, CPU/RAM,
+token use, recent runs and checks.  During a multi-step check, call report_check at the start, after
+each step (status, step, progress) and for every key finding (level pass / warn / fail with the member,
+value and load case), and once at the end with status passed / failed / attention / done.
+dashboard_status returns the same information as text, e.g. when the engineer asks how a run is going."""
 
 mcp = FastMCP("sofistik", instructions=INSTRUCTIONS)
 
@@ -58,6 +63,21 @@ _jobs: dict = {}
 _calc: dict = {"job": None, "proc": None, "stop": False, "cdb": None}
 _last_run: dict = {}   # normalised .cdb path -> {"status", "cdb_updated"} of the last run in this server
 BAD_RUN_STATUSES = ("errors", "not finished", "no protocol", "timed out", "stopped")
+_root_cache: dict = {}
+
+
+def _sofistik_root():
+    """SOFiSTiK program folder for the dashboard's process list (looked up once per minute)."""
+    if time.time() - _root_cache.get("t", 0) > 60:
+        try:
+            _root_cache.update(t=time.time(), root=_install().get("root"))
+        except Exception:
+            _root_cache.update(t=time.time(), root=None)
+    return _root_cache.get("root")
+
+
+_state = dashboard.ServerState(lambda: _settings(), VERSION)
+_collector = dashboard.Collector(lambda: _settings(), _sofistik_root)
 
 
 def _cap(n, default: int) -> int:
@@ -292,9 +312,12 @@ async def run_calculation(dat_path: str, continue_on_error: bool = False, only_b
 
     def on_start(proc):
         _calc["proc"] = proc
+        _state.job_process(proc.pid)
 
     def work():
         log.info("run %s", full)
+        _state.job_started(full)
+        r: dict = {}
         try:
             r = solver.run(full, info["sps"], limit * 60, allow_sys=s["allow_sys_commands"],
                            continue_on_error=continue_on_error, only_urs=only_block_urs,
@@ -306,6 +329,7 @@ async def run_calculation(dat_path: str, continue_on_error: bool = False, only_b
             return r
         finally:
             _calc["proc"] = None
+            _state.job_finished(r)
 
     job = _start_job("calc", os.path.basename(full), work)
     _calc["job"] = job
@@ -529,6 +553,46 @@ _manuals = None
 _examples = None
 
 
+# ------------------------------------------------------------------------------------------------
+# dashboard
+# ------------------------------------------------------------------------------------------------
+
+@mcp.tool()
+async def report_check(check: str, status: str | None = None, step: str | None = None,
+                       progress: str | None = None, findings: list | None = None,
+                       clear_findings: bool = False) -> dict:
+    """Show the progress and key findings of a check on the engineer's live dashboard.  Call it when a
+    check starts, after each step and for every key finding, and once at the end.
+    check: a short name, the same on every call (e.g. "26016 member checks").
+    status: running | passed | failed | attention | waiting | done.
+    step: what is happening now, one line (e.g. "ASE: ULS combinations 101-154").
+    progress: optional, e.g. "3 of 7".
+    findings: new key findings, each {"level": "info"|"pass"|"warn"|"fail", "text": "..."}; they are added
+    after the earlier ones.  Give the member, the value, the limit and the load case, e.g.
+    {"level": "fail", "text": "B81 UB 457x191x89: LTB ratio 1.12 > 1.0 (LC 118)"}.
+    clear_findings=True starts the list again (e.g. for a rerun)."""
+    try:
+        s = _settings()
+        return await anyio.to_thread.run_sync(
+            lambda: dashboard.report_check(s, check, status, step, progress, findings, clear_findings))
+    except (config.SettingsError, OSError) as e:
+        return _err(e)
+
+
+@mcp.tool()
+async def dashboard_status() -> dict:
+    """What the live dashboard shows right now, as data: the SOFiSTiK module running, the calculation and
+    how long it has run, PC CPU and RAM, SOFiSTiK and Claude processes, the checks with their latest
+    findings, the last calculations and today's Claude Code token use on this PC."""
+    d = await anyio.to_thread.run_sync(_collector.collect)
+    host, port = dashboard.dashboard_options(_settings())
+    lan = f" (same Wi-Fi: http://{d.get('host')}:{port})" if host != "127.0.0.1" else ""
+    d["page"] = f"http://localhost:{port}{lan}"
+    for c in d.get("checks") or []:
+        c["findings"] = c.get("findings", [])[-15:]
+    return d
+
+
 def _man():
     global _manuals
     if _manuals is None:
@@ -580,7 +644,24 @@ async def search_examples(query: str, max_files: int = 15) -> dict:
 
 def main():
     log.info("SOFiSTiK MCP server %s starting (Python %s)", VERSION, sys.version.split()[0])
-    mcp.run()
+    _start_dashboard()
+    try:
+        mcp.run()
+    finally:
+        _state.remove()
+
+
+def _start_dashboard():
+    """Serve the live page in a background thread (best effort: never stops the server starting)."""
+    try:
+        _state.started()
+        host, port = dashboard.dashboard_options(_settings())
+        if dashboard.start(_collector, host, port):
+            log.info("dashboard on http://localhost:%s", port)
+        else:
+            log.info("dashboard not started here (port %s taken or switched off)", port)
+    except Exception as e:                          # pragma: no cover - logged, never fatal
+        log.warning("dashboard not started: %s", e)
 
 
 if __name__ == "__main__":

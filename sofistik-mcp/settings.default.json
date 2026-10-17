@@ -10,5 +10,9 @@
   "_allow_sys_commands": "false = refuse to run any .dat containing +SYS (which runs Windows commands). Only set true if you need it.",
   "run_timeout_minutes": 60,
   "examples_folders": ["C:\\Sofistik workflow"],
-  "manual_folders": ["C:\\Sofistik workflow"]
+  "manual_folders": ["C:\\Sofistik workflow"],
+  "dashboard_port": 8765,
+  "_dashboard_port": "Live dashboard page: http://localhost:8765 on this PC. 0 switches it off.",
+  "dashboard_lan": false,
+  "_dashboard_lan": "true lets a phone or laptop on the same Wi-Fi open http://<this PC's name>:8765 (Windows asks once to allow it). Anyone on that network can then see the page (read only)."
 }

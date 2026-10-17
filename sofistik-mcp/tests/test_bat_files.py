@@ -1,4 +1,4 @@
-"""install.bat / selftest.bat / uninstall.bat: Windows cmd needs CRLF and plain ASCII, and every
+"""install.bat / selftest.bat / uninstall.bat / dashboard.bat: Windows cmd needs CRLF and plain ASCII, and every
 '.venv\\Scripts\\python.exe -m X' must name a module that exists."""
 from __future__ import annotations
 
@@ -12,8 +12,8 @@ ROOT = os.path.dirname(HERE)
 BATS = sorted(n for n in os.listdir(ROOT) if n.lower().endswith(".bat"))
 
 
-def test_the_three_bat_files_exist():
-    assert BATS == ["install.bat", "selftest.bat", "uninstall.bat"]
+def test_the_bat_files_exist():
+    assert BATS == ["dashboard.bat", "install.bat", "selftest.bat", "uninstall.bat"]
 
 
 def raw(name):

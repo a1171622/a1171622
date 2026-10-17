@@ -19,6 +19,7 @@ TOOLS = {
     "stop_calculation", "read_calculation_messages", "cdb_overview", "cdb_load_cases", "cdb_nodes",
     "cdb_node_results", "cdb_support_reactions", "cdb_beam_forces", "cdb_truss_cable_forces", "cdb_envelope",
     "cdb_read_key", "search_manuals", "read_manual_page", "list_manuals", "index_manual", "search_examples",
+    "report_check", "dashboard_status",
 }
 REQUIRED = {
     "sofistik_status": [], "list_folder": ["path"], "read_text_file": ["path"],
@@ -29,7 +30,7 @@ REQUIRED = {
     "cdb_truss_cable_forces": ["cdb_path", "load_case"], "cdb_envelope": ["cdb_path", "load_cases"],
     "cdb_read_key": ["cdb_path", "kwh", "kwl"], "search_manuals": ["query"],
     "read_manual_page": ["manual", "page"], "list_manuals": [], "index_manual": ["manual"],
-    "search_examples": ["query"],
+    "search_examples": ["query"], "report_check": ["check"], "dashboard_status": [],
 }
 
 
@@ -133,7 +134,7 @@ def test_protocol_tools_and_every_call(stdio_env):
     o = session(stdio_env, body)
     assert o["init"].serverInfo.name == "sofistik" and "SOFiSTiK 2027" in o["init"].instructions
     tools = {t.name: t for t in o["tools"]}
-    assert set(tools) == TOOLS and len(o["tools"]) == 22
+    assert set(tools) == TOOLS and len(o["tools"]) == 24
     for name, t in tools.items():
         assert t.description and len(t.description) > 30, name
         assert t.inputSchema["type"] == "object", name

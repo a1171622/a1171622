@@ -29,6 +29,8 @@ DEFAULTS = {
     "run_timeout_minutes": 60,
     "examples_folders": [r"C:\Sofistik workflow"],
     "manual_folders": [r"C:\Sofistik workflow"],
+    "dashboard_port": 8765,
+    "dashboard_lan": False,
 }
 
 

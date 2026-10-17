@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SOFiSTiK Dashboard</title>
+<style>
+:root {
+  --bg: #f6f7f9; --card: #ffffff; --text: #1b1f24; --muted: #667080; --line: #e3e6ea;
+  --blue: #2563eb; --green: #15803d; --amber: #b45309; --red: #b91c1c; --gray: #6b7280;
+  --green-bg: #e7f6ec; --amber-bg: #fdf3e2; --red-bg: #fde8e8; --blue-bg: #e8effd; --gray-bg: #eef0f3;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111418; --card: #1a1e24; --text: #e6e9ee; --muted: #9aa3b0; --line: #2a3038;
+    --blue: #7aa2ff; --green: #4ade80; --amber: #fbbf24; --red: #f87171; --gray: #9ca3af;
+    --green-bg: #12301d; --amber-bg: #33270e; --red-bg: #3a1616; --blue-bg: #172340; --gray-bg: #252a31;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+header { padding: 14px 16px 6px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+h1 { font-size: 19px; margin: 0; font-weight: 650; }
+.sub { color: var(--muted); font-size: 13px; }
+main { padding: 6px 16px 32px; display: grid; gap: 12px; grid-template-columns: 1fr; max-width: 1200px; }
+@media (min-width: 860px) { main { grid-template-columns: 1fr 1fr; } .wide { grid-column: 1 / -1; } }
+section { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 0 0 10px; font-weight: 600; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+.stat { flex: 1 1 130px; }
+.big { font-size: 26px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.label { color: var(--muted); font-size: 13px; }
+svg.spark { width: 100%; height: 34px; display: block; margin-top: 4px; }
+svg.spark polyline { fill: none; stroke: var(--blue); stroke-width: 1.6; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 5px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 12px; }
+td.num, th.num { text-align: right; }
+.scroll { overflow-x: auto; }
+.pill { display: inline-block; padding: 1px 9px; border-radius: 99px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.s-ok, .s-passed, .s-pass, .s-done { background: var(--green-bg); color: var(--green); }
+.s-warn, .s-attention, .s-waiting { background: var(--amber-bg); color: var(--amber); }
+.s-bad, .s-failed, .s-fail { background: var(--red-bg); color: var(--red); }
+.s-running, .s-info { background: var(--blue-bg); color: var(--blue); }
+.s-idle { background: var(--gray-bg); color: var(--gray); }
+.module { font-size: 30px; font-weight: 700; letter-spacing: .02em; }
+.check { border-top: 1px solid var(--line); padding: 10px 0 4px; }
+.check:first-of-type { border-top: 0; padding-top: 0; }
+.check-head { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.check-name { font-weight: 650; }
+ul.findings { list-style: none; padding: 0; margin: 8px 0 0; }
+ul.findings li { display: flex; gap: 8px; padding: 3px 0; }
+ul.findings .t { color: var(--muted); font-size: 12px; min-width: 40px; padding-top: 2px; }
+.empty { color: var(--muted); font-style: italic; }
+.note { color: var(--muted); font-size: 12.5px; margin-top: 8px; }
+.banner { margin: 0 16px; padding: 8px 12px; border-radius: 8px; background: var(--red-bg); color: var(--red); display: none; }
+code { font-size: 12.5px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>SOFiSTiK workflow</h1>
+  <span class="sub" id="host">connecting...</span>
+</header>
+<div class="banner" id="banner">Lost contact with the dashboard on the PC. Retrying...</div>
+<main>
+  <section>
+    <h2>Now running</h2>
+    <div class="row">
+      <div class="stat"><div class="label">SOFiSTiK module</div><div class="module" id="module">-</div></div>
+      <div class="stat"><div class="label">Calculation</div><div id="job" class="empty">none</div></div>
+    </div>
+  </section>
+  <section>
+    <h2>PC resources</h2>
+    <div class="row">
+      <div class="stat"><div class="label">CPU</div><div class="big" id="cpu">-</div><svg class="spark" id="cpu-spark" viewBox="0 0 100 34" preserveAspectRatio="none"><polyline points=""/></svg></div>
+      <div class="stat"><div class="label">RAM</div><div class="big" id="ram">-</div><svg class="spark" id="ram-spark" viewBox="0 0 100 34" preserveAspectRatio="none"><polyline points=""/></svg></div>
+    </div>
+    <div class="note">Last 10 minutes while this page is open.</div>
+  </section>
+  <section class="wide">
+    <h2>Checks and key findings</h2>
+    <div id="checks"><div class="empty">No checks reported yet.</div></div>
+  </section>
+  <section>
+    <h2>SOFiSTiK and Claude processes</h2>
+    <div class="scroll"><table><thead><tr><th>Program</th><th class="num">CPU</th><th class="num">RAM</th><th>Since</th></tr></thead><tbody id="procs"></tbody></table></div>
+  </section>
+  <section>
+    <h2>Claude token usage today</h2>
+    <div class="row">
+      <div class="stat"><div class="label">Output</div><div class="big" id="tok-out">-</div></div>
+      <div class="stat"><div class="label">Input (new)</div><div class="big" id="tok-in">-</div></div>
+      <div class="stat"><div class="label">Cache read</div><div class="big" id="tok-cache">-</div></div>
+    </div>
+    <div class="scroll"><table><thead><tr><th>Session</th><th>Last</th><th class="num">Output</th><th class="num">Input + cache</th></tr></thead><tbody id="tok-sessions"></tbody></table></div>
+    <div class="note" id="tok-note"></div>
+  </section>
+  <section class="wide">
+    <h2>Recent calculations</h2>
+    <div class="scroll"><table><thead><tr><th>Finished</th><th>File</th><th>Status</th><th class="num">Errors</th><th class="num">Warnings</th><th class="num">Time</th></tr></thead><tbody id="runs"></tbody></table></div>
+    <div class="note" id="folder"></div>
+  </section>
+</main>
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const hist = { cpu: [], ram: [] };
+const HIST_N = 200;            // 200 x 3 s = 10 minutes
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function fmtTok(n) {
+  n = Number(n) || 0;
+  if (n >= 1e6) return (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + "M";
+  if (n >= 1e3) return (n / 1e3).toFixed(n >= 1e4 ? 0 : 1) + "k";
+  return String(n);
+}
+function fmtSec(s) {
+  s = Math.round(Number(s) || 0);
+  if (s < 60) return s + " s";
+  const m = Math.floor(s / 60);
+  return m < 60 ? m + " min " + (s % 60) + " s" : Math.floor(m / 60) + " h " + (m % 60) + " min";
+}
+function base(p) { return String(p || "").split(/[\\/]/).pop(); }
+function hm(iso) { return iso ? String(iso).slice(11, 16) : ""; }
+function statusClass(st) {
+  st = String(st || "").toLowerCase();
+  if (st === "ok") return "s-ok";
+  if (st === "ok with warnings" || st.startsWith("check")) return "s-warn";
+  if (["errors", "not finished", "no protocol", "timed out", "stopped", "not run"].includes(st)) return "s-bad";
+  return "s-" + st.replace(/[^a-z]/g, "");
+}
+function spark(id, arr) {
+  const pts = arr.map((v, i) => ((i / (HIST_N - 1)) * 100).toFixed(1) + "," + (33 - (v / 100) * 32).toFixed(1));
+  $(id).querySelector("polyline").setAttribute("points", pts.join(" "));
+}
+function push(a, v) { a.push(Number(v) || 0); if (a.length > HIST_N) a.shift(); }
+
+function render(d) {
+  $("host").textContent = (d.host || "") + " · updated " + hm(d.time) + (d.time ? d.time.slice(16, 19) : "");
+  const r = d.resources || {};
+  if (r.cpu_percent != null) {
+    $("cpu").textContent = Math.round(r.cpu_percent) + " %";
+    $("ram").textContent = r.ram_used_gb + " / " + r.ram_total_gb + " GB";
+    push(hist.cpu, r.cpu_percent); push(hist.ram, r.ram_percent);
+    spark("cpu-spark", hist.cpu); spark("ram-spark", hist.ram);
+  } else if (r.error) { $("cpu").textContent = "-"; $("ram").textContent = r.error; }
+
+  const pr = d.processes || {};
+  $("module").textContent = pr.module || "idle";
+  const jobs = [];
+  for (const s of d.servers || []) if (s.job) jobs.push(s.job);
+  $("job").className = jobs.length ? "" : "empty";
+  $("job").innerHTML = jobs.length
+    ? jobs.map((j) => "<div><b>" + esc(base(j.dat)) + "</b><br><span class='label'>running " + esc(fmtSec(j.elapsed_s)) +
+        (j.note ? " (" + esc(j.note) + ")" : "") + "</span></div>").join("")
+    : (pr.module ? "started outside Claude (e.g. Teddy)" : "none");
+
+  const rows = [];
+  for (const p of (pr.sofistik || []).concat(pr.claude || []))
+    rows.push("<tr><td>" + esc(p.name) + "</td><td class='num'>" + esc(p.cpu_percent) + " %</td><td class='num'>" +
+      esc(p.ram_mb) + " MB</td><td>" + esc(p.started) + "</td></tr>");
+  $("procs").innerHTML = rows.join("") || "<tr><td colspan='4' class='empty'>No SOFiSTiK or Claude program running.</td></tr>";
+
+  const checks = d.checks || [];
+  $("checks").innerHTML = checks.length ? checks.map((c) => {
+    const f = (c.findings || []).slice(-12).reverse();
+    return "<div class='check'><div class='check-head'><span class='check-name'>" + esc(c.check) + "</span>" +
+      "<span class='pill " + statusClass(c.status) + "'>" + esc(c.status || "?") + "</span>" +
+      (c.progress ? "<span class='label'>" + esc(c.progress) + "</span>" : "") +
+      "<span class='label'>updated " + esc(hm(c.updated)) + "</span></div>" +
+      (c.step ? "<div>" + esc(c.step) + "</div>" : "") +
+      (f.length ? "<ul class='findings'>" + f.map((x) => "<li><span class='t'>" + esc(hm(x.time)) + "</span><span class='pill " +
+        statusClass(x.level) + "'>" + esc(x.level) + "</span><span>" + esc(x.text) + "</span></li>").join("") + "</ul>" : "") +
+      "</div>";
+  }).join("") : "<div class='empty'>No checks reported yet.</div>";
+
+  const runs = [];
+  for (const s of d.servers || []) for (const x of s.recent_runs || []) runs.push(x);
+  runs.sort((a, b) => String(b.finished).localeCompare(String(a.finished)));
+  $("runs").innerHTML = runs.slice(0, 20).map((x) => "<tr><td>" + esc(hm(x.finished)) + "</td><td>" + esc(base(x.dat)) +
+    (x.first_error ? "<br><span class='label'>" + esc(x.first_error) + "</span>" : x.reason ? "<br><span class='label'>" + esc(x.reason) + "</span>" : "") +
+    "</td><td><span class='pill " + statusClass(x.status) + "'>" + esc(x.status) + "</span></td><td class='num'>" + esc(x.errors) +
+    "</td><td class='num'>" + esc(x.warnings) + "</td><td class='num'>" + esc(x.seconds != null ? fmtSec(x.seconds) : "") + "</td></tr>").join("") ||
+    "<tr><td colspan='6' class='empty'>No calculations since Claude started.</td></tr>";
+  $("folder").textContent = d.status_folder ? "Status files: " + d.status_folder : "";
+
+  const t = d.tokens || {}, td = t.today || {};
+  $("tok-out").textContent = fmtTok(td.output);
+  $("tok-in").textContent = fmtTok(td.input + td.cache_write);
+  $("tok-cache").textContent = fmtTok(td.cache_read);
+  $("tok-sessions").innerHTML = (t.sessions || []).map((s) => "<tr><td>" + esc(base(s.project)) + (s.subagent ? " (helper)" : "") +
+    "</td><td>" + esc(s.last || "") + "</td><td class='num'>" + fmtTok(s.output) + "</td><td class='num'>" +
+    fmtTok(s.input + s.cache_write + s.cache_read) + "</td></tr>").join("") ||
+    "<tr><td colspan='4' class='empty'>No Claude Code session on this PC today.</td></tr>";
+  $("tok-note").textContent = (t.note || "") + ((d.notes || []).length ? " " + d.notes.join(" ") : "");
+}
+
+async function tick() {
+  try {
+    const res = await fetch("/api/state", { cache: "no-store" });
+    if (!res.ok) throw new Error(res.status);
+    render(await res.json());
+    $("banner").style.display = "none";
+  } catch (e) {
+    $("banner").style.display = "block";
+  }
+}
+tick();
+setInterval(tick, 3000);
+</script>
+</body>
+</html>
