@@ -503,6 +503,18 @@ def make_handler(collector: Collector):
     return Handler
 
 
+class _Server(ThreadingHTTPServer):
+    """Binds the port exclusively.  HTTPServer sets SO_REUSEADDR, which on Windows lets a second process
+    bind the same port too (both 'serve', requests go to either), so the second copy would not notice."""
+    allow_reuse_address = False
+    daemon_threads = True
+
+    def server_bind(self):
+        if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):    # Windows
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        super().server_bind()
+
+
 def dashboard_options(settings: dict) -> tuple[str, int]:
     try:
         port = int(settings.get("dashboard_port", DEFAULT_PORT))
@@ -518,10 +530,9 @@ def start(collector: Collector, host: str, port: int):
     if not port:
         return None
     try:
-        httpd = ThreadingHTTPServer((host, port), make_handler(collector))
+        httpd = _Server((host, port), make_handler(collector))
     except OSError:
         return None
-    httpd.daemon_threads = True
     threading.Thread(target=httpd.serve_forever, name="dashboard", daemon=True).start()
     return httpd
 
