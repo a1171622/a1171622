@@ -53,8 +53,8 @@ def find(settings: dict | None = None) -> dict:
         searched.append(root)
         if not os.path.isdir(root):
             continue
-        sps = os.path.join(root, "sps.exe")
-        sps = sps if os.path.isfile(sps) else None
+        sps_exe = os.path.join(root, "sps.exe")
+        sps = sps_exe if os.path.isfile(sps_exe) else None
         dll_dirs = [d for d in (os.path.join(root, "interfaces", "64bit"), root) if os.path.isdir(d)]
         dll = None
         for d in dll_dirs:

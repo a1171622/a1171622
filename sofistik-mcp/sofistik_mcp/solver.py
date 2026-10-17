@@ -30,7 +30,7 @@ RESULT_EXTS = (".cdb", ".prt", ".erg", ".plb", ".lst")
 def scan_dat(path: str, depth: int = 3, _seen=None) -> dict:
     """+SYS lines, active +PROG blocks and included files of a .dat (follows #INCLUDE / +APPLY)."""
     _seen = _seen if _seen is not None else set()
-    out = {"sys_lines": [], "programs": [], "includes": [], "missing_includes": []}
+    out: dict = {"sys_lines": [], "programs": [], "includes": [], "missing_includes": []}
     key = os.path.normcase(os.path.abspath(path))
     if key in _seen:
         return out
@@ -45,7 +45,13 @@ def scan_dat(path: str, depth: int = 3, _seen=None) -> dict:
         out["programs"].append({"program": m.group(1).upper(), "urs": int(urs.group(1)) if urs else None,
                                 "file": os.path.basename(path),
                                 "line": text.count("\n", 0, m.start()) + 1})
-    if depth > 0:
+    if depth <= 0:
+        # deeper includes are not scanned for +SYS, so report them as missing and the run is refused
+        out["missing_includes"].extend(
+            f"{n} (nested more than 3 levels deep in {os.path.basename(path)})"
+            for n in (re.split(r"\s\$(?:\s|$)|[;!]", m.group(1))[0].strip().strip("\"'").strip()
+                      for m in INCLUDE_RE.finditer(text)) if n)
+    else:
         base = os.path.dirname(os.path.abspath(path))
         for m in INCLUDE_RE.finditer(text):
             name = re.split(r"\s\$(?:\s|$)|[;!]", m.group(1))[0].strip().strip("\"'").strip()

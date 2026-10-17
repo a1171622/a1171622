@@ -52,7 +52,7 @@ def parse_protocol(text: str, context_before: int = 0, max_messages: int = 200) 
     lines = text.split("\n")
     programs = []           # [{name, line, stop_line, errors, warnings, aborted}]
     current = None
-    messages = []
+    messages: list = []
     n_err = n_warn = 0
     aborted_lines = []
     for i, ln in enumerate(lines):
@@ -113,8 +113,8 @@ def parse_protocol(text: str, context_before: int = 0, max_messages: int = 200) 
 
 def summarize_run(prt_path: str | None, erg_path: str | None = None) -> dict:
     """Combine the .prt (authoritative for counts and end state) with the .erg (input context)."""
-    out = {"prt": prt_path if prt_path and os.path.isfile(prt_path) else None,
-           "erg": erg_path if erg_path and os.path.isfile(erg_path) else None}
+    out: dict = {"prt": prt_path if prt_path and os.path.isfile(prt_path) else None,
+                 "erg": erg_path if erg_path and os.path.isfile(erg_path) else None}
     if out["prt"]:
         p = parse_protocol(read_text(out["prt"]))
     else:

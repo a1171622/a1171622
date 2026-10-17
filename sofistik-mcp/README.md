@@ -54,6 +54,7 @@ The window ends with **ALL CHECKS PASSED** or lists what failed. The same text i
 | `read_calculation_messages` | Errors and warnings of an earlier run (`.prt` / `.erg`) |
 | `read_text_file`, `list_folder` | Read `.dat`, `.prt`, `.erg` files; find models |
 | `cdb_overview`, `cdb_load_cases` | Project, element counts, materials, sections, groups, load cases (titles, reaction sums, eigenfrequencies) |
+| `cdb_nodes` | Node numbers and coordinates (m) |
 | `cdb_node_results`, `cdb_support_reactions` | Displacements (mm), rotations (mrad), reactions (kN, kNm) and their sum |
 | `cdb_beam_forces` | N, Vy, Vz, Mt, My, Mz by beam, group or structural line, with extremes |
 | `cdb_truss_cable_forces` | Axial forces of trusses and cables |

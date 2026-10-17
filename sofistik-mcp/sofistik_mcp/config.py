@@ -11,6 +11,7 @@ Folder rules
 """
 from __future__ import annotations
 
+import datetime
 import json
 import os
 
@@ -40,7 +41,7 @@ class AccessError(PermissionError):
 
 def load_settings(path: str | None = None) -> dict:
     """settings.json merged over DEFAULTS.  Keys starting with '_' are comments and are ignored."""
-    s = dict(DEFAULTS)
+    s: dict = dict(DEFAULTS)
     p = path or SETTINGS_PATH
     if not os.path.isfile(p) and path is None and os.path.isfile(DEFAULT_SETTINGS_PATH):
         p = DEFAULT_SETTINGS_PATH
@@ -61,13 +62,34 @@ def load_settings(path: str | None = None) -> dict:
     for k in ("work_folders", "read_folders", "examples_folders", "manual_folders"):
         v = s.get(k) or []
         s[k] = [v] if isinstance(v, str) else [str(x) for x in v if str(x).strip()]
-    s["allow_sys_commands"] = bool(s.get("allow_sys_commands"))
+        for x in s[k]:
+            if any(ord(ch) < 32 for ch in x):
+                raise SettingsError(
+                    f"{p}: the folder {x!r} in {k} contains a single backslash before t, n, r, b or f, "
+                    r'which JSON reads as a control character. Use double backslashes, e.g. "C:\\temp". '
+                    "Fix it in Notepad, save, and restart Claude.")
+    a = s.get("allow_sys_commands")
+    # only a real JSON true (or the word "true") switches the +SYS guard off; "false", 0, "no" never do
+    s["allow_sys_commands"] = a is True or (isinstance(a, str) and a.strip().lower() == "true")
+    if s.get("sofistik_dir") and any(ord(ch) < 32 for ch in str(s["sofistik_dir"])):
+        raise SettingsError(f"{p}: sofistik_dir contains a single backslash before t, n, r, b or f. "
+                            "Use double backslashes. Fix it in Notepad, save, and restart Claude.")
     try:
         s["run_timeout_minutes"] = max(1.0, float(s.get("run_timeout_minutes") or 60))
     except (TypeError, ValueError):
         s["run_timeout_minutes"] = 60.0
     s["_path"] = p if os.path.isfile(p) else ""
     return s
+
+
+def backup_name(path: str) -> str:
+    """A .bak-<time> name next to path that does not exist yet (never replaces an earlier backup)."""
+    stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    cand, n = f"{path}.bak-{stamp}", 1
+    while os.path.exists(cand):
+        n += 1
+        cand = f"{path}.bak-{stamp}-{n}"
+    return cand
 
 
 def _norm(p: str) -> str:

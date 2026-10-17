@@ -11,13 +11,14 @@ claude command is installed.
 """
 from __future__ import annotations
 
-import datetime
 import glob
 import json
 import os
 import shutil
 import subprocess
 import sys
+
+from .config import backup_name
 
 NAME = "sofistik"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -42,7 +43,7 @@ def update_desktop(python_exe: str, remove: bool = False) -> list[str]:
     report = []
     for d in desktop_config_dirs():
         path = os.path.join(d, "claude_desktop_config.json")
-        data = {}
+        data: dict = {}
         if os.path.isfile(path):
             try:
                 with open(path, encoding="utf-8-sig") as f:
@@ -54,7 +55,7 @@ def update_desktop(python_exe: str, remove: bool = False) -> list[str]:
             if not isinstance(data, dict):
                 report.append(f"NOT CHANGED {path}: unexpected content.")
                 continue
-            backup = path + ".bak-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+            backup = backup_name(path)
             shutil.copy2(path, backup)
         servers = data.get("mcpServers")
         if not isinstance(servers, dict):

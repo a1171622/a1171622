@@ -1,0 +1,36 @@
+[project]
+name = "sofistik-mcp"
+version = "1.0.0"
+description = "Local MCP server for SOFiSTiK 2027: write and run CADINP .dat files, read errors and .cdb results, search the manuals."
+readme = "README.md"
+requires-python = ">=3.10"
+# Runtime dependencies live in requirements.txt only (install.bat reads it); not repeated here.
+# Not built or installed as a package: run_server.py puts the folder on sys.path.
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "I", "UP"]
+
+[tool.mypy]
+python_version = "3.10"
+check_untyped_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+# SOFiSTiK only runs on Windows: check the Windows code paths (os.add_dll_directory etc.) on every OS.
+platform = "win32"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["sofistik_mcp"]
+branch = true
+# selftest.py needs real SOFiSTiK; it is the on-PC acceptance test, not unit-tested here
+omit = ["*/selftest.py"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 95

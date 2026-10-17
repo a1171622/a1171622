@@ -1,0 +1,110 @@
+# CI for the SOFiSTiK MCP server (sofistik-mcp/).  Lint, type check, byte-compile, tests with
+# coverage, and the .bat checks, on Windows (the engineer's OS) and Linux, oldest and newest Python.
+name: sofistik-mcp CI
+
+on:
+  push:
+    paths:
+      - "sofistik-mcp/**"
+      - ".github/workflows/sofistik-mcp-ci.yml"
+  pull_request:
+    paths:
+      - "sofistik-mcp/**"
+      - ".github/workflows/sofistik-mcp-ci.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sofistik-mcp-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        python: ["3.10", "3.13"]
+    defaults:
+      run:
+        shell: bash
+        working-directory: sofistik-mcp
+
+    steps:
+      # Check out the bytes exactly as committed on both OSes (Windows runners default to
+      # core.autocrlf=true, which would turn an LF .bat into CRLF and hide the problem).
+      - name: Keep committed line endings
+        working-directory: .
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: |
+            sofistik-mcp/requirements.txt
+            sofistik-mcp/requirements-dev.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Version in pyproject.toml matches the server
+        run: |
+          python - <<'EOF'
+          import re, sys
+          py = re.search(r'^version\s*=\s*"([^"]+)"', open("pyproject.toml", encoding="utf-8").read(), re.M)
+          srv = re.search(r'^VERSION\s*=\s*"([^"]+)"', open("sofistik_mcp/server.py", encoding="utf-8").read(), re.M)
+          if not py or not srv or py.group(1) != srv.group(1):
+              print(f"::error::pyproject.toml version {py and py.group(1)} != sofistik_mcp/server.py VERSION {srv and srv.group(1)}")
+              sys.exit(1)
+          print("version", py.group(1))
+          EOF
+
+      - name: .bat files are CRLF and plain ASCII
+        run: |
+          python - <<'EOF'
+          import glob, os, sys
+          bad = []
+          files = sorted(glob.glob("**/*.bat", recursive=True))
+          files = [f for f in files if ".venv" not in f.split(os.sep)]
+          if not files:
+              bad.append("no .bat files found (expected install.bat, selftest.bat, uninstall.bat)")
+          for f in files:
+              data = open(f, "rb").read()
+              lf_only = data.count(b"\n") - data.count(b"\r\n")
+              cr_only = data.count(b"\r") - data.count(b"\r\n")
+              if lf_only or cr_only:
+                  bad.append(f"{f}: {lf_only} LF-only and {cr_only} CR-only line endings (must all be CRLF)")
+              if data and not data.endswith(b"\r\n"):
+                  bad.append(f"{f}: last line does not end with CRLF")
+              non_ascii = [i for i, b in enumerate(data) if b > 127]
+              if non_ascii:
+                  line = data[:non_ascii[0]].count(b"\n") + 1
+                  bad.append(f"{f}: {len(non_ascii)} non-ASCII bytes, first on line {line}")
+          for b in bad:
+              print(f"::error::{b}")
+          print(f"checked {len(files)} .bat files: {', '.join(files)}")
+          sys.exit(1 if bad else 0)
+          EOF
+
+      - name: Lint (ruff)
+        run: ruff check .
+
+      - name: Type check (mypy)
+        run: mypy sofistik_mcp run_server.py
+
+      - name: Byte-compile
+        run: python -m compileall -q sofistik_mcp run_server.py
+
+      # The tests need SOFiSTiK's record layouts (sofistik_daten.py), which are not in the repository:
+      # see tests/fake_cdb.py for where it looks ($SOFISTIK_DATEN first).  -rs lists any skipped test.
+      - name: Tests with coverage
+        run: python -m pytest -rs --cov=sofistik_mcp --cov-report=term-missing

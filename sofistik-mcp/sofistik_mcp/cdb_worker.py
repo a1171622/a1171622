@@ -12,6 +12,8 @@ import json
 import os
 import sys
 import traceback
+from collections.abc import Callable
+from typing import Any
 
 if __package__ in (None, ""):
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -19,7 +21,7 @@ if __package__ in (None, ""):
 
 from sofistik_mcp import cdbio, results  # noqa: E402
 
-OPS = {
+OPS: dict[str, Callable[[Any, Any, dict], Any]] = {
     "overview": lambda c, d, a: results.overview(c, d),
     "load_cases": lambda c, d, a: results.load_cases(c, d, only=results.parse_ids(a.get("lcs"))),
     "nodes": lambda c, d, a: results.nodes(c, d, ids=a.get("ids"), max_rows=a.get("max_rows", 500)),
@@ -51,6 +53,8 @@ def handle(req: dict) -> dict:
     try:
         res = OPS[op](cdb, daten, req.get("args") or {})
         if getattr(cdb, "truncated", 0):
+            if not isinstance(res, dict):
+                res = {"rows": res}
             res["warning_truncated_records"] = cdb.truncated
         return {"ok": True, "result": res}
     finally:

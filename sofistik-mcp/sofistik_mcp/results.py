@@ -68,10 +68,11 @@ def parse_ids(spec) -> set | None:
             out |= parse_ids(s) or set()
         return out
     out = set()
-    for part in re.split(r"[,\s;]+", str(spec).strip()):
+    text = re.sub(r"\s*(-|\bto\b|\.\.)\s*", r"\1", str(spec).strip(), flags=re.IGNORECASE)
+    for part in re.split(r"[,\s;]+", text):
         if not part:
             continue
-        m = re.fullmatch(r"(-?\d+)\s*(?:-|to|\.\.)\s*(-?\d+)", part)
+        m = re.fullmatch(r"(-?\d+)\s*(?:-|to|\.\.)\s*(-?\d+)", part, re.IGNORECASE)
         if m:
             a, b = int(m.group(1)), int(m.group(2))
             if a > b:
@@ -107,7 +108,7 @@ def _extremes(rows, comps, id_keys):
                 best_min = r
         if best_max is None:
             continue
-        def pick(r):
+        def pick(r, c=c):  # bind c now (B023); pick is only called in this iteration
             d = {"value": r[c]}
             for k in id_keys:
                 if k in r:
@@ -235,7 +236,7 @@ def overview(cdb, daten) -> dict:
 
 def nodes(cdb, daten, ids=None, max_rows=500) -> dict:
     want = parse_ids(ids)
-    rows = []
+    rows: list = []
     total = 0
     if cdb.kexist(20, 0) >= 1:
         for rec in cdb.records(20, 0):
@@ -333,7 +334,7 @@ def support_reactions(cdb, daten, lc, ids=None, max_rows=500) -> dict:
 
 def _beam_index(cdb, daten):
     """element -> {sln, section, length_m}"""
-    out = {}
+    out: dict = {}
     if cdb.kexist(100, 0) < 1:
         return out
     for rec in cdb.records(100, 0):
@@ -394,10 +395,11 @@ def beam_forces(cdb, daten, lc, beams=None, groups_=None, slns=None, max_rows=30
                      "N": val(f.m_n, 1, 4), "Vy": val(f.m_vy, 1, 4), "Vz": val(f.m_vz, 1, 4),
                      "Mt": val(f.m_mt, 1, 4), "My": val(f.m_my, 1, 4), "Mz": val(f.m_mz, 1, 4)})
     if ends_only:
-        keep, by = [], {}
+        keep: list = []
+        by: dict = {}
         for r in rows:
             by.setdefault(r["beam"], []).append(r)
-        for b, rs in by.items():
+        for rs in by.values():
             rs.sort(key=lambda r: r["x"] or 0)
             keep.extend([rs[0]] + ([rs[-1]] if len(rs) > 1 else []))
         rows = keep
@@ -443,7 +445,15 @@ def envelope(cdb, daten, lcs, what="beam", ids=None, groups_=None, slns=None) ->
         return {"error": "Give the load cases, e.g. 101-118."}
     kwh = {"beam": 102, "node": 24, "support": 24, "truss": 152, "cable": 162}[what]
     found = [lc for lc in sorted(lcset) if cdb.kexist(kwh, lc) >= 1]
-    per_lc, overall = {}, {}
+    eigen = []
+    for lc in found:                                # mode shapes are normalised, not real results
+        recs = cdb.records(12, lc) if cdb.kexist(12, lc) >= 1 else []
+        if recs and int(as_rec(daten, "CLC_CTRL", recs[0]).m_kind) == 4:
+            eigen.append(lc)
+    found = [lc for lc in found if lc not in eigen]
+    warnings: list = []
+    per_lc: dict = {}
+    overall: dict = {}
     ctx = _beam_ctx(cdb, daten) if what == "beam" else None
     for lc in found:
         if what == "beam":
@@ -456,6 +466,8 @@ def envelope(cdb, daten, lcs, what="beam", ids=None, groups_=None, slns=None) ->
             r = axial_forces(cdb, daten, lc, element_type=what, ids=ids, max_rows=0)
         if hasattr(cdb, "forget"):
             cdb.forget(kwh, lc)                     # keep memory flat over many load cases
+        if r.get("warning") and r["warning"] not in warnings:
+            warnings.append(r["warning"])
         per_lc[lc] = r.get("extremes", {})
         for comp, mm in per_lc[lc].items():
             o = overall.setdefault(comp, {"max": None, "min": None})
@@ -463,22 +475,29 @@ def envelope(cdb, daten, lcs, what="beam", ids=None, groups_=None, slns=None) ->
                 o["max"] = dict(mm["max"], lc=lc)
             if o["min"] is None or mm["min"]["value"] < o["min"]["value"]:
                 o["min"] = dict(mm["min"], lc=lc)
-    return {"what": what, "load_cases_found": found,
-            "load_cases_missing": sorted(lcset - set(found)), "overall": overall, "per_lc": per_lc,
-            "units": UNITS}
+    out = {"what": what, "load_cases_found": found,
+           "load_cases_missing": sorted(lcset - set(found) - set(eigen)), "overall": overall, "per_lc": per_lc,
+           "units": UNITS}
+    if eigen:
+        out["eigen_load_cases_skipped"] = eigen
+        warnings.append("Eigenmode load cases " + ", ".join(map(str, eigen)) + " were left out: mode shapes "
+                        "are normalised and are not design results.")
+    if warnings:
+        out["warning"] = " ".join(warnings)
+    return out
 
 
 def read_key(cdb, daten, kwh, kwl, class_name=None, max_records=20, skip=0) -> dict:
     """Generic: decode records of any key with any sofistik_daten class (for things the other tools
     do not cover).  Without class_name: record sizes and the first integers / floats."""
     ex = cdb.kexist(int(kwh), int(kwl))
-    out = {"kwh": int(kwh), "kwl": int(kwl), "kexist": ex,
-           "kexist_meaning": {0: "key missing", 1: "key exists, no data", 2: "key with data"}.get(ex, "?")}
+    out: dict = {"kwh": int(kwh), "kwl": int(kwl), "kexist": ex,
+                 "kexist_meaning": {0: "key missing", 1: "key exists, no data", 2: "key with data"}.get(ex, "?")}
     if ex < 1:
         return out
     recs = cdb.records(int(kwh), int(kwl))
     out["record_count"] = len(recs)
-    rows = []
+    rows: list = []
     cls = getattr(daten, class_name, None) if class_name else None
     if class_name and cls is None:
         out["error"] = f"No class {class_name} in sofistik_daten.py."
@@ -490,7 +509,7 @@ def read_key(cdb, daten, kwh, kwl, class_name=None, max_records=20, skip=0) -> d
                          "floats": [val(x) for x in struct.unpack_from(f"<{min(n, 12)}f", rec)]})
             continue
         obj = as_rec(daten, class_name, rec)
-        d = {"_bytes": len(rec)}
+        d: dict = {"_bytes": len(rec)}
         for fname, _ in cls._fields_:
             v = getattr(obj, fname)
             if isinstance(v, ctypes.Array):

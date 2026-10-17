@@ -49,7 +49,7 @@ mcp = FastMCP("sofistik", instructions=INSTRUCTIONS)
 
 WAIT_S = 40            # Claude Desktop gives a tool call about 60 s; answer before that
 _jobs: dict = {}
-_calc = {"job": None, "proc": None, "stop": False, "cdb": None}
+_calc: dict = {"job": None, "proc": None, "stop": False, "cdb": None}
 
 
 def _settings():
@@ -57,8 +57,8 @@ def _settings():
 
 
 def _start_job(kind: str, label: str, fn) -> dict:
-    job = {"id": f"{kind}-{uuid.uuid4().hex[:8]}", "kind": kind, "label": label, "started": time.time(),
-           "result": None, "done": threading.Event()}
+    job: dict = {"id": f"{kind}-{uuid.uuid4().hex[:8]}", "kind": kind, "label": label, "started": time.time(),
+                 "result": None, "done": threading.Event()}
 
     def work():
         try:
@@ -132,8 +132,9 @@ async def list_folder(path: str, pattern: str = "*", recursive: bool = False, ma
     if not os.path.isdir(full):
         return {"error": f"Not a folder: {full}"}
     rows = []
-    walker = os.walk(full) if recursive else [(full, [d for d in os.listdir(full) if os.path.isdir(os.path.join(full, d))],
-                                              [f for f in os.listdir(full) if os.path.isfile(os.path.join(full, f))])]
+    walker = os.walk(full) if recursive else [
+        (full, [d for d in os.listdir(full) if os.path.isdir(os.path.join(full, d))],
+         [f for f in os.listdir(full) if os.path.isfile(os.path.join(full, f))])]
     folders = []
     for dirpath, dirs, files in walker:
         if not recursive:
@@ -144,11 +145,12 @@ async def list_folder(path: str, pattern: str = "*", recursive: bool = False, ma
                 st = os.stat(p)
                 rows.append({"path": p, "size_kb": round(st.st_size / 1024, 1),
                              "modified": datetime.datetime.fromtimestamp(st.st_mtime).strftime("%Y-%m-%d %H:%M")})
-                if len(rows) >= max_entries:
+                if len(rows) > max_entries:
                     break
-        if len(rows) >= max_entries:
+        if len(rows) > max_entries:
             break
-    return {"folder": full, "sub_folders": folders, "files": rows, "truncated": len(rows) >= max_entries}
+    return {"folder": full, "sub_folders": folders, "files": rows[:max_entries],
+            "truncated": len(rows) > max_entries}
 
 
 @mcp.tool()
@@ -188,7 +190,7 @@ async def write_dat_file(path: str, content: str, overwrite: bool = False) -> di
     if os.path.exists(full):
         if not overwrite:
             return {"error": f"{full} already exists. Use another name, or overwrite=True (a backup is kept)."}
-        backup = full + ".bak-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        backup = config.backup_name(full)
         os.replace(full, backup)
     text = content.replace("\r\n", "\n").replace("\r", "\n")
     with open(full, "w", encoding="utf-8", newline="\r\n") as f:
@@ -230,7 +232,7 @@ async def run_calculation(dat_path: str, continue_on_error: bool = False, only_b
         return {"status": "not run", "reason": f"Another calculation is still running ({cur['label']}). "
                 f"Wait with get_job_result('{cur['id']}') or stop it with stop_calculation.",
                 "job_id": cur["id"]}
-    _calc.update(stop=False, proc=None, cdb=os.path.splitext(full)[0].lower() + ".cdb")
+    _calc.update(stop=False, proc=None, cdb=config._norm(os.path.splitext(full)[0] + ".cdb"))
 
     def on_start(proc):
         _calc["proc"] = proc
@@ -299,7 +301,7 @@ def _cdb_call(op: str, cdb_path: str, args: dict, timeout_s: float = 900) -> dic
     if not full.lower().endswith(".cdb"):
         return {"error": "Give the .cdb file (or its .dat)."}
     cur = _calc["job"]
-    if cur is not None and not cur["done"].is_set() and _calc["cdb"] == full.lower():
+    if cur is not None and not cur["done"].is_set() and _calc["cdb"] == config._norm(full):
         return {"error": "This .cdb is being calculated right now. Wait for the calculation "
                          f"(get_job_result('{cur['id']}')) and read it afterwards."}
     if not os.path.isfile(full):
@@ -310,8 +312,8 @@ def _cdb_call(op: str, cdb_path: str, args: dict, timeout_s: float = 900) -> dic
         req, ans = os.path.join(tmp, "req.json"), os.path.join(tmp, "ans.json")
         with open(req, "w", encoding="utf-8") as f:
             json.dump({"op": op, "cdb": full, "info": info, "args": args}, f)
-        kw = {"cwd": config.ROOT, "stdin": subprocess.DEVNULL, "stdout": subprocess.PIPE,
-              "stderr": subprocess.STDOUT, "timeout": timeout_s}
+        kw: dict = {"cwd": config.ROOT, "stdin": subprocess.DEVNULL, "stdout": subprocess.PIPE,
+                    "stderr": subprocess.STDOUT, "timeout": timeout_s}
         if os.name == "nt":
             kw["creationflags"] = solver.CREATE_NO_WINDOW
         try:

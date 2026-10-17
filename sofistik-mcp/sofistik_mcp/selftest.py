@@ -13,6 +13,7 @@ import os
 import shutil
 import sys
 import traceback
+from typing import Any
 
 from . import config, install, solver
 from . import server as srv
@@ -25,7 +26,7 @@ L = 6.0          # m
 TABLE = {"A_cm2": 53.8, "Iy_cm4": 3692.0}   # HEA 200, Euronorm 53-62 tables
 E_EXPECT = 2.1e8                            # kN/m2 (210 000 N/mm2)
 
-lines = []
+lines: list[str] = []
 fails = 0
 
 
@@ -85,14 +86,14 @@ def run_checks():
           f"{sec['A_cm2']} cm2 vs table {TABLE['A_cm2']}")
     check("section Iy (units m4 -> cm4)", close(sec["Iy_cm4"], TABLE["Iy_cm4"], 0.03),
           f"{sec['Iy_cm4']} cm4 vs table {TABLE['Iy_cm4']}")
-    lc1 = next((x for x in ov["load_cases"] if x["lc"] == 1), None)
+    lc1: Any = next((x for x in ov["load_cases"] if x["lc"] == 1), None)
     check("load case 1 present with node and beam results",
           bool(lc1) and "nodes" in lc1["has_results"] and "beams" in lc1["has_results"], str(lc1))
 
     raw = srv._cdb_call("read_key", cdb, {"kwh": 9, "kwl": 1, "class_name": "CSECT", "max_records": 50})
-    cs = next((x for x in raw.get("records", []) if x.get("m_id") == 0), {})
+    cs: dict = next((x for x in raw.get("records", []) if x.get("m_id") == 0), {})
     mat = srv._cdb_call("read_key", cdb, {"kwh": 1, "kwl": 1, "class_name": "CMAT_STEE", "max_records": 50})
-    ms = next((x for x in mat.get("records", []) if x.get("m_id") == 1), {})
+    ms: dict = next((x for x in mat.get("records", []) if x.get("m_id") == 1), {})
     E = ms.get("m_emod") or cs.get("m_em")
     G = ms.get("m_gmod") or cs.get("m_gm")
     Iy, Iz, Az = cs.get("m_iy"), cs.get("m_iz"), cs.get("m_az")
@@ -113,17 +114,18 @@ def run_checks():
     check("tip deflection (units m -> mm)", ok, f"{uz} mm vs {d_bend + d_shear:.4f} mm (bending only {d_bend:.4f})")
     if not ok and Iz:
         out(f"    (bending about the weak axis would give {P * L ** 3 / (3 * E * Iz) * 1000:.3f} mm)")
-    check("no sideways deflection", abs(tip.get("uy") or 0) < 1e-3 * abs(uz or 1) and abs(tip.get("ux") or 0) < 1e-3 * abs(uz or 1),
+    check("no sideways deflection",
+          abs(tip.get("uy") or 0) < 1e-3 * abs(uz or 1) and abs(tip.get("ux") or 0) < 1e-3 * abs(uz or 1),
           f"ux {tip.get('ux')}, uy {tip.get('uy')}")
     sr = srv._cdb_call("support_reactions", cdb, {"lc": 1})
     rows = sr.get("rows") or []
-    sup = next((x for x in rows if x["node"] == 1), {})
+    sup: dict = next((x for x in rows if x["node"] == 1), {})
     out(f"  support node 1: px {sup.get('px')} py {sup.get('py')} pz {sup.get('pz')} kN, "
         f"mx {sup.get('mx')} my {sup.get('my')} mz {sup.get('mz')} kNm")
     check("support reaction = P", close(sup.get("pz"), P, 0.005), f"{sup.get('pz')} kN vs {P}")
     check("support moment = P L", close(sup.get("my"), P * L, 0.005), f"{sup.get('my')} kNm vs {P * L}")
     check("only node 1 carries reactions", [x["node"] for x in rows] == [1], str([x["node"] for x in rows]))
-    stored = sr.get("sum_stored_by_sofistik_kN")
+    stored: Any = sr.get("sum_stored_by_sofistik_kN")
     out(f"  sum of reactions stored by SOFiSTiK: {stored}")
     check("SOFiSTiK's stored reaction sum = P", bool(stored) and close(stored[2], P, 0.005), str(stored))
     bf = srv._cdb_call("beam_forces", cdb, {"lc": 1})
@@ -132,7 +134,8 @@ def run_checks():
     vz = ext.get("Vz", {})
     mmax = max(abs(my.get("max", {}).get("value") or 0), abs(my.get("min", {}).get("value") or 0))
     vmax = max(abs(vz.get("max", {}).get("value") or 0), abs(vz.get("min", {}).get("value") or 0))
-    out(f"  beam forces: {bf.get('beams')} beams, {bf.get('stations')} stations; max |My| {mmax} kNm, max |Vz| {vmax} kN")
+    out(f"  beam forces: {bf.get('beams')} beams, {bf.get('stations')} stations; "
+        f"max |My| {mmax} kNm, max |Vz| {vmax} kN")
     out(f"    My extremes {my}")
     check("max beam moment = P L", close(mmax, P * L, 0.005), f"{mmax} kNm vs {P * L}")
     check("beam shear = P", close(vmax, P, 0.005), f"{vmax} kN vs {P}")
@@ -160,8 +163,8 @@ def solve(info, name):
         f"{r.get('errors')} errors, {r.get('warnings')} warnings")
     for m in r.get("messages", [])[:10]:
         out(f"    {m['kind']} {m['number']} ({m['program']}): {m['text']}")
-        for ln in (next((e for e in r.get("erg_messages", []) if e["number"] == m["number"]), {})
-                   .get("input_before", [])[-3:]):
+        erg_m: dict = next((e for e in r.get("erg_messages", []) if e["number"] == m["number"]), {})
+        for ln in erg_m.get("input_before", [])[-3:]:
             out(f"       input: {ln}")
     if r.get("reason"):
         out(f"  {r['reason']}")

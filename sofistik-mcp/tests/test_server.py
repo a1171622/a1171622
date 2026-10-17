@@ -4,7 +4,6 @@ from __future__ import annotations
 import asyncio
 import json
 import os
-import stat
 import sys
 import textwrap
 
@@ -15,8 +14,9 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, ROOT)
 sys.path.insert(0, HERE)
 
-from sofistik_mcp import config, messages, results, solver  # noqa: E402
 import fake_cdb  # noqa: E402
+
+from sofistik_mcp import config, messages, results, solver  # noqa: E402
 
 D = fake_cdb.daten
 
@@ -102,10 +102,11 @@ def test_scan_sys_and_includes(tmp_path):
 
 
 def _fake_sps(tmp_path, body):
-    sps = tmp_path / "sps.exe"
-    sps.write_text("#!" + sys.executable + "\n" + body)
-    sps.chmod(sps.stat().st_mode | stat.S_IEXEC)
-    return str(sps)
+    """A Python stand-in for sps.exe, started through a .cmd (Windows) or sh (elsewhere) launcher."""
+    import fake_sps
+    script = tmp_path / "fake_sps_body.py"
+    script.write_text(body)
+    return fake_sps.make(tmp_path / "bin", script)
 
 
 FAKE_OK = r'''
@@ -144,7 +145,7 @@ def test_run_refuses_sys(tmp_path):
     assert not (tmp_path / "args.txt").exists()
 
 
-def test_run_no_protocol(tmp_path):
+def test_run_no_protocol(tmp_path, fast_clock):
     sps = _fake_sps(tmp_path, "import sys\n")
     dat = tmp_path / "m.dat"
     dat.write_text("+PROG ASE\nEND\n")
@@ -170,7 +171,8 @@ def test_overview():
     assert ov["system"]["project"] == "SELFTEST"
     assert ov["element_counts"]["nodes"] == 7 and ov["element_counts"]["beams"] == 6
     s = ov["sections"][0]
-    assert s["title"] == "HEA 200" and s["A_cm2"] == pytest.approx(53.8) and s["Iy_cm4"] == pytest.approx(3692, rel=1e-6)
+    assert s["title"] == "HEA 200" and s["A_cm2"] == pytest.approx(53.8)
+    assert s["Iy_cm4"] == pytest.approx(3692, rel=1e-6)
     lc = {x["lc"]: x for x in ov["load_cases"]}
     assert lc[1]["title"] == "self-test tip load 1 kN" and lc[1]["sum_reactions_kN"][2] == pytest.approx(1.0)
     assert set(lc[1]["has_results"]) == {"nodes", "beams", "trusses"}

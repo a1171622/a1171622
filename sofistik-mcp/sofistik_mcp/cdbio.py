@@ -27,6 +27,7 @@ def load_daten(path):
         raise CdbError(f"sofistik_daten.py not found ({path}). It is normally in "
                        r"<SOFiSTiK>\interfaces\examples\python.")
     spec = importlib.util.spec_from_file_location("sofistik_daten_runtime", path)
+    assert spec is not None and spec.loader is not None  # always set for an existing .py file
     mod = importlib.util.module_from_spec(spec)
     try:
         spec.loader.exec_module(mod)

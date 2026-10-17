@@ -50,7 +50,7 @@ class Manuals:
         self.loaded = False
 
     def _pdfs(self):
-        out = {}
+        out: dict = {}
         for f in self.folders:
             if os.path.isdir(f):
                 for n in os.listdir(f):
@@ -163,7 +163,8 @@ class Examples:
         for f in self.folders:
             for dirpath, dirs, names in os.walk(f):
                 # only the shipped example folders (<module>.dat\english|deutsch\...), not project work
-                dirs[:] = [d for d in dirs if not d.startswith(".") and d.lower() not in ("sofistik-mcp", "__pycache__")]
+                dirs[:] = [d for d in dirs
+                           if not d.startswith(".") and d.lower() not in ("sofistik-mcp", "__pycache__")]
                 rel = os.path.relpath(dirpath, f)
                 if rel == ".":
                     dirs[:] = [d for d in dirs if d.lower().endswith(".dat")]
@@ -181,6 +182,7 @@ class Examples:
 
     def search(self, query, max_files=15, prefer="english"):
         self.load()
+        assert self.files is not None  # load() always sets it
         terms = _terms(query)
         if not terms:
             return {"error": "Empty query."}
