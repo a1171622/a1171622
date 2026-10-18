@@ -219,10 +219,13 @@ def test_write_refused_while_a_calculation_runs(server_mod, settings):
     work = settings["work_folders"][0]
     first = run(server_mod.run_calculation(w_dat(work, "slow.dat", "+PROG ASE\nEND\n$ FAKE sleep=5\n")))
     assert first["status"] == "running"
-    r = run(server_mod.write_dat_file(os.path.join(work, "inc.dat"), "+PROG ASE\nEND\n"))
-    assert "calculation is running" in r["error"] and not os.path.exists(os.path.join(work, "inc.dat"))
-    assert run(server_mod.get_job_result(first["job_id"], 30))["status"] == "ok"
+    r = run(server_mod.write_dat_file(os.path.join(work, "slow.dat"), "+PROG ASE\nEND\n", overwrite=True))
+    assert "calculation that reads this file is running" in r["error"]           # its own input
+    # another file in the folder is not its input: it may be written (e.g. the next check's .dat)
     assert "written" in run(server_mod.write_dat_file(os.path.join(work, "inc.dat"), "+PROG ASE\nEND\n"))
+    assert run(server_mod.get_job_result(first["job_id"], 30))["status"] == "ok"
+    assert "written" in run(server_mod.write_dat_file(os.path.join(work, "slow.dat"), "+PROG ASE\nEND\n",
+                                                      overwrite=True))
 
 
 def w_dat(folder, name, text):
@@ -400,10 +403,14 @@ def test_lock_file_written_during_run_and_removed(tmp_path, sps):
 def test_live_lock_of_another_process_refuses_run(tmp_path, sps):
     other = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
     try:
-        (tmp_path / ("other" + solver.LOCK_EXT)).write_text(f"{other.pid}\n")
+        (tmp_path / ("other" + solver.LOCK_EXT)).write_text(f"{other.pid}\n")     # another model: runs alongside
+        assert solver.run(w(tmp_path / "x.dat", "+PROG ASE\nEND\n"), sps, 60)["status"] == "ok"
+        (tmp_path / ("m" + solver.LOCK_EXT)).write_text(f"{other.pid}\n")
         r = solver.run(w(tmp_path / "m.dat", "+PROG ASE\nEND\n"), sps, 60)
-        assert r["status"] == "not run" and "Another calculation is running in this folder" in r["reason"]
-        assert calls(tmp_path) == []
+        assert r["status"] == "not run" and "Another calculation of this model is running" in r["reason"]
+        os.remove(tmp_path / ("m" + solver.LOCK_EXT))
+        os.remove(tmp_path / "x.prt")
+        assert calls(tmp_path) == ["-B0 x.dat"]
     finally:
         other.kill()
         other.wait()
@@ -413,7 +420,7 @@ def test_live_lock_of_another_process_refuses_run(tmp_path, sps):
 
 def test_stale_lock_with_own_pid_and_garbage_is_removed(tmp_path, sps):
     (tmp_path / ("a" + solver.LOCK_EXT)).write_text(f"{os.getpid()}\n")         # not written by this run
-    garbage = tmp_path / ("b" + solver.LOCK_EXT)
+    garbage = tmp_path / ("m" + solver.LOCK_EXT)
     garbage.write_text("garbage\n")
     dat = w(tmp_path / "m.dat", "+PROG ASE\nEND\n")
     # an empty / unreadable lock may be one another server is writing right now: respected for 10 s
@@ -699,7 +706,7 @@ def test_readme_safety_rules_updated():
     with open(os.path.join(ROOT, "README.md"), encoding="utf-8") as f:
         text = f.read()
     rules = text[text.index("## Safety rules"):text.index("## Limits")]
-    for s in ("*SYS", "outside the folders", "refuses to write anything", ".mcp-running", "full path"):
+    for s in ("*SYS", "outside the folders", "refuses to change its input files", ".mcp-running", "full path"):
         assert s in rules, s
 
 
@@ -750,16 +757,22 @@ def test_lock_races(tmp_path, sps, monkeypatch):
     dat = w(tmp_path / "m.dat", "+PROG ASE\nEND\n")
     real = solver.live_lock
     # both servers checked at once (the check before the lock is written saw nothing)
-    monkeypatch.setattr(solver, "live_lock", lambda folder, skip=None: None if skip is None else real(folder, skip))
+    monkeypatch.setattr(solver, "live_lock", lambda folder, skip=None, stem=None: None if skip is None
+                        else real(folder, skip, stem))
     (tmp_path / ("m" + solver.LOCK_EXT)).write_text("")
     r = solver.run(dat, sps, 60)
     assert r["status"] == "not run" and "appeared just now" in r["reason"]
     os.remove(tmp_path / ("m" + solver.LOCK_EXT))
     other = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
+    calls_before = calls(tmp_path)
     try:
-        (tmp_path / ("o" + solver.LOCK_EXT)).write_text(f"{other.pid}\n")
+        # the check after our lock was written finds another live lock of this model (e.g. M.dat next to
+        # m.dat on Windows, where both names give the same lock)
+        other_lock = (str(tmp_path / "M.mcp-running"), {"host": None, "procs": [[other.pid, None]], "started": None})
+        monkeypatch.setattr(solver, "live_lock", lambda folder, skip=None, stem=None:
+                            None if skip is None else other_lock)
         r = solver.run(dat, sps, 60)
-        assert r["status"] == "not run" and "at the same moment" in r["reason"] and calls(tmp_path) == []
+        assert r["status"] == "not run" and "at the same moment" in r["reason"] and calls(tmp_path) == calls_before
         assert not (tmp_path / ("m" + solver.LOCK_EXT)).exists()
     finally:
         other.kill()

@@ -43,7 +43,7 @@ then as structural lines 7 (group 3, 1 kN/m) and 8 (group 4, 2 kN/m) (SOFiMSHC).
 | Structural line model: SLN 7 / group 3 and SLN 8 / group 4 | each gives only its own 6 beams |
 | Structural line model: moment, deflection, reaction sum | 18 and 36 kNm, w L⁴ / 8EIy ≈ 20.9 mm, 18 kN |
 | Structural line model: each beam's group by GDIV, by its structural line and by the group ranges | the three agree (a rule the `.cdb` gives no answer for is an INFO line) |
-| The server starts and answers like it will for Claude | 24 tools |
+| The server starts and answers like it will for Claude | 27 tools |
 
 Lines marked **INFO** are recorded but never fail the test: the load case titles read back (ASE may
 replace SOFiLOAD's titles), the signs SOFiSTiK uses (tip direction, reaction sign), sps.exe's exit code
@@ -75,7 +75,10 @@ checked without SOFiSTiK. The window ends with **ALL CHECKS PASSED** or lists wh
 | `sofistik_status` | Shows where SOFiSTiK is and which folders the server may use |
 | `write_dat_file` | Writes a `.dat` (never overwrites without asking; keeps a `.bak` copy) |
 | `run_calculation` | Runs the `.dat` with `sps.exe`; returns status, every error and warning with the input line before it, programs run, output files |
-| `get_job_result`, `stop_calculation` | A run (or a big `.cdb` read) longer than about 40 s answers "running"; Claude then waits for it with `get_job_result`, or stops it |
+| `get_job_result`, `stop_calculation` | A run (or a big `.cdb` read) longer than about 40 s answers "running"; Claude then waits for it with `get_job_result`, or stops it (one run by `job_id`, or all) |
+| `check_cdb_lock` | Is a `.cdb` locked, and by which program (running calculation, open SOFiSTiK window, program left behind by a stopped run) |
+| `clear_cdb_lock` | Clears a stale lock: ends programs left behind by a stopped run, then runs SOFiSTiK's own Clean Locks on the `.cdb` |
+| `clone_cdb` | Copies a model's `.cdb` to the name of a check's `.dat`, so several checks can run at the same time |
 | `read_calculation_messages` | Errors and warnings of an earlier run (`.prt` / `.erg`) |
 | `read_text_file`, `list_folder` | Read `.dat`, `.prt`, `.erg` files; find models |
 | `cdb_overview`, `cdb_load_cases` | Project, element counts, materials, sections, groups, load cases (titles, reaction sums, eigenfrequencies) |
@@ -100,7 +103,7 @@ refreshes every 3 seconds and shows:
 
 | Panel | What it shows | Where it comes from |
 | --- | --- | --- |
-| Now running | The SOFiSTiK module working now (AQUA, SOFIMSHA, SOFILOAD, ASE, BDK, MAXIMA ...) and the calculation with its running time | The programs running from the SOFiSTiK folder, and the server's own job |
+| Now running | The SOFiSTiK module working now (AQUA, SOFIMSHA, SOFILOAD, ASE, BDK, MAXIMA ...) and each calculation with its running time, RAM, "program 3 of 5" and the estimated time left and finish time | The programs running from the SOFiSTiK folder, the server's own jobs, and `run_history.json` |
 | PC resources | CPU and RAM of the PC, with the last 10 minutes | Windows, via psutil |
 | Checks and key findings | Each check's status (running, passed, failed, attention, waiting, done), its current step and its findings, newest first | `report_check` calls from the checking session |
 | Processes | Every SOFiSTiK program and Claude process with its CPU and RAM | Windows, via psutil |
@@ -158,17 +161,33 @@ Open `settings.json` in Notepad to change them, then restart Claude. Use double 
   and UTF-32 files with a byte order mark are read). The rule is deliberately broad; if a model
   really needs such a line, set it to `true` and restart Claude.
   `write_dat_file` refuses to write such content too, so it cannot be left for you to run by hand.
-- **run_timeout_minutes**: a calculation is stopped after this long (default 60).
+- **run_timeout_minutes**: 0 (the default) = no time limit, since a big model can run for hours. A
+  number stops every calculation after that many minutes.
+- **max_parallel_runs** (default 2) and **min_free_ram_gb** (default 4): how many calculations may
+  run at once. A second one starts only if the RAM it needed last time (or, if it never ran here, what
+  the running one needs) fits next to what the running ones may still grow to, with this much spare.
+  The same model never runs twice at once. On a 32 GB PC one big BDK run (about 17 GB) leaves no room
+  for a second one, and the server says so instead of starting it.
+- **auto_clear_cdb_locks** (default true): before a run, SOFiSTiK programs left behind by a stopped
+  or crashed run that still hold the model's `.cdb` are ended. If SOFiSTiK still stops with
+  "WAIT FOR LOCK" (a killed run can leave its locks written inside the `.cdb`, so even a copy is
+  locked), the server runs SOFiSTiK's own **Clean Locks** (the same as Teddy: Home > Database Tools >
+  Clean Locks, or right-click the `.cdb` > SOFiSTiK > Clean Locks) and runs the model once more.
+  A calculation that is still running, an open SOFiSTiK window or any other program is never ended;
+  the result says what to close. **clean_locks_command** is only needed if the Clean Locks menu entry
+  cannot be found in the registry.
 - Every folder in `settings.json` must be a full path with the drive (e.g. `D:\\26016 HPC`);
   a relative path is refused because it would depend on where Claude was started.
-- One calculation runs at a time. While it runs, `write_dat_file` refuses to write anything (SOFiSTiK
-  reads `#INCLUDE` / `+APPLY` files during the run), and its `.cdb` is not read. If an input file
+- Up to `max_parallel_runs` calculations of different models run at a time. While one runs,
+  `write_dat_file` refuses to change its input files (SOFiSTiK reads `#INCLUDE` / `+APPLY` files during
+  the run), and its `.cdb` is not read. If an input file
   changes during the run anyway, the result says so (status `check: input changed during run`).
   If the project is open in SSD, Teddy or WinGRAF the `.cdb` may be locked: close it there first.
 - A run writes `<name>.mcp-running` next to the `.dat` while it runs, so a second Claude window
-  cannot start a calculation in the same folder. If Claude or the server is closed during a run,
+  cannot start a calculation of the same model (other models in the folder may run alongside). If Claude or the server is closed during a run,
   SOFiSTiK is stopped too, and so is everything it started (each run has its own Windows job object,
-  which a stop or time-out ends as a whole). The lock file names the PC and the process (number and
+  which a stop or time-out ends as a whole; every program seen below `sps.exe` that is still alive
+  after that is ended one by one). The lock file names the PC and the process (number and
   start time); one left by a crash on this PC is removed automatically, one written by another PC
   (a shared network folder) never is: the message names that PC, and you delete the file by hand once
   nothing runs there.
@@ -202,6 +221,11 @@ Open `settings.json` in Notepad to change them, then restart Claude. Use double 
   and the key numbers as you would for any model.
 - The manual search covers the English manuals that were in `C:\Sofistik workflow` on 17 Oct 2026;
   a new PDF can be added with `index_manual`.
+- The run-time estimate exists only from the second clean run of a file on this PC. It assumes each
+  program takes as long as last time, so a changed model (more members, more load cases) can take
+  longer than shown; the page then says "slower than last time".
+- Parallel runs share the PC's cores and disk, so two runs together are faster than one after the
+  other, but each one on its own is slower. A big BDK run can need half of a 32 GB PC.
 
 ## Remove
 

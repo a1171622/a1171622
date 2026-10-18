@@ -80,7 +80,7 @@ _lock = threading.Lock()
 def state_dir(settings: dict) -> str:
     """<first work folder>\\_dashboard: inside a work folder, so a checking session may write there."""
     folders = settings.get("work_folders") or []
-    base = folders[0] if folders else config.ROOT
+    base = folders[0] if folders and os.path.isabs(folders[0]) else config.ROOT   # never a relative folder
     return os.path.join(base, DIR_NAME)
 
 
@@ -160,14 +160,23 @@ def _read_json(path: str):
 # ------------------------------------------------------------------------------------------------
 
 class ServerState:
-    """The calculation this server is running and its last runs, kept in server-<pid>.json.
+    """The calculations this server is running ("jobs"; "job" is the first of them, for older pages)
+    and its last runs, kept in server-<pid>.json.  Every finished run is also added to the shared
+    run_history.json, which gives the run-time estimate of the next run of the same file.
     Every write is best effort: the dashboard must never make a calculation fail."""
 
     def __init__(self, settings_fn, version: str):
         self._settings_fn = settings_fn
+        self._jobs: dict = {}                        # key -> job dict, in start order
         self.data: dict = {"pid": os.getpid(), "pid_started": _process_start(os.getpid()),
                            "host": socket.gethostname(), "version": version,
-                           "started": _now(), "updated": _now(), "job": None, "recent_runs": []}
+                           "started": _now(), "updated": _now(), "job": None, "jobs": [], "recent_runs": []}
+
+    def history(self) -> RunHistory | None:
+        try:
+            return RunHistory(state_dir(self._settings_fn()))
+        except Exception:
+            return None
 
     def path(self) -> str | None:
         try:
@@ -179,6 +188,8 @@ class ServerState:
         p = self.path()
         if not p:
             return
+        self.data["jobs"] = [{k: v for k, v in j.items() if not k.startswith("_")} for j in self._jobs.values()]
+        self.data["job"] = self.data["jobs"][0] if self.data["jobs"] else None
         self.data["updated"] = _now()
         try:
             with _lock:
@@ -189,17 +200,44 @@ class ServerState:
     def started(self) -> None:
         self._save()
 
-    def job_started(self, dat: str) -> None:
-        self.data["job"] = {"dat": dat, "started": _now(), "t0": time.time(), "sps_pid": None}
+    def _key(self, key):
+        return key if key is not None else next(iter(self._jobs), None)
+
+    def job_started(self, dat: str, key=None, programs: int | None = None) -> None:
+        h = self.history()
+        prev = h.last_for(dat) if h else None
+        k = key if key is not None else dat
+        self._jobs[k] = {"dat": dat, "started": _now(), "t0": time.time(), "sps_pid": None,
+                         "programs_total": programs, "estimate": estimate(prev, [], 0.0, programs),
+                         "_prev": prev}
         self._save()
 
-    def job_process(self, pid: int) -> None:
-        if self.data.get("job"):
-            self.data["job"]["sps_pid"] = pid
+    def job_info(self, key) -> dict | None:
+        return self._jobs.get(key)
+
+    def job_programs(self, programs: int | None, key=None) -> None:
+        job = self._jobs.get(self._key(key))
+        if job is not None:
+            job["programs_total"] = programs
+
+    def job_process(self, pid: int, key=None) -> None:
+        job = self._jobs.get(self._key(key))
+        if job is not None:
+            job["sps_pid"] = pid
             self._save()
 
-    def job_finished(self, result: dict) -> None:
-        job = self.data.get("job") or {}
+    def job_progress(self, watch, key=None) -> None:
+        """Called by the run's watcher every few seconds: running program, RAM, estimate."""
+        job = self._jobs.get(self._key(key))
+        if job is None:
+            return
+        tl = [dict(t) for t in watch.timeline]
+        job.update(module=watch.module, ram_mb=watch.ram_mb, peak_ram_mb=watch.peak_ram_mb,
+                   estimate=estimate(job.get("_prev"), tl, time.time() - job["t0"], job.get("programs_total")))
+        self._save()
+
+    def job_finished(self, result: dict, key=None) -> None:
+        job = self._jobs.pop(self._key(key), None) or {}
         r = result if isinstance(result, dict) else {}
         run = {"dat": job.get("dat") or r.get("dat"), "finished": _now(),
                "status": r.get("status") or ("server error" if r.get("error") or not r else "?"),
@@ -207,8 +245,15 @@ class ServerState:
                "seconds": r.get("seconds") if r.get("seconds") is not None
                else (round(time.time() - job["t0"], 1) if job.get("t0") else None),
                "first_error": _first_error(r), "reason": r.get("reason") or r.get("error")}
+        if r.get("peak_ram_mb"):
+            run["peak_ram_mb"] = r["peak_ram_mb"]
         self.data["recent_runs"] = ([run] + list(self.data.get("recent_runs") or []))[:RECENT_RUNS]
-        self.data["job"] = None
+        if run["dat"] and run["status"] not in ("not run", "server error", "?"):
+            h = self.history()
+            if h is not None:
+                h.add({"dat": run["dat"], "finished": run["finished"], "status": run["status"],
+                       "seconds": run["seconds"], "peak_ram_mb": r.get("peak_ram_mb"),
+                       "modules": r.get("module_times") or []})
         self._save()
 
     def remove(self) -> None:
@@ -218,6 +263,103 @@ class ServerState:
                 os.remove(p)
             except OSError:
                 pass
+
+
+# ------------------------------------------------------------------------------------------------
+# run history and the run-time estimate
+# ------------------------------------------------------------------------------------------------
+
+GOOD_RUNS = ("ok", "ok with warnings")
+HISTORY_MAX = 300
+
+
+def _dat_key(dat: str) -> str:
+    return os.path.normcase(os.path.abspath(str(dat)))
+
+
+class RunHistory:
+    """<status folder>\\run_history.json: the finished runs of every server on this PC (file, status,
+    seconds, peak RAM, time per program), newest last."""
+
+    def __init__(self, folder: str):
+        self.path = os.path.join(folder, "run_history.json")
+
+    def runs(self) -> list[dict]:
+        d = _read_json(self.path)
+        runs = d.get("runs") if isinstance(d, dict) else None
+        return [r for r in runs or [] if isinstance(r, dict) and r.get("dat")]
+
+    def add(self, run: dict) -> None:
+        try:
+            os.makedirs(os.path.dirname(self.path), exist_ok=True)
+            with _lock, _FileLock(self.path):
+                runs = (self.runs() + [run])[-HISTORY_MAX:]
+                _write_json(self.path, {"runs": runs})
+        except (OSError, TimeoutError):
+            pass
+
+    def last_for(self, dat: str) -> dict | None:
+        """The newest clean run of this .dat (the basis of its estimate)."""
+        key = _dat_key(dat)
+        for r in reversed(self.runs()):
+            if _dat_key(r["dat"]) == key and r.get("status") in GOOD_RUNS and r.get("seconds"):
+                return r
+        return None
+
+    def peak_ram_mb(self, dat: str) -> int | None:
+        """The most RAM one of the last 3 runs of this .dat needed (None: never run here)."""
+        key = _dat_key(dat)
+        peaks = [_int(r.get("peak_ram_mb")) for r in self.runs() if _dat_key(r["dat"]) == key][-3:]
+        peaks = [p for p in peaks if p > 0]
+        return max(peaks) if peaks else None
+
+
+def _fmt_s(sec: float) -> str:
+    sec = int(round(max(0.0, sec)))
+    h, rest = divmod(sec, 3600)
+    m, s_ = divmod(rest, 60)
+    return f"{h} h {m:02d} min" if h else (f"{m} min" if m >= 2 else f"{m * 60 + s_} s")
+
+
+def estimate(prev: dict | None, timeline: list, elapsed: float, programs_total: int | None = None,
+             now: float | None = None) -> dict:
+    """Run-time estimate of a running calculation, from the last clean run of the same file.
+
+    timeline: [{"program", "t0", "t1"}] of the programs the .prt has started so far.  With the same
+    programs in the same order as last time: what is left of the running program plus the programs
+    after it, each as long as last time.  Otherwise: last run's total minus the time so far.
+    -> {program, program_no, programs_total, program_elapsed_s, remaining_s, finish_at, basis,
+        slower_than_last}"""
+    now = time.time() if now is None else now
+    out: dict = {"programs_total": programs_total, "remaining_s": None, "finish_at": None,
+                 "slower_than_last": False}
+    k = len(timeline) - 1
+    if k >= 0:
+        cur = timeline[k]
+        out.update(program=cur["program"], program_no=k + 1,
+                   program_elapsed_s=round((cur["t1"] or now) - cur["t0"]))
+    if not prev:
+        out["basis"] = "first run of this file on this PC: no estimate yet"
+        return out
+    pm = [m for m in prev.get("modules") or [] if isinstance(m, dict)]
+    same = k >= 0 and k < len(pm) and all(pm[i].get("program") == timeline[i]["program"] for i in range(k + 1))
+    if same:
+        cur = timeline[k]
+        last = float(pm[k].get("seconds") or 0)
+        cur_el = (cur["t1"] or now) - cur["t0"]
+        left = 0.0 if cur["t1"] is not None else max(last - cur_el, 0.0)
+        remaining = left + sum(float(m.get("seconds") or 0) for m in pm[k + 1:])
+        out["slower_than_last"] = cur["t1"] is None and cur_el > 1.1 * last + 30
+        out["programs_total"] = programs_total or len(pm)
+    else:
+        remaining = max(float(prev["seconds"]) - elapsed, 0.0)
+        out["slower_than_last"] = elapsed > 1.1 * float(prev["seconds"]) + 30
+    out["remaining_s"] = round(remaining)
+    out["finish_at"] = datetime.datetime.fromtimestamp(now + remaining).strftime("%H:%M")
+    out["basis"] = (f"last clean run of this file ({str(prev.get('finished') or '')[:16].replace('T', ' ')}) "
+                    f"took {_fmt_s(float(prev['seconds']))}" + ("" if same or k < 0 else
+                                                               "; its programs differ, so only the total is used"))
+    return out
 
 
 def _count(v) -> int:
@@ -372,23 +514,30 @@ class Collector:
                     old = time.time() - os.path.getmtime(path) > 24 * 3600
                 except OSError:
                     old = True
-                if old or not data.get("recent_runs"):
+                if old or not (data.get("recent_runs") or data.get("jobs") or data.get("job")):
                     if old:
                         try:
                             os.remove(path)
                         except OSError:
                             pass
                     continue
-                if data.get("job"):
+                jobs = [j for j in (data.get("jobs") or [data.get("job")]) if isinstance(j, dict)]
+                if jobs:
                     runs = list(data.get("recent_runs") or [])
-                    runs.insert(0, {"dat": data["job"].get("dat"), "finished": data.get("updated"),
-                                    "status": "not finished", "errors": 0, "warnings": 0, "seconds": None,
-                                    "reason": "Claude or the server closed while it ran"})
-                    data["recent_runs"], data["job"] = runs[:RECENT_RUNS], None
+                    for j in jobs:
+                        runs.insert(0, {"dat": j.get("dat"), "finished": data.get("updated"),
+                                        "status": "not finished", "errors": 0, "warnings": 0, "seconds": None,
+                                        "reason": "Claude or the server closed while it ran"})
+                    data["recent_runs"] = runs[:RECENT_RUNS]
+                data["job"], data["jobs"] = None, []
             data["alive"] = alive
-            job = data.get("job")
-            if isinstance(job, dict) and job.get("t0"):
-                job["elapsed_s"] = round(time.time() - float(job["t0"]))
+            jobs = [j for j in (data.get("jobs") or ([data["job"]] if data.get("job") else [])) if isinstance(j, dict)]
+            for job in jobs:
+                job.pop("_prev", None)
+                if job.get("t0"):
+                    job["elapsed_s"] = round(time.time() - float(job["t0"]))
+            data["jobs"] = jobs
+            data["job"] = jobs[0] if jobs else None
             out.append(data)
         return out
 

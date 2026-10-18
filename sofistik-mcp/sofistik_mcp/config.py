@@ -26,7 +26,11 @@ DEFAULTS = {
     "work_folders": [r"C:\Sofistik workflow"],
     "read_folders": [],
     "allow_sys_commands": False,
-    "run_timeout_minutes": 60,
+    "run_timeout_minutes": 0,
+    "auto_clear_cdb_locks": True,
+    "clean_locks_command": "",
+    "max_parallel_runs": 2,
+    "min_free_ram_gb": 4,
     "examples_folders": [r"C:\Sofistik workflow"],
     "manual_folders": [r"C:\Sofistik workflow"],
     "dashboard_port": 8765,
@@ -87,10 +91,21 @@ def load_settings(path: str | None = None) -> dict:
     if s.get("sofistik_dir") and not is_full_path(str(s["sofistik_dir"])):
         raise SettingsError(f"{p}: sofistik_dir {s['sofistik_dir']!r} is not a full path. Give the whole path, "
                             r'e.g. "C:\\Program Files\\SOFiSTiK\\2027". Fix it in Notepad, save, and restart Claude.')
-    try:
-        s["run_timeout_minutes"] = max(1.0, float(s.get("run_timeout_minutes") or 60))
+    try:                                          # 0 (or empty): no time limit
+        t = float(s.get("run_timeout_minutes") or 0)
+        s["run_timeout_minutes"] = max(1.0, t) if t > 0 else 0.0
     except (TypeError, ValueError):
-        s["run_timeout_minutes"] = 60.0
+        s["run_timeout_minutes"] = 0.0
+    c = s.get("auto_clear_cdb_locks")
+    s["auto_clear_cdb_locks"] = not (c is False or (isinstance(c, str) and c.strip().lower() == "false"))
+    try:
+        s["max_parallel_runs"] = max(1, min(8, int(s.get("max_parallel_runs") or 1)))
+    except (TypeError, ValueError):
+        s["max_parallel_runs"] = 1
+    try:
+        s["min_free_ram_gb"] = max(0.0, float(s.get("min_free_ram_gb") or 0))
+    except (TypeError, ValueError):
+        s["min_free_ram_gb"] = 4.0
     s["_path"] = p if os.path.isfile(p) else ""
     return s
 

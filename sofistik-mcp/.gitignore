@@ -10,3 +10,4 @@ __pycache__/
 coverage.xml
 .mypy_cache/
 .ruff_cache/
+_dashboard/

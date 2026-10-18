@@ -19,7 +19,7 @@ TOOLS = {
     "stop_calculation", "read_calculation_messages", "cdb_overview", "cdb_load_cases", "cdb_nodes",
     "cdb_node_results", "cdb_support_reactions", "cdb_beam_forces", "cdb_truss_cable_forces", "cdb_envelope",
     "cdb_read_key", "search_manuals", "read_manual_page", "list_manuals", "index_manual", "search_examples",
-    "report_check", "dashboard_status",
+    "report_check", "dashboard_status", "check_cdb_lock", "clear_cdb_lock", "clone_cdb",
 }
 REQUIRED = {
     "sofistik_status": [], "list_folder": ["path"], "read_text_file": ["path"],
@@ -31,6 +31,7 @@ REQUIRED = {
     "cdb_read_key": ["cdb_path", "kwh", "kwl"], "search_manuals": ["query"],
     "read_manual_page": ["manual", "page"], "list_manuals": [], "index_manual": ["manual"],
     "search_examples": ["query"], "report_check": ["check"], "dashboard_status": [],
+    "check_cdb_lock": ["cdb_path"], "clear_cdb_lock": ["cdb_path"], "clone_cdb": ["cdb_path", "new_name"],
 }
 
 
@@ -61,7 +62,8 @@ def stdio_env(tmp_path, monkeypatch):
             "dll": str(tmp_path / "sofistik" / "sof_cdb_w-2027.dll"), "dll_dirs": [], "daten": fake_cdb.DATEN_PATH,
             "searched": []}
     settings = {"_help": "test", "work_folders": [str(work)], "read_folders": [str(ref)],
-                "examples_folders": [str(ex)], "manual_folders": [str(man)], "run_timeout_minutes": 5}
+                "examples_folders": [str(ex)], "manual_folders": [str(man)], "run_timeout_minutes": 5,
+                "max_parallel_runs": 1}
     write_hook_config(tmp_path, monkeypatch, settings, install=info, fake="build_frame", wait_s=1.5)
     monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "Local"))
     env = dict(os.environ)
@@ -134,7 +136,7 @@ def test_protocol_tools_and_every_call(stdio_env):
     o = session(stdio_env, body)
     assert o["init"].serverInfo.name == "sofistik" and "SOFiSTiK 2027" in o["init"].instructions
     tools = {t.name: t for t in o["tools"]}
-    assert set(tools) == TOOLS and len(o["tools"]) == 24
+    assert set(tools) == TOOLS and len(o["tools"]) == 27
     for name, t in tools.items():
         assert t.description and len(t.description) > 30, name
         assert t.inputSchema["type"] == "object", name
@@ -205,8 +207,8 @@ def test_protocol_jobs_running_stop_and_locks(stdio_env):
     first = o["first"]
     assert first["status"] == "running" and re.fullmatch(r"calc-[0-9a-f]{8}", first["job_id"])
     assert first["what"] == "slow.dat"
-    assert o["busy"]["status"] == "not run" and "Another calculation is still running" in o["busy"]["reason"]
-    assert o["busy"]["job_id"] == first["job_id"]
+    assert o["busy"]["status"] == "not run" and "already running" in o["busy"]["reason"]
+    assert o["busy"]["running"] == [first["job_id"]]
     assert "being calculated right now" in o["locked"]["error"] and first["job_id"] in o["locked"]["error"]
     assert "being calculated right now" in o["locked_dat"]["error"]
     assert o["done"]["status"] == "ok" and o["done"]["seconds"] >= 3.5

@@ -140,6 +140,19 @@ function spark(id, arr) {
 }
 function push(a, v) { a.push(Number(v) || 0); if (a.length > HIST_N) a.shift(); }
 
+function estHtml(e, module) {
+  let prog = "";
+  if (e.program) prog = "program " + esc(e.program_no) + (e.programs_total ? " of " + esc(e.programs_total) : "") + ": " +
+    esc(e.program) + " (" + esc(fmtSec(e.program_elapsed_s)) + ")";
+  else if (module) prog = esc(module);
+  let left;
+  if (e.remaining_s == null) left = "<span class='label'>" + esc(e.basis || "no estimate yet") + "</span>";
+  else if (e.remaining_s <= 0 && e.slower_than_last) left = "taking longer than last time<br><span class='label'>" + esc(e.basis) + "</span>";
+  else left = "about <b>" + esc(fmtSec(e.remaining_s)) + "</b> left, done ~" + esc(e.finish_at) +
+    (e.slower_than_last ? " (slower than last time)" : "") + "<br><span class='label'>" + esc(e.basis) + "</span>";
+  return (prog ? "<div>" + prog + "</div>" : "") + "<div>" + left + "</div>";
+}
+
 function render(d) {
   $("host").textContent = (d.host || "") + " · updated " + hm(d.time) + (d.time ? d.time.slice(16, 19) : "");
   const r = d.resources || {};
@@ -153,11 +166,12 @@ function render(d) {
   const pr = d.processes || {};
   $("module").textContent = pr.module || "idle";
   const jobs = [];
-  for (const s of d.servers || []) if (s.job) jobs.push(s.job);
+  for (const s of d.servers || []) for (const j of (s.jobs || (s.job ? [s.job] : []))) jobs.push(j);
   $("job").className = jobs.length ? "" : "empty";
   $("job").innerHTML = jobs.length
-    ? jobs.map((j) => "<div><b>" + esc(base(j.dat)) + "</b><br><span class='label'>running " + esc(fmtSec(j.elapsed_s)) +
-        (j.note ? " (" + esc(j.note) + ")" : "") + "</span></div>").join("")
+    ? jobs.map((j) => "<div class='jobrow'><b>" + esc(base(j.dat)) + "</b><br><span class='label'>running " + esc(fmtSec(j.elapsed_s)) +
+        (j.note ? " (" + esc(j.note) + ")" : "") + (j.ram_mb ? " · " + esc((j.ram_mb / 1024).toFixed(1)) + " GB RAM" : "") +
+        "</span>" + estHtml(j.estimate || {}, j.module) + "</div>").join("")
     : (pr.module ? "started outside Claude (e.g. Teddy)" : "none");
 
   const rows = [];

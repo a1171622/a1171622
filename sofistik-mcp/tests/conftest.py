@@ -60,13 +60,15 @@ def server_mod(monkeypatch, tmp_path, settings, sps):
     monkeypatch.setattr(server, "_examples", None)
     server._test_info = info
     yield server
-    job = server._calc["job"]
-    if job is not None and not job["done"].is_set():
-        server._calc["stop"] = True
-        if server._calc["proc"] is not None:
-            server.solver._kill_tree(server._calc["proc"])
-        job["done"].wait(30)
-    server._calc.update(job=None, proc=None, stop=False, cdb=None)
+    for c in list(server._calcs.values()):
+        job = c["job"]
+        if job is not None and not job["done"].is_set():
+            c["stop"] = True
+            if c["proc"] is not None:
+                server.solver._kill_tree(c["proc"])
+            job["done"].wait(30)
+    server._calcs.clear()
+    server._latest["id"] = None
     server._jobs.clear()
 
 

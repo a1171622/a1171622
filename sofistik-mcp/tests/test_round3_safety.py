@@ -349,11 +349,11 @@ def _dead_pid():
 
 
 def test_lock_from_another_pc_is_never_removed(tmp_path, sps):
-    lock = tmp_path / ("other" + solver.LOCK_EXT)
+    lock = tmp_path / ("m" + solver.LOCK_EXT)
     lock.write_text(json.dumps({"host": "DESIGN-PC-7", "procs": [[_dead_pid(), None]], "started": "2026-10-17 09:00"}))
     r = solver.run(w(tmp_path / "m.dat", "+PROG ASE\nEND\n"), sps, 60)
     assert r["status"] == "not run" and lock.exists() and calls(tmp_path) == []
-    assert "DESIGN-PC-7" in r["reason"] and "delete other.mcp-running" in r["reason"]
+    assert "DESIGN-PC-7" in r["reason"] and "delete m.mcp-running" in r["reason"]
     assert r["lock_host"] == "DESIGN-PC-7"
     assert "2026-10-17 09:00" in r["reason"]
 
@@ -364,10 +364,11 @@ def test_lock_with_a_reused_pid_is_stale(tmp_path, sps):
     try:
         start = solver.proc_start_time(other.pid)
         assert start is not None
-        lock = tmp_path / ("other" + solver.LOCK_EXT)
+        lock = tmp_path / ("m" + solver.LOCK_EXT)
         lock.write_text(json.dumps({"host": solver.HOST, "procs": [[other.pid, start]]}))
         r = solver.run(w(tmp_path / "m.dat", "+PROG ASE\nEND\n"), sps, 60)
-        assert r["status"] == "not run" and "Another calculation is running" in r["reason"]   # same process
+        # same process
+        assert r["status"] == "not run" and "Another calculation of this model is running" in r["reason"]
         lock.write_text(json.dumps({"host": solver.HOST.upper(), "procs": [[other.pid, start + 12345]]}))
         r = solver.run(str(tmp_path / "m.dat"), sps, 60)                                        # PID reused
         assert r["status"] == "ok" and not lock.exists()

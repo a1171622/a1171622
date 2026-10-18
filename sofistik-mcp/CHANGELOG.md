@@ -3,6 +3,36 @@
 All notable changes to the SOFiSTiK MCP server. Versions follow `VERSION` in
 `sofistik_mcp/server.py`, which must equal `version` in `pyproject.toml` (CI checks this).
 
+## 1.3.0 - 2026-10-18
+
+### Added
+- Stale .cdb locks are cleared. `check_cdb_lock` says what holds a `.cdb`: a running calculation, an
+  open SOFiSTiK window, this server's reader, or a program left behind by a stopped or crashed run.
+  `clear_cdb_lock` ends only the programs left behind, then runs SOFiSTiK's own Clean Locks
+  (`dbinfo.exe <file>.cdb z`, the command behind the .cdb right-click menu, found in the registry). It
+  does this for locks a killed run leaves written inside the `.cdb`, which even a copy keeps.
+  `run_calculation` does both by itself (`auto_clear_cdb_locks`, default true). It ends the programs
+  left behind before each run. If SOFiSTiK still stops with "WAIT FOR LOCK", it runs Clean Locks and
+  then the model once more.
+- Parallel runs: up to `max_parallel_runs` (default 2) calculations of different models at once. A
+  second one starts only if the RAM it needed last time, or else what the running one needs, fits with
+  `min_free_ram_gb` (default 4) to spare. `clone_cdb` copies a model's `.cdb` to the name of a check's
+  `.dat`, so several checks can run on one model at the same time. `stop_calculation` takes a `job_id`;
+  without one it stops all runs.
+- Run-time estimate on the dashboard: "program 3 of 5", the time left and the finish time, based on
+  the last clean run of the same file. Each program takes as long as it did then. Runs are kept in
+  `_dashboard\run_history.json`, with the time per program and the peak RAM.
+
+### Changed
+- No time limit by default (`run_timeout_minutes` 0), since a big model can run for hours. A number
+  still sets a limit, and `timeout_minutes` sets one for a single run.
+- A stop now ends every program the run started. Each run is watched, and any program seen below
+  `sps.exe` that is still alive after the job object is ended is ended one by one. On 17 Oct 2026 a
+  stopped BDK outlived its run. A calculation program still running after `sps.exe` ended normally is
+  ended too, and the result says so.
+- The `.mcp-running` lock is per model, not per folder, so different models in one folder can run
+  side by side. `write_dat_file` refuses only to change the input files of a running calculation.
+
 ## 1.2.0 - 2026-10-17
 
 ### Added

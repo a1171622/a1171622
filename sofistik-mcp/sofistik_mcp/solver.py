@@ -21,9 +21,10 @@ Safety (CADINP manual cadinp_1.pdf, 1.9 "Starting an Analysis"):
     into the .erg, which Claude can read.
   * Each run's sps.exe runs in its own Windows job object (made before sps.exe starts): a stop or
     time-out ends the whole job (also programs whose parent has already ended), and Windows closes it,
-    killing what is left, when the server process ends.  A <name>.mcp-running lock file (PC name,
-    process numbers and start times) next to the .dat stops a second server from starting a
-    calculation in the same folder.
+    killing what is left, when the server process ends.  The run is also watched, and every program
+    seen below sps.exe that is still alive after a stop is ended one by one.  A <name>.mcp-running
+    lock file (PC name, process numbers and start times) next to the .dat stops a second server from
+    starting a calculation of the same model (other models may run alongside).
 """
 from __future__ import annotations
 
@@ -42,7 +43,12 @@ import threading
 import time
 import unicodedata
 
-from . import config, messages
+try:
+    import psutil
+except ImportError:                                  # pragma: no cover - psutil is in requirements.txt
+    psutil = None
+
+from . import cdblock, config, messages
 
 CREATE_NO_WINDOW = 0x08000000
 RESULT_EXTS = (".cdb", ".prt", ".erg", ".plb", ".lst")
@@ -516,6 +522,13 @@ else:  # pragma: no cover
 
 
 def _kill_tree(proc):
+    """Stop sps.exe and everything it started.  The job object (or taskkill) does most of it; every
+    program the run's watcher saw is then ended too if it is still there, because a program that left
+    the job (seen on SOFiSTiK 2027: BDK outlived a stopped run and kept the .cdb locked) would
+    otherwise keep running.  What is still alive after that is kept in proc._mcp_survivors."""
+    watch = getattr(proc, "_mcp_watch", None)
+    if watch is not None:
+        watch.snapshot()                                    # the tree while its parents still exist
     try:
         _kill_group(proc)
     except Exception:
@@ -524,6 +537,155 @@ def _kill_tree(proc):
         proc.wait(timeout=10)
     except Exception:
         pass
+    if watch is not None:
+        setattr(proc, "_mcp_survivors", watch.end_all())    # noqa: B010
+
+
+POLL_S = 3.0
+WRAPPERS = {"sps", "wpsjob", "conhost"}
+
+
+class _Watch:
+    """Follows one run while it goes: every program below sps.exe (for a complete stop), the RAM of the
+    whole run (and its peak), the program running now, and the programs the .prt has started so far
+    with the time each one took (for the dashboard's run-time estimate).  Never fails the run."""
+
+    def __init__(self, proc, prt: str | None = None, prt_mtime_before: int | None = None, on_tick=None):
+        self.proc, self.prt, self._prt_before, self.on_tick = proc, prt, prt_mtime_before, on_tick
+        self.seen: dict = {}                     # pid -> (create_time, name)
+        self.ram_mb = self.peak_ram_mb = 0
+        self.module: str | None = None
+        self.timeline: list[dict] = []           # [{"program", "t0", "t1"}] in the order the .prt shows them
+        self._offset = 0
+        self._partial = b""
+        self._root = None
+        self._stop = threading.Event()
+        self._mutex = threading.Lock()
+        if psutil is not None:
+            try:
+                self._root = psutil.Process(proc.pid)
+            except Exception:
+                self._root = None
+        self._thread = threading.Thread(target=self._loop, daemon=True)
+
+    def start(self) -> _Watch:
+        self._thread.start()
+        return self
+
+    def stop(self) -> None:
+        self._stop.set()
+        if self._thread.is_alive() and self._thread is not threading.current_thread():
+            self._thread.join(POLL_S + 2)
+        self.tick()                              # last look at the .prt (the final Stop lines)
+
+    def _loop(self) -> None:
+        while not self._stop.wait(POLL_S):
+            self.tick()
+
+    def tick(self) -> None:
+        try:
+            self.snapshot()
+            self._read_prt()
+        except Exception:                        # pragma: no cover - never let the watcher fail a run
+            pass
+        if self.on_tick is not None:
+            try:
+                self.on_tick(self)
+            except Exception:
+                pass
+
+    def snapshot(self) -> list:
+        """Record the run's programs now; -> the live descendants (psutil.Process)."""
+        if self._root is None:
+            return []
+        with self._mutex:
+            try:
+                kids = self._root.children(recursive=True)
+            except Exception:
+                kids = []
+            ram = 0
+            newest = None
+            for k in [self._root] + kids:
+                try:
+                    ct = k.create_time()
+                    name = k.name()
+                    ram += k.memory_info().rss
+                except Exception:
+                    continue
+                if k is not self._root:
+                    self.seen[k.pid] = (ct, name)
+                    base = os.path.splitext(name)[0].lower()
+                    if base not in WRAPPERS and (newest is None or ct >= newest[0]):
+                        newest = (ct, os.path.splitext(name)[0].upper())
+            self.ram_mb = round(ram / 2**20)
+            self.peak_ram_mb = max(self.peak_ram_mb, self.ram_mb)
+            self.module = newest[1] if newest else None
+            return kids
+
+    def _read_prt(self) -> None:
+        if not self.prt:
+            return
+        try:
+            st = os.stat(self.prt)
+        except OSError:
+            return
+        if self._prt_before is not None and st.st_mtime_ns <= self._prt_before:
+            return                               # still the protocol of the previous run
+        if st.st_size < self._offset:            # rewritten (sps.exe retried): start again
+            self._offset, self._partial, self.timeline = 0, b"", []
+        if st.st_size == self._offset:
+            return
+        with open(self.prt, "rb") as f:
+            f.seek(self._offset)
+            chunk = f.read(4_000_000)
+        self._offset += len(chunk)
+        data = self._partial + chunk
+        cut = data.rfind(b"\n") + 1
+        self._partial = data[cut:]
+        now = time.time()
+        for line in data[:cut].decode("latin-1").splitlines():
+            m = messages.START_RE.match(line)
+            if m and not m.group(1).lower().startswith("calculation"):
+                if self.timeline and self.timeline[-1]["t1"] is None:
+                    self.timeline[-1]["t1"] = now
+                self.timeline.append({"program": m.group(1).split()[0].upper(), "t0": now, "t1": None})
+            elif messages.STOP_RE.match(line) and self.timeline and self.timeline[-1]["t1"] is None:
+                self.timeline[-1]["t1"] = now
+
+    def modules(self) -> list[dict]:
+        """[{"program", "seconds"}] of the programs that finished, in order."""
+        return [{"program": t["program"], "seconds": round(t["t1"] - t["t0"], 1)}
+                for t in self.timeline if t["t1"] is not None]
+
+    def leftovers(self, names=None) -> list[dict]:
+        """Programs of this run that are still alive (optionally only those with these base names)."""
+        out = []
+        for pid, (ct, name) in list(self.seen.items()):
+            if names is not None and os.path.splitext(name)[0].lower() not in names:
+                continue
+            try:
+                p = psutil.Process(pid)
+                if abs(p.create_time() - ct) <= 1 and p.is_running() and p.status() != psutil.STATUS_ZOMBIE:
+                    out.append({"pid": pid, "name": name, "proc": p})
+            except Exception:
+                continue
+        return out
+
+    def end_all(self, names=None) -> list[dict]:
+        """End every program of this run still alive; -> those that could not be ended."""
+        if psutil is None:                       # pragma: no cover
+            return []
+        left = self.leftovers(names)
+        for x in left:
+            try:
+                x["proc"].kill()
+            except Exception:
+                pass
+        if not left:
+            return []
+        _, alive = psutil.wait_procs([x["proc"] for x in left], timeout=10)
+        alive_pids = {p.pid for p in alive}
+        return [{"pid": x["pid"], "name": x["name"]} for x in left if x["pid"] in alive_pids]
 
 
 def kill_tree_async(proc) -> threading.Thread:
@@ -598,7 +760,7 @@ def _lock_holder(path: str, info: dict | None) -> str | None:
     return None
 
 
-def lock_message(path: str, info: dict | None, what: str = "Another calculation is running in this folder") -> str:
+def lock_message(path: str, info: dict | None, what: str = "Another calculation of this model is running") -> str:
     name = os.path.basename(path)
     if info is not None and info["host"] and info["host"].casefold() != HOST.casefold():
         return (f"{what}, started from the PC '{info['host']}'" + (f" at {info['started']}" if info["started"]
@@ -609,14 +771,19 @@ def lock_message(path: str, info: dict | None, what: str = "Another calculation 
             "the lock file if you are sure nothing is running.")
 
 
-def live_lock(folder: str, skip: str | None = None) -> tuple[str, dict | None] | None:
-    """(path, contents) of a lock file in folder that is still live (stale ones are removed)."""
+def live_lock(folder: str, skip: str | None = None, stem: str | None = None) -> tuple[str, dict | None] | None:
+    """(path, contents) of a lock file in folder that is still live (stale ones are removed).
+    stem: only the lock of that model (<stem>.mcp-running) counts, so different models in one folder
+    can run at the same time; else any lock in the folder."""
+    mine = os.path.normcase(stem + LOCK_EXT) if stem else None
     for p in sorted(glob.glob(os.path.join(glob.escape(folder), "*" + LOCK_EXT))):
         if skip is not None and os.path.normcase(p) == os.path.normcase(skip):
             continue
         info = _read_lock(p)
         if _lock_holder(p, info):
-            return p, info
+            if mine is None or os.path.normcase(os.path.basename(p)) == mine:
+                return p, info
+            continue                               # another model's calculation: may run alongside
         if skip is None:
             _remove(p)
     return None
@@ -631,8 +798,9 @@ def _write_lock(path: str, pids) -> None:
 # running sps.exe
 # ------------------------------------------------------------------------------------------------
 
-def _launch(cmd, folder, timeout_s, on_start, cap: int = CONSOLE_TAIL_BYTES):
-    """Start sps.exe in a new job object, wait for it (killing the whole process tree on timeout).
+def _launch(cmd, folder, timeout_s, on_start, cap: int = CONSOLE_TAIL_BYTES, watch_kw: dict | None = None):
+    """Start sps.exe in a new job object, wait for it (killing the whole process tree on timeout;
+    timeout_s None: no time limit).  A _Watch follows the run (proc._mcp_watch).
     -> (proc, output tail, timed_out, containment problem or None)"""
     try:
         job = _new_job()                                    # before sps.exe exists
@@ -665,6 +833,9 @@ def _launch(cmd, folder, timeout_s, on_start, cap: int = CONSOLE_TAIL_BYTES):
                 del buf[:-cap]
     reader = threading.Thread(target=pump, daemon=True)
     reader.start()
+    watch = _Watch(proc, **(watch_kw or {}))
+    setattr(proc, "_mcp_watch", watch)                      # noqa: B010
+    watch.start()
     if on_start:
         on_start(proc)
     timed_out = False
@@ -675,6 +846,16 @@ def _launch(cmd, folder, timeout_s, on_start, cap: int = CONSOLE_TAIL_BYTES):
         timed_out = True
     finally:
         _ACTIVE.discard(proc)
+        watch.stop()
+    if not timed_out and not hasattr(proc, "_mcp_survivors"):
+        # sps.exe ended by itself: a calculation program still running now has left the run (it would
+        # keep the .cdb locked), so it is given a moment and then ended.
+        if watch.leftovers(cdblock.CALC_NAMES):
+            time.sleep(3)
+            left = [{"pid": x["pid"], "name": x["name"]} for x in watch.leftovers(cdblock.CALC_NAMES)]
+            if left:
+                setattr(proc, "_mcp_leftovers", left)           # noqa: B010
+                setattr(proc, "_mcp_survivors", watch.end_all(cdblock.CALC_NAMES))  # noqa: B010
     reader.join(10)
     if not reader.is_alive():
         try:
@@ -694,12 +875,61 @@ def _stat_ns(path):
 OK_STATUSES = ("ok", "ok with warnings")
 
 
-def run(dat_path: str, sps: str, timeout_s: float, allow_sys: bool = False,
+def _left(timeout_s: float | None, t0: float) -> float | None:
+    """What is left of the time limit (None: no limit)."""
+    return None if timeout_s is None else max(1.0, timeout_s - (time.time() - t0))
+
+
+def _pre_run_lock(cdb: str, root: str | None, auto_clear: bool) -> dict:
+    """Look at who holds the model's .cdb before SOFiSTiK opens it.
+    -> {} when nothing holds it, else a report with "ended" (orphans ended), "refuse" (a live
+    calculation holds it: do not start) or "warning"."""
+    if psutil is None or not os.path.isfile(cdb):
+        return {}
+    try:
+        info = cdblock.check(cdb, root)
+    except Exception as e:                       # never fail a run over the check itself
+        return {"warning": f"Could not check whether the .cdb is locked ({type(e).__name__}: {e})."}
+    if not info["locked"]:
+        return {}
+    kinds = {h["kind"] for h in info["holders"]}
+    rep: dict = {"holders": info["holders"]}
+    if "run" in kinds:
+        rep["refuse"] = ("The database " + os.path.basename(cdb) + " is in use by a calculation that is still "
+                         "running: " + " ".join(info["advice"]))
+        return rep
+    if "orphan" in kinds and auto_clear:
+        c = cdblock.clear(cdb, root)
+        rep.update(ended=c["ended"], failed=c["failed"], locked_now=c["locked_now"])
+        info = {"advice": c["advice"], "locked": c["locked_now"]}
+    if info["locked"]:
+        rep["warning"] = ("The database " + os.path.basename(cdb) + " is open in another program, so SOFiSTiK may "
+                          "not be able to write it: " + " ".join(info["advice"]))
+    return rep
+
+
+LOCK_WAIT_RE = re.compile(r"WAIT\s+FOR\s+LOCK", re.IGNORECASE)
+
+
+def _lock_abort(out: bytes, prt: str, fresh) -> bool:
+    """Did SOFiSTiK give up because the .cdb was locked ("CDBASE: WAIT FOR LOCK ABORTED BY USER")?"""
+    if LOCK_WAIT_RE.search((out or b"").decode("latin-1")):
+        return True
+    return bool(fresh(prt) and LOCK_WAIT_RE.search(messages.read_text(prt)))
+
+
+def run(dat_path: str, sps: str, timeout_s: float | None, allow_sys: bool = False,
         continue_on_error: bool = False, only_urs: int | None = None, on_start=None,
-        stopped=lambda: False, readable=None) -> dict:
+        stopped=lambda: False, readable=None, on_tick=None, sofistik_root: str | None = None,
+        auto_clear_locks: bool = True, on_scan=None, clean_cmd: str = "") -> dict:
     """Run sps.exe on dat_path (already access-checked) and return a summary dict.
     on_start(proc) is called with the running process; stopped() tells whether the caller killed it.
-    readable: folders an #INCLUDE / +APPLY file must be in (None: not checked)."""
+    readable: folders an #INCLUDE / +APPLY file must be in (None: not checked).
+    timeout_s None: no time limit.  on_tick(watch) is called every few seconds while it runs.
+    auto_clear_locks: end SOFiSTiK programs left behind by a stopped run that still hold this model's
+    .cdb (before the run); if SOFiSTiK still reports "WAIT FOR LOCK", also reset the locks stored in the
+    .cdb with SOFiSTiK's Clean Locks (clean_cmd: its command, "" = found in the registry) and run once more.
+    on_scan(scan) gets the input check (its files) before the run starts."""
     if not os.path.isfile(dat_path):
         return {"status": "not run", "reason": f".dat file not found: {dat_path}"}
     if not dat_path.lower().endswith(".dat"):
@@ -710,7 +940,8 @@ def run(dat_path: str, sps: str, timeout_s: float, allow_sys: bool = False,
     if not sps or not os.path.isfile(sps):
         return {"status": "not run", "reason": f"sps.exe not found ({sps}). Set \"sofistik_dir\" in settings.json."}
     folder, name = os.path.split(dat_path)
-    held = live_lock(folder)
+    stem = os.path.splitext(name)[0]
+    held = live_lock(folder, stem=stem)
     if held:
         return {"status": "not run", "lock_file": held[0], "lock_host": (held[1] or {}).get("host"),
                 "reason": lock_message(*held)}
@@ -743,8 +974,9 @@ def run(dat_path: str, sps: str, timeout_s: float, allow_sys: bool = False,
                 "missing_includes": scan["missing_includes"]}
     if not scan["programs"]:
         return {"status": "not run", "reason": "No active PROG / +PROG block found in the file (or its includes)."}
+    if on_scan is not None:
+        on_scan(scan)
 
-    stem = os.path.splitext(name)[0]
     prt = os.path.join(folder, stem + ".prt")
     erg = os.path.join(folder, stem + ".erg")
     before = {ext: _stat_ns(os.path.join(folder, stem + ext)) for ext in RESULT_EXTS}
@@ -773,11 +1005,18 @@ def run(dat_path: str, sps: str, timeout_s: float, allow_sys: bool = False,
                 "reason": f"{os.path.basename(lock_path)} appeared just now: another calculation is starting here."}
     _LOCKS.add(lock_path)
     try:
-        other = live_lock(folder, skip=lock_path)
+        other = live_lock(folder, skip=lock_path, stem=stem)
         if other:
             return {"status": "not run", "lock_file": other[0], "lock_host": (other[1] or {}).get("host"),
-                    "reason": lock_message(*other, what="Another calculation started in this folder at the same "
+                    "reason": lock_message(*other, what="Another calculation of this model started at the same "
                                                         "moment")}
+        cdb = os.path.join(folder, stem + ".cdb")
+        lock_report = _pre_run_lock(cdb, sofistik_root, auto_clear_locks)
+        if lock_report.get("refuse"):
+            return {"status": "not run", "reason": lock_report["refuse"], "cdb_lock": lock_report}
+        if lock_report.get("warning"):
+            server_warnings.append(lock_report["warning"])
+        watch_kw = {"prt": prt, "prt_mtime_before": before[".prt"], "on_tick": on_tick}
 
         def started(proc):
             try:
@@ -791,7 +1030,7 @@ def run(dat_path: str, sps: str, timeout_s: float, allow_sys: bool = False,
 
         t0 = time.time()
         cmd = [sps] + opts + [name]
-        proc, out, timed_out, problem = _launch(cmd, folder, timeout_s, started)
+        proc, out, timed_out, problem = _launch(cmd, folder, timeout_s, started, watch_kw=watch_kw)
         if problem:
             server_warnings.append("sps.exe could not be tied to the server (" + problem + "): if the server is "
                                    "closed during the run, the calculation may keep running.")
@@ -800,7 +1039,7 @@ def run(dat_path: str, sps: str, timeout_s: float, allow_sys: bool = False,
             # The order of options and file name for sps.exe is not documented: try file name first once.
             first = cmd
             cmd = [sps, name] + opts
-            proc, out2, timed_out, _ = _launch(cmd, folder, max(1.0, timeout_s - (time.time() - t0)), started)
+            proc, out2, timed_out, _ = _launch(cmd, folder, _left(timeout_s, t0), started, watch_kw=watch_kw)
             out = (out or b"") + (out2 or b"")
             retried = (f"sps.exe wrote no protocol with {' '.join(first[1:])}, so it was retried with the file "
                        f"name first: {' '.join(cmd[1:])}")
@@ -810,19 +1049,64 @@ def run(dat_path: str, sps: str, timeout_s: float, allow_sys: bool = False,
             if fresh(prt) and messages.END_RE.search(messages.read_text(prt)):
                 break
             time.sleep(0.5)
+        if (not timed_out and not stopped() and auto_clear_locks and _lock_abort(out, prt, fresh)):
+            # SOFiSTiK gave up waiting for the .cdb: end what a stopped run left holding it, then once more
+            again = _pre_run_lock(cdb, sofistik_root, True)
+            if not again.get("refuse") and not again.get("warning") and os.path.isfile(cdb):
+                # no program holds it any more: the lock is the one written inside the .cdb
+                again["clean_locks"] = cdblock.clean_locks(cdb, sofistik_root, clean_cmd)
+            lock_report.setdefault("after_lock_error", again)
+            if again.get("ended") or (again.get("clean_locks") or {}).get("cleaned"):
+                proc, out3, timed_out, _ = _launch(cmd, folder, _left(timeout_s, t0), started, watch_kw=watch_kw)
+                out = (out or b"") + (out3 or b"")
+                server_warnings.append("SOFiSTiK reported the .cdb as locked (WAIT FOR LOCK); " +
+                                       ("the programs left behind by an earlier run were ended" if again.get("ended")
+                                        else "its stale locks were cleared with SOFiSTiK's Clean Locks") +
+                                       " and the calculation was run again.")
+                deadline = time.time() + 15
+                while not timed_out and not stopped() and time.time() < deadline:
+                    if fresh(prt) and messages.END_RE.search(messages.read_text(prt)):
+                        break
+                    time.sleep(0.5)
         elapsed = time.time() - t0
     finally:
         _remove(lock_path)
 
     summary = messages.summarize_run(prt if fresh(prt) else None, erg if fresh(erg) else None)
     exit_code = None if timed_out else proc.returncode
+    watch = getattr(proc, "_mcp_watch", None)
+    if watch is not None:
+        summary["peak_ram_mb"] = watch.peak_ram_mb
+        summary["module_times"] = watch.modules()
+    survivors = getattr(proc, "_mcp_survivors", None) or []
+    leftovers = getattr(proc, "_mcp_leftovers", None) or []
+    if leftovers:
+        server_warnings.append("These SOFiSTiK programs were still running after sps.exe ended and were ended: " +
+                               ", ".join(f"{x['name']} ({x['pid']})" for x in leftovers))
+    if survivors:
+        server_warnings.append("These SOFiSTiK programs of the run could not be ended and may keep the .cdb "
+                               "locked: " + ", ".join(f"{x['name']} ({x['pid']})" for x in survivors) +
+                               ". check_cdb_lock shows what holds it.")
+        summary["left_running"] = survivors
+    if lock_report.get("ended") or lock_report.get("after_lock_error"):
+        summary["cdb_lock"] = {k: v for k, v in lock_report.items() if k != "warning"}
+    if _lock_abort(out, prt, fresh) and summary.get("status") not in OK_STATUSES:
+        info = cdblock.check(cdb, sofistik_root)
+        cl = ((lock_report.get("after_lock_error") or {}).get("clean_locks") or {})
+        summary["reason"] = ("SOFiSTiK could not open the database because it is locked (WAIT FOR LOCK). " +
+                             (" ".join(info["advice"]) or cl.get("error") or
+                              "No program holds it any more and Clean Locks ran: run it again, or call "
+                              "clear_cdb_lock.") +
+                             ("" if auto_clear_locks else
+                              " (settings.json \"auto_clear_cdb_locks\" is false, so nothing was ended.)"))
     if stopped():
         summary["status"] = "stopped"
         summary["reason"] = "The calculation was stopped on request; results are incomplete."
     elif timed_out:
         summary["status"] = "timed out"
-        summary["reason"] = (f"Stopped after {timeout_s / 60:.0f} minutes (settings.json \"run_timeout_minutes\"). "
-                             "The calculation was killed; results are incomplete.")
+        summary["reason"] = (f"Stopped after {(timeout_s or 0) / 60:.0f} minutes (the time limit asked for this run, "
+                             "or settings.json \"run_timeout_minutes\"). The calculation was killed; results are "
+                             "incomplete.")
     elif not fresh(prt):
         summary["reason"] = "sps.exe wrote no new .prt protocol, so the calculation did not run."
     elif summary["status"] in OK_STATUSES and exit_code not in (0, None):

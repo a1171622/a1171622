@@ -39,8 +39,8 @@ def test_utf8_bom_accepted(tmp_path):
     assert config.load_settings(str(p))["work_folders"] == ["D:\\x"]
 
 
-@pytest.mark.parametrize("value, expected", [("bad", 60.0), (None, 60.0), (0, 60.0), (-5, 1.0), (0.5, 1.0),
-                                             ("30", 30.0), (120, 120.0), ([1], 60.0)])
+@pytest.mark.parametrize("value, expected", [("bad", 0.0), (None, 0.0), (0, 0.0), (-5, 0.0), (0.5, 1.0),
+                                             ("30", 30.0), (120, 120.0), ([1], 0.0)])
 def test_timeout_values(tmp_path, value, expected):
     p = write(tmp_path / "s.json", json.dumps({"run_timeout_minutes": value}))
     assert config.load_settings(p)["run_timeout_minutes"] == expected
@@ -49,7 +49,7 @@ def test_timeout_values(tmp_path, value, expected):
 def test_missing_file_gives_defaults(tmp_path):
     s = config.load_settings(str(tmp_path / "none.json"))
     assert s["work_folders"] == [r"C:\Sofistik workflow"] and s["allow_sys_commands"] is False
-    assert s["run_timeout_minutes"] == 60.0 and s["_path"] == ""
+    assert s["run_timeout_minutes"] == 0.0 and s["_path"] == ""
 
 
 def test_no_settings_json_falls_back_to_settings_default(tmp_path, monkeypatch):
@@ -94,7 +94,7 @@ def test_single_backslash_control_escape_is_refused(tmp_path):
 
 def test_default_settings_file_is_valid_and_safe():
     s = config.load_settings(config.DEFAULT_SETTINGS_PATH)
-    assert s["allow_sys_commands"] is False and s["run_timeout_minutes"] == 60.0
+    assert s["allow_sys_commands"] is False and s["run_timeout_minutes"] == 0.0
     assert s["work_folders"] == [r"C:\Sofistik workflow"] and s["read_folders"] == []
 
 

@@ -82,7 +82,7 @@ def test_settings_comments_ignored(tmp_path):
     p = tmp_path / "s.json"
     p.write_text(json.dumps({"_help": "x", "work_folders": "C:\\a", "run_timeout_minutes": "bad"}))
     s = config.load_settings(str(p))
-    assert s["work_folders"] == ["C:\\a"] and s["run_timeout_minutes"] == 60.0 and "_help" not in s
+    assert s["work_folders"] == ["C:\\a"] and s["run_timeout_minutes"] == 0.0 and "_help" not in s
 
 
 def test_default_settings_file_valid():
@@ -351,7 +351,7 @@ def test_server_job_flow(monkeypatch, tmp_path):
 
     first, busy, locked, done = asyncio.run(go())
     assert first["status"] == "running" and first["job_id"].startswith("calc-")
-    assert busy["status"] == "not run" and "still running" in busy["reason"]
+    assert busy["status"] == "not run" and "already being calculated" in busy["reason"]
     assert "being calculated right now" in locked["error"]
     assert done["status"] == "ok with warnings"
 

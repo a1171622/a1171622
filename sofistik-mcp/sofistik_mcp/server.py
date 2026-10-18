@@ -23,12 +23,17 @@ import uuid
 import anyio
 from mcp.server.fastmcp import FastMCP
 
-from . import config, dashboard, docsearch, install, messages, solver
+from . import cdblock, config, dashboard, docsearch, install, messages, solver
+
+try:
+    import psutil
+except ImportError:                                  # pragma: no cover - psutil is in requirements.txt
+    psutil = None
 
 log = logging.getLogger("sofistik-mcp")
 logging.basicConfig(stream=sys.stderr, level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
-VERSION = "1.2.0"
+VERSION = "1.3.0"
 
 INSTRUCTIONS = """\
 Tools for SOFiSTiK 2027 on this PC (structural FEA).  Typical loop:
@@ -36,10 +41,16 @@ Tools for SOFiSTiK 2027 on this PC (structural FEA).  Typical loop:
 2. write_dat_file: write the CADINP input (.dat) inside a work folder.
 3. run_calculation: SOFiSTiK solves it in batch mode (sps.exe).  A long run returns
    status 'running' with a job_id: call get_job_result(job_id) until it is finished (each call waits
-   up to 40 s).  ALWAYS read the final status, errors and warnings; 'errors' means the results are
-   not valid.  stop_calculation stops a run (if it answers 'stopping', get_job_result gives the final
-   state).  While a calculation runs, write_dat_file refuses to write.  Big .cdb reads can also
-   return a job_id.
+   up to 40 s).  There is no time limit unless settings.json sets one: a big model can run for hours.
+   ALWAYS read the final status, errors and warnings; 'errors' means the results are not valid.
+   stop_calculation stops a run (if it answers 'stopping', get_job_result gives the final state).
+   Several models can run at the same time (settings.json "max_parallel_runs", and only while enough
+   RAM stays free).  To run several checks on one model at once, clone_cdb copies the model's .cdb to
+   the name of each check's .dat; run those .dat files in parallel.  While a calculation runs,
+   write_dat_file refuses to change its input files.  Big .cdb reads can also return a job_id.
+   A .cdb that SOFiSTiK reports as locked ("WAIT FOR LOCK"): check_cdb_lock says which program holds
+   it; programs left behind by a stopped run are ended automatically before each run (clear_cdb_lock
+   does it on request).  Never end other programs yourself.
 4. cdb_overview / cdb_load_cases, then cdb_node_results, cdb_support_reactions, cdb_beam_forces,
    cdb_truss_cable_forces, cdb_envelope to read results from the .cdb.
 Units returned: displacements mm, rotations mrad, forces kN, moments kNm, coordinates m.
@@ -60,7 +71,8 @@ STOP_WAIT_S = 5        # stop_calculation waits this long for the end, then answ
 MAX_ROWS = 5000        # upper limit for max_rows / max_entries
 MAX_CDB_JOBS = 4       # .cdb reads running at the same time (each is a worker process)
 _jobs: dict = {}
-_calc: dict = {"job": None, "proc": None, "stop": False, "cdb": None}
+_calcs: dict = {}      # job id -> {"job", "proc", "stop", "cdb", "dat", "inputs"} of the calculations started
+_latest: dict = {"id": None}
 _last_run: dict = {}   # normalised .cdb path -> {"status", "cdb_updated"} of the last run in this server
 BAD_RUN_STATUSES = ("errors", "not finished", "no protocol", "timed out", "stopped")
 _root_cache: dict = {}
@@ -87,16 +99,21 @@ def _cap(n, default: int) -> int:
         return default
 
 
-def _calc_running():
-    cur = _calc["job"]
-    return cur if cur is not None and not cur["done"].is_set() else None
+def _running() -> list[dict]:
+    """The calculations still running, oldest first."""
+    return [c for c in _calcs.values() if not c["job"]["done"].is_set()]
+
+
+def _forget_finished() -> None:
+    for k in [k for k, c in _calcs.items() if c["job"]["done"].is_set() and k != _latest["id"]]:
+        _calcs.pop(k, None)
 
 
 def _settings():
     return config.load_settings()
 
 
-def _start_job(kind: str, label: str, fn) -> dict:
+def _start_job(kind: str, label: str, fn, before=None) -> dict:
     job: dict = {"id": f"{kind}-{uuid.uuid4().hex[:8]}", "kind": kind, "label": label, "started": time.time(),
                  "result": None, "done": threading.Event()}
 
@@ -112,6 +129,8 @@ def _start_job(kind: str, label: str, fn) -> dict:
     for old in sorted(_jobs.values(), key=lambda j: j["started"])[:-50]:
         if old["done"].is_set():
             _jobs.pop(old["id"], None)
+    if before is not None:
+        before(job)
     threading.Thread(target=work, daemon=True).start()
     return job
 
@@ -156,7 +175,10 @@ async def sofistik_status() -> dict:
     return {"server_version": VERSION, "python": sys.version.split()[0], "settings_file": s.get("_path"),
             "sofistik": info, "work_folders": s["work_folders"], "read_folders": s["read_folders"],
             "examples_folders": s["examples_folders"], "manual_folders": s["manual_folders"],
-            "allow_sys_commands": s["allow_sys_commands"], "run_timeout_minutes": s["run_timeout_minutes"],
+            "allow_sys_commands": s["allow_sys_commands"],
+            "run_timeout_minutes": s["run_timeout_minutes"] or "no limit",
+            "max_parallel_runs": s["max_parallel_runs"], "min_free_ram_gb": s["min_free_ram_gb"],
+            "auto_clear_cdb_locks": s["auto_clear_cdb_locks"],
             "manual_index_shipped": os.path.isfile(docsearch.SHIPPED_INDEX)}
 
 
@@ -229,11 +251,15 @@ async def write_dat_file(path: str, content: str, overwrite: bool = False) -> di
         return _err(e)
     if not full.lower().endswith(".dat"):
         return {"error": "The file name must end in .dat."}
-    cur = _calc_running()
-    if cur is not None:
-        # SOFiSTiK reads #INCLUDE / +APPLY files while it runs: nothing may change under it
-        return {"error": f"A calculation is running ({cur['label']}); files cannot be written until it has "
-                         f"finished. Wait with get_job_result('{cur['id']}') or stop it with stop_calculation."}
+    for c in _running():
+        # SOFiSTiK reads #INCLUDE / +APPLY files while it runs: nothing it uses may change under it.  Until
+        # its input check is done every file in its folder counts as its input.
+        mine = config._norm(full)
+        if mine in c["inputs"] or (c["inputs_pending"] and config._norm(os.path.dirname(full)) == c["folder"]):
+            j = c["job"]
+            return {"error": f"A calculation that reads this file is running ({j['label']}); it cannot be "
+                             f"written until that has finished. Wait with get_job_result('{j['id']}') or stop "
+                             "it with stop_calculation."}
     text = content.replace("\r\n", "\n").replace("\r", "\n")
     if not s["allow_sys_commands"]:
         found = solver.sys_lines_in_text(text, full, config.readable_folders(s, _install(s).get("root")))
@@ -299,68 +325,149 @@ async def run_calculation(dat_path: str, continue_on_error: bool = False, only_b
     info = _install(s)
     if not info.get("sps"):
         return {"status": "not run", "reason": info.get("error") or "sps.exe not found", "sofistik": info}
-    limit = s["run_timeout_minutes"]
-    if timeout_minutes is not None:
-        limit = max(1.0, min(float(timeout_minutes), limit))
-    cur = _calc["job"]
-    if cur is not None and not cur["done"].is_set():
-        return {"status": "not run", "reason": f"Another calculation is still running ({cur['label']}). "
-                f"Wait with get_job_result('{cur['id']}') or stop it with stop_calculation.",
-                "job_id": cur["id"]}
+    limit = s["run_timeout_minutes"] or None              # None: no time limit
+    if timeout_minutes is not None and float(timeout_minutes) > 0:
+        limit = max(1.0, float(timeout_minutes) if limit is None else min(float(timeout_minutes), limit))
     cdb_key = config._norm(os.path.splitext(full)[0] + ".cdb")
-    _calc.update(stop=False, proc=None, cdb=cdb_key)
+    busy = _parallel_refusal(full, cdb_key, s)
+    if busy:
+        return busy
+    _forget_finished()
+    entry: dict = {"job": None, "proc": None, "stop": False, "cdb": cdb_key, "dat": config._norm(full),
+                   "folder": config._norm(os.path.dirname(full)), "inputs": {config._norm(full)},
+                   "inputs_pending": True}
 
     def on_start(proc):
-        _calc["proc"] = proc
-        _state.job_process(proc.pid)
+        entry["proc"] = proc
+        _state.job_process(proc.pid, key=entry["job"]["id"])
+
+    def on_scan(scan):
+        entry["inputs"] = {config._norm(p) for p in scan.get("hashes", {})} | {config._norm(full)}
+        entry["inputs_pending"] = False
+        _state.job_programs(1 if only_block_urs is not None else len(scan.get("programs") or []) or None,
+                            key=entry["job"]["id"])
 
     def work():
         log.info("run %s", full)
-        _state.job_started(full)
         r: dict = {}
         try:
-            r = solver.run(full, info["sps"], limit * 60, allow_sys=s["allow_sys_commands"],
+            r = solver.run(full, info["sps"], None if limit is None else limit * 60,
+                           allow_sys=s["allow_sys_commands"],
                            continue_on_error=continue_on_error, only_urs=only_block_urs,
-                           on_start=on_start, stopped=lambda: _calc["stop"],
-                           readable=config.readable_folders(s, info.get("root")))
+                           on_start=on_start, stopped=lambda: entry["stop"],
+                           readable=config.readable_folders(s, info.get("root")),
+                           on_tick=lambda w: _state.job_progress(w, key=entry["job"]["id"]),
+                           sofistik_root=info.get("root"), auto_clear_locks=s["auto_clear_cdb_locks"],
+                           on_scan=on_scan, clean_cmd=str(s.get("clean_locks_command") or ""))
             if r.get("status") != "not run":
                 _last_run[cdb_key] = {"status": r.get("status"),
                                       "cdb_updated": bool(r.get("files", {}).get("cdb", {}).get("updated_by_this_run"))}
             return r
         finally:
-            _calc["proc"] = None
-            _state.job_finished(r)
+            entry["proc"] = None
+            _state.job_finished(r, key=entry["job"]["id"])
 
-    job = _start_job("calc", os.path.basename(full), work)
-    _calc["job"] = job
+    with _start_lock:
+        busy = _parallel_refusal(full, cdb_key, s)          # again, now that no other start can slip in
+        if busy:
+            return busy
+        job = _start_job("calc", os.path.basename(full), work, before=lambda j: _register(j, entry, full))
     return await _wait(job)
+
+
+_start_lock = threading.Lock()
+
+
+def _register(job: dict, entry: dict, full: str) -> None:
+    entry["job"] = job
+    _calcs[job["id"]] = entry
+    _latest["id"] = job["id"]
+    _state.job_started(full, key=job["id"])
+
+
+def _parallel_refusal(full: str, cdb_key: str, s: dict) -> dict | None:
+    """Why this calculation may not start now (None: it may)."""
+    running = _running()
+    for c in running:
+        if c["cdb"] == cdb_key:
+            j = c["job"]
+            return {"status": "not run", "job_id": j["id"],
+                    "reason": f"This model is already being calculated ({j['label']}). Wait with "
+                              f"get_job_result('{j['id']}') or stop it with stop_calculation."}
+    if not running:
+        return None
+    labels = ", ".join(f"{c['job']['label']} ({c['job']['id']})" for c in running)
+    if len(running) >= s["max_parallel_runs"]:
+        return {"status": "not run", "running": [c["job"]["id"] for c in running],
+                "reason": f"{len(running)} calculation(s) already running ({labels}); settings.json "
+                          f"\"max_parallel_runs\" allows {s['max_parallel_runs']}. Wait for one with get_job_result."}
+    ram = _ram_check(full, running, s)
+    if ram:
+        return {"status": "not run", "running": [c["job"]["id"] for c in running], "reason": ram}
+    return None
+
+
+def _ram_check(full: str, running: list, s: dict) -> str | None:
+    """A second calculation only starts if the RAM it needed last time (or, never run here, what the
+    calculations now running need) fits next to what the running ones may still grow to, with
+    min_free_ram_gb to spare."""
+    if psutil is None:                                     # pragma: no cover
+        return None
+    hist = _state.history()
+    avail = psutil.virtual_memory().available / 2**20
+    growth = 0.0
+    biggest = 0.0
+    for c in running:
+        job = _state.job_info(c["job"]["id"]) or {}
+        now_mb = float(job.get("ram_mb") or 0)
+        peak = float((hist.peak_ram_mb(c["dat"]) if hist else None) or job.get("peak_ram_mb") or now_mb)
+        growth += max(peak - now_mb, 0.0)
+        biggest = max(biggest, peak)
+    last = hist.peak_ram_mb(full) if hist else None
+    basis = "what it needed last time" if last else "the largest calculation running now (this file has not run here)"
+    need = float(last or biggest)
+    spare = s["min_free_ram_gb"] * 1024
+    if avail - growth - need < spare:
+        return (f"Not enough free RAM to start a second calculation: {avail / 1024:.1f} GB free, the running "
+                f"calculation(s) may still need {growth / 1024:.1f} GB more, this one about {need / 1024:.1f} GB "
+                f"({basis}), and settings.json \"min_free_ram_gb\" keeps {s['min_free_ram_gb']:g} GB spare. "
+                "Wait for the running calculation with get_job_result.")
+    return None
 
 
 @mcp.tool()
 async def get_job_result(job_id: str | None = None, wait_seconds: float = 40) -> dict:
     """Wait (up to wait_seconds, max 50) for a calculation or .cdb read that answered 'running', and
     return its result.  Without job_id: the latest calculation."""
-    job = _jobs.get(job_id) if job_id else _calc["job"]
+    job = _jobs.get(job_id) if job_id else (_calcs.get(_latest["id"]) or {}).get("job")
     if job is None:
         return {"error": f"No job {job_id or '(no calculation started yet)'}. Jobs are forgotten when Claude restarts."}
     return await _wait(job, wait_seconds)
 
 
 @mcp.tool()
-async def stop_calculation() -> dict:
-    """Stop the running SOFiSTiK calculation (kills sps.exe and the programs it started).  Answers within
-    a few seconds: 'stopped' with the result, or 'stopping' (then get_job_result gives the final state)."""
-    job, proc = _calc["job"], _calc["proc"]
-    if job is None or job["done"].is_set():
-        return {"status": "nothing running"}
-    _calc["stop"] = True
-    if proc is not None:
-        solver.kill_tree_async(proc)
-    r = await _wait(job, STOP_WAIT_S)
-    if r.get("status") == "running":
-        return {"status": "stopping", "job_id": job["id"],
-                "next": f"SOFiSTiK is being stopped. Call get_job_result(job_id='{job['id']}') for the final state."}
-    return r
+async def stop_calculation(job_id: str | None = None) -> dict:
+    """Stop a running SOFiSTiK calculation (kills sps.exe and every program it started).  job_id: which
+    one; without it every running calculation is stopped.  Answers within a few seconds: 'stopped'
+    with the result, or 'stopping' (then get_job_result gives the final state)."""
+    running = _running()
+    if job_id:
+        running = [c for c in running if c["job"]["id"] == job_id]
+    if not running:
+        return {"status": "nothing running" + (f" with job_id {job_id}" if job_id else "")}
+    for c in running:
+        c["stop"] = True
+        if c["proc"] is not None:
+            solver.kill_tree_async(c["proc"])
+    out = []
+    for c in running:
+        job = c["job"]
+        r = await _wait(job, STOP_WAIT_S)
+        if r.get("status") == "running":
+            r = {"status": "stopping", "job_id": job["id"],
+                 "next": f"SOFiSTiK is being stopped. Call get_job_result(job_id='{job['id']}') for the final state."}
+        out.append(r)
+    return out[0] if len(out) == 1 else {"status": "stopped several", "results": out}
 
 
 @mcp.tool()
@@ -373,6 +480,129 @@ async def read_calculation_messages(path: str) -> dict:
         return _err(e)
     stem = os.path.splitext(full)[0]
     return messages.summarize_run(stem + ".prt", stem + ".erg")
+
+
+def _cdb_path(path: str) -> str:
+    return path[:-4] + ".cdb" if path.lower().endswith(".dat") else path
+
+
+@mcp.tool()
+async def check_cdb_lock(cdb_path: str) -> dict:
+    """Is a .cdb locked, and by which program?  Each program that has it open is one of: run (a
+    calculation still running: wait), window (open in WinGRAF / Teddy / SSD ...: close it there),
+    reader (this server reading results), orphan (left behind by a stopped or crashed run:
+    clear_cdb_lock ends it), other.  cdb_path: the .cdb or its .dat."""
+    s = _settings()
+    info = _install(s)
+    try:
+        full = config.check_read(_cdb_path(cdb_path), s, info.get("root"))
+    except config.AccessError as e:
+        return _err(e)
+    if not full.lower().endswith(".cdb"):
+        return {"error": "Give the .cdb file (or its .dat)."}
+    r = await anyio.to_thread.run_sync(lambda: cdblock.check(full, info.get("root")))
+    r["calculating_here"] = [c["job"]["id"] for c in _running() if c["cdb"] == config._norm(full)]
+    return r
+
+
+@mcp.tool()
+async def clear_cdb_lock(cdb_path: str, clean_stored_locks: bool = True) -> dict:
+    """Clear a stale lock on a .cdb.  First ends only the SOFiSTiK programs left behind by a stopped or
+    crashed run that still hold it (kind 'orphan' in check_cdb_lock).  Then, once no program has it
+    open, resets the locks a killed run leaves written INSIDE the .cdb (SOFiSTiK error "WAIT FOR LOCK"
+    / "another process is writing the key"; a copy of the file is locked too) with SOFiSTiK's own
+    Clean Locks (clean_stored_locks=False skips that).  Running calculations, SOFiSTiK windows and
+    other programs are never ended: the answer says what to close instead.  run_calculation does all
+    this by itself when SOFiSTiK reports the lock (settings.json "auto_clear_cdb_locks")."""
+    s = _settings()
+    info = _install(s)
+    try:
+        full = config.check_write(_cdb_path(cdb_path), s)
+    except config.AccessError as e:
+        return _err(e)
+    if not full.lower().endswith(".cdb"):
+        return {"error": "Give the .cdb file (or its .dat)."}
+    for c in _running():
+        if c["cdb"] == config._norm(full):
+            return {"error": f"This .cdb is being calculated right now ({c['job']['id']}): that is not a stale "
+                             "lock. Stop it with stop_calculation if it must end."}
+    r = await anyio.to_thread.run_sync(lambda: cdblock.clear(full, info.get("root"), clean_flag=clean_stored_locks,
+                                                             clean_cmd=str(s.get("clean_locks_command") or "")))
+    if r["ended"]:
+        log.info("cleared lock on %s: ended %s", full, r["ended"])
+    return r
+
+
+CLONE_SPARE_BYTES = 1 * 2**30
+
+
+@mcp.tool()
+async def clone_cdb(cdb_path: str, new_name: str, overwrite: bool = False) -> dict:
+    """Copy a model's .cdb so that several checks can run on it at the same time.  SOFiSTiK uses the
+    .cdb with the same name as the .dat, so new_name is the name of the check's .dat (or a full path to
+    it, or to the new .cdb): e.g. clone_cdb("C:\\...\\26016.cdb", "26016_bdk_part2") gives
+    26016_bdk_part2.cdb next to it; then run 26016_bdk_part2.dat.  The copy is refused while the
+    model is being calculated or locked.  overwrite=True replaces an existing copy (not a .cdb that is
+    being calculated or is open)."""
+    s = _settings()
+    info = _install(s)
+    try:
+        src = config.check_read(_cdb_path(cdb_path), s, info.get("root"))
+    except config.AccessError as e:
+        return _err(e)
+    if not src.lower().endswith(".cdb") or not os.path.isfile(src):
+        return {"error": f"Source .cdb not found: {src}"}
+    name = str(new_name).strip()
+    if not name:
+        return {"error": "new_name: give the name of the check's .dat, e.g. 26016_bdk_part2."}
+    if not (os.path.isabs(name) or config.is_full_path(name)):
+        name = os.path.join(os.path.dirname(src), name)
+    base = os.path.splitext(name)[0] if name.lower().endswith((".dat", ".cdb")) else name
+    target = base + ".cdb"
+    bad = config.bad_file_name(target)
+    if bad:
+        return {"error": bad}
+    try:
+        target = config.check_write(target, s)
+        _not_in_server_folder(target)
+    except config.AccessError as e:
+        return _err(e)
+    if config._norm(target) == config._norm(src):
+        return {"error": "new_name gives the same .cdb as the source."}
+    for c in _running():
+        if c["cdb"] in (config._norm(src), config._norm(target)):
+            return {"error": f"{os.path.basename(c['cdb'])} is being calculated right now ({c['job']['id']}); "
+                             "copy it after the calculation has finished."}
+    if os.path.exists(target) and not overwrite:
+        return {"error": f"{target} already exists. Use another name, or overwrite=True."}
+
+    def work():
+        for p, what in ((src, "source"), (target, "target")):
+            if os.path.isfile(p):
+                chk = cdblock.check(p, info.get("root"))
+                if chk["locked"]:
+                    return {"error": f"The {what} {os.path.basename(p)} is open in another program, so a copy may be "
+                                     "half-written: " + " ".join(chk["advice"]), "holders": chk["holders"]}
+        size = os.path.getsize(src)
+        free = shutil.disk_usage(os.path.dirname(target)).free
+        if free < size + CLONE_SPARE_BYTES:
+            return {"error": f"Not enough disk space: the copy needs {size / 2**30:.1f} GB and leaves less than "
+                             f"1 GB free ({free / 2**30:.1f} GB free now)."}
+        t0 = time.time()
+        tmp = target + f".{os.getpid()}.copying"
+        try:
+            shutil.copyfile(src, tmp)
+            os.replace(tmp, target)
+        finally:
+            if os.path.exists(tmp):
+                os.remove(tmp)
+        dat = base + ".dat"
+        return {"copied": src, "to": target, "size_mb": round(size / 2**20, 1), "seconds": round(time.time() - t0, 1),
+                "dat_to_run": dat, "dat_exists": os.path.isfile(dat),
+                "note": "Run dat_to_run with run_calculation; it reads and writes this copy, not the original."}
+
+    job = _start_job("copy", f"clone {os.path.basename(src)} -> {os.path.basename(target)}", work)
+    return await _wait(job)
 
 
 # ------------------------------------------------------------------------------------------------
@@ -390,10 +620,10 @@ def _cdb_call(op: str, cdb_path: str, args: dict, timeout_s: float = 900) -> dic
         full = full[:-4] + ".cdb"
     if not full.lower().endswith(".cdb"):
         return {"error": "Give the .cdb file (or its .dat)."}
-    cur = _calc["job"]
-    if cur is not None and not cur["done"].is_set() and _calc["cdb"] == config._norm(full):
-        return {"error": "This .cdb is being calculated right now. Wait for the calculation "
-                         f"(get_job_result('{cur['id']}')) and read it afterwards."}
+    for c in _running():
+        if c["cdb"] == config._norm(full):
+            return {"error": "This .cdb is being calculated right now. Wait for the calculation "
+                             f"(get_job_result('{c['job']['id']}')) and read it afterwards."}
     if not os.path.isfile(full):
         return {"error": f".cdb not found: {full}. Run the calculation first."}
     if not info.get("dll") or not info.get("daten"):

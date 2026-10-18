@@ -25,7 +25,7 @@ def test_status(server_mod, settings):
     st = run(server_mod.sofistik_status())
     assert st["server_version"] == server_mod.VERSION and st["sofistik"]["sps"] == server_mod._test_info["sps"]
     assert st["work_folders"] == settings["work_folders"] and st["allow_sys_commands"] is False
-    assert st["run_timeout_minutes"] == 60.0 and isinstance(st["manual_index_shipped"], bool)
+    assert st["run_timeout_minutes"] == "no limit" and isinstance(st["manual_index_shipped"], bool)
 
 
 def test_install_error_is_reported_not_raised(monkeypatch, tmp_path):
@@ -173,7 +173,12 @@ def test_timeout_minutes_limited_by_settings(server_mod, settings, monkeypatch):
     seen = []
     monkeypatch.setattr(server_mod.solver, "run", lambda *a, **k: seen.append(a[2]) or {"status": "ok"})
     d = dat(settings, "m.dat", "+PROG ASE\n")
-    for asked in (None, 0.01, 5, 600):
+    for asked in (None, 0, 0.01, 5, 600):                      # settings: no limit
+        run(server_mod.run_calculation(d, timeout_minutes=asked))
+    assert seen == [None, None, 60.0, 300.0, 36000.0]
+    seen.clear()
+    settings["run_timeout_minutes"] = 60.0
+    for asked in (None, 0.01, 5, 600):                         # a limit in settings.json caps every run
         run(server_mod.run_calculation(d, timeout_minutes=asked))
     assert seen == [3600.0, 60.0, 300.0, 3600.0]
 
@@ -184,8 +189,13 @@ def test_long_run_job_flow(server_mod, settings):
     first = run(server_mod.run_calculation(d))
     assert first["status"] == "running" and first["job_id"].startswith("calc-") and first["what"] == "slow.dat"
     assert time.time() - t0 < 10 and "get_job_result" in first["next"]
+    same = run(server_mod.run_calculation(d))
+    assert same["status"] == "not run" and "already being calculated" in same["reason"]
+    assert same["job_id"] == first["job_id"]
+    settings["max_parallel_runs"] = 1
     busy = run(server_mod.run_calculation(dat(settings, "other.dat", "+PROG ASE\n")))
-    assert busy["status"] == "not run" and "still running" in busy["reason"] and busy["job_id"] == first["job_id"]
+    assert busy["status"] == "not run" and "already running" in busy["reason"] and busy["running"] == [first["job_id"]]
+    settings["max_parallel_runs"] = 2
     for p in ("slow.cdb", "slow.dat", "SLOW.CDB" if os.name == "nt" else "slow.cdb"):
         locked = run(server_mod.cdb_overview(str(work(settings) / p)))
         assert "being calculated right now" in locked["error"]
@@ -206,7 +216,7 @@ def test_stop_calculation(server_mod, settings):
     assert r["status"] in ("stopped", "stopping") and time.time() - t0 < 15
     r = run(server_mod.get_job_result(first["job_id"], 30))
     assert r["status"] == "stopped" and "stopped on request" in r["reason"] and time.time() - t0 < 45
-    assert server_mod._calc["proc"] is None and not (work(settings) / "long.prt").exists()
+    assert all(c["proc"] is None for c in server_mod._calcs.values()) and not (work(settings) / "long.prt").exists()
     nxt = run(server_mod.run_calculation(dat(settings, "next.dat", "+PROG ASE\nEND\n")))
     assert nxt["status"] == "ok"                                                   # stop flag reset
 
