@@ -244,8 +244,13 @@ def test_stop_ends_a_program_that_left_the_job(tmp_path):
 def test_lock_abort_is_cleaned_and_rerun(tmp_path, sps, monkeypatch):
     root = str(tmp_path / "sofistik")
     write_fake_dbinfo(root)
-    dat = w(tmp_path / "m.dat", "+PROG ASE\nEND\n$ FAKE print=CDBASE:_WAIT_FOR_LOCK_ABORTED_BY_USER\n")
+    monkeypatch.setattr(cdblock, "SETTLE_GAP_S", 0)
+    ok = w(tmp_path / "m.dat", "+PROG ASE\nEND\n$ FAKE print=CDBASE:_WAIT_FOR_LOCK_ABORTED_BY_USER\n")
     (tmp_path / "m.cdb").write_bytes(b"\0" * 64)
+    assert solver.run(ok, sps, 60, sofistik_root=root, clean_cmd=fake_cmd(root))["status"] == "ok"
+    assert not os.path.exists(os.path.join(root, "dbinfo_calls.txt"))              # it went on: nothing to clean
+    dat = w(tmp_path / "m.dat", "+PROG ASE\nEND\n$ FAKE mode=errors\n"
+                                "$ FAKE print=CDBASE:_WAIT_FOR_LOCK_ABORTED_BY_USER\n")
     r = solver.run(dat, sps, 60, sofistik_root=root, clean_cmd=fake_cmd(root))
     assert dbinfo_calls(root) == [f"{tmp_path / 'm.cdb'} z"]                       # cleaned once
     assert any("Clean Locks" in x and "run again" in x for x in r["server_warnings"])
@@ -254,8 +259,9 @@ def test_lock_abort_is_cleaned_and_rerun(tmp_path, sps, monkeypatch):
     assert len(dbinfo_calls(root)) == 1                                              # switched off: not again
 
 
-def test_lock_abort_reason_when_it_cannot_be_cleaned(tmp_path, sps):
-    dat = w(tmp_path / "m.dat", "+PROG ASE\nEND\n$ FAKE mode=errors\n$ FAKE print=WAIT_FOR_LOCK\n")
+def test_lock_abort_reason_when_it_cannot_be_cleaned(tmp_path, sps, monkeypatch):
+    monkeypatch.setattr(cdblock, "SETTLE_GAP_S", 0)
+    dat = w(tmp_path / "m.dat", "+PROG ASE\nEND\n$ FAKE mode=errors\n$ FAKE print=WAIT_FOR_LOCK_ABORTED\n")
     (tmp_path / "m.cdb").write_bytes(b"\0" * 64)
     r = solver.run(dat, sps, 60, sofistik_root=str(tmp_path / "nosofistik"))
     assert "locked (WAIT FOR LOCK)" in r["reason"] and "Teddy" in r["reason"]
@@ -331,20 +337,35 @@ def test_survivors_are_reported(tmp_path, sps, monkeypatch):
     assert any("could not be ended" in x for x in r["server_warnings"])
 
 
-def test_working_folder_is_the_hint_when_open_files_are_refused(tmp_path, cdb, monkeypatch):
-    (tmp_path / "other.txt").write_text("x")
-    p = hold(fake_program(tmp_path, "ase"), str(tmp_path / "other.txt"), tmp_path)   # runs in the .cdb's folder
+def test_a_calculation_of_this_model_counts_even_without_the_open_file(tmp_path, cdb, monkeypatch):
+    """Between two programs sps.exe has the .cdb closed: a SOFiSTiK program in the folder whose command
+    line names the model still counts (and is never ended on that guess)."""
+    (tmp_path / "m.lst").write_text("x")
+    (tmp_path / "other.lst").write_text("x")
+    p = hold(fake_program(tmp_path, "ase"), str(tmp_path / "m.lst"), tmp_path)         # names model m
+    q = hold(fake_program(tmp_path, "aqua"), str(tmp_path / "other.lst"), tmp_path)    # another model
 
     def denied(self):
         raise psutil.AccessDenied(self.pid)
     monkeypatch.setattr(psutil.Process, "open_files", denied)
     try:
         r = cdblock.check(cdb)
-        hint = [h["how"] for h in r["holders"] if h["pid"] == p.pid]
-        assert hint == ["working folder (its open files could not be listed)"]
+        assert [(h["pid"], h["how"], h["kind"]) for h in r["holders"]] == [(p.pid, cdblock.MODEL_HINT, "run")]
+        monkeypatch.setattr(cdblock, "_chain", lambda pid, table: [])                     # looks left behind
+        c = cdblock.clear(cdb, clean_flag=True)
+        assert c["ended"] == [] and p.poll() is None and "cannot be confirmed" in c["advice"][0]
+        assert c["clean_locks"]["cleaned"] is False
     finally:
-        p.kill()
-        p.wait()
+        for x in (p, q):
+            x.kill()
+            x.wait()
+
+
+def test_quiet_checks_again(cdb, monkeypatch):
+    seen = iter([False, False, True])
+    monkeypatch.setattr(cdblock, "SETTLE_GAP_S", 0)
+    monkeypatch.setattr(cdblock, "check", lambda *a, **k: {"locked": next(seen), "holders": [], "advice": []})
+    assert cdblock.quiet(cdb)["locked"] is True
 
 
 def test_end_skips_a_reused_number_and_reports_kill_failures(cdb, monkeypatch):

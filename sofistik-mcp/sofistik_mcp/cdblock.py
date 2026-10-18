@@ -38,8 +38,8 @@ WINDOWS = {"ssd", "teddy", "wingraf", "animator", "sofiplus", "resultviewer", "s
 LAUNCHERS = {"sps", "teddy", "ssd", "sofiplus", "sofiplus-x", "wps"}
 # calculation programs known by name (also when the SOFiSTiK program folder is unknown)
 CALC_NAMES = {"wpsjob", "aqua", "aqb", "sofimsha", "sofimshb", "sofimshc", "sofiload", "ase", "bdk", "maxima",
-              "talpa", "dyna", "csm", "ella", "hase", "sir", "star2", "tendon", "textile", "column", "footing",
-              "bemess", "dbmerg", "hydra", "rely", "plbconverter", "dolfyn", "templat", "template"}
+              "talpa", "dyna", "csm", "ella", "hase", "star2", "tendon", "textile",
+              "bemess", "dbmerg", "hydra", "plbconverter", "dolfyn"}
 KILL_WAIT_S = 10
 
 
@@ -114,15 +114,36 @@ def _process_table(root: str | None) -> dict:
     return table
 
 
+MODEL_HINT = "calculation of this model (runs in its folder, its command line names it)"
+
+
+def _runs_model(p, folder: str, model: str) -> bool:
+    """A SOFiSTiK program working on this model: in its folder, with the model's name in its command line."""
+    try:
+        if not _same_file(p.cwd(), folder):
+            return False
+        args = [str(a) for a in p.cmdline()[1:]]
+    except Exception:
+        return False
+    for a in args:
+        for part in a.replace('"', " ").split():     # "-B0 m.dat" may come as one argument
+            if _stem(part.replace("\\", "/").rsplit("/", 1)[-1]) == model:
+                return True
+    return False
+
+
 def holders(cdb: str, root: str | None = None, own_pids: set | None = None) -> list[dict]:
-    """Processes that have cdb open: [{pid, name, kind, create_time, parent, ram_mb, how}].
+    """Processes that use cdb: [{pid, name, kind, create_time, parent, ram_mb, how}].
     Only SOFiSTiK programs and Python processes are searched (reading every program's open files is
-    slow and mostly refused); 'how' says whether the open file was seen or only guessed from the
-    program's current folder (when Windows refused to list its files)."""
+    slow and mostly refused).  how = "open file": it has the .cdb open.  how = MODEL_HINT: a SOFiSTiK
+    calculation program running in the .cdb's folder whose command line names this model.  sps.exe
+    closes the .cdb between two programs, so such a calculation counts even while nothing has it open;
+    a holder found only this way is never ended (clear needs "open file")."""
     if psutil is None:                               # pragma: no cover
         return []
     own = set(own_pids or ())
     folder = os.path.dirname(os.path.abspath(cdb))
+    model = _stem(cdb)
     table = _process_table(root)
     out = []
     for row in table.values():
@@ -135,13 +156,11 @@ def holders(cdb: str, root: str | None = None, own_pids: set | None = None) -> l
             if any(_same_file(f.path, cdb) for f in p.open_files()):
                 how = "open file"
         except psutil.AccessDenied:
-            try:                                     # cannot list its files: its working folder is a hint
-                if row["sofistik"] and s not in WINDOWS and _same_file(p.cwd(), folder):
-                    how = "working folder (its open files could not be listed)"
-            except Exception:
-                pass
+            pass
         except Exception:
             continue
+        if how is None and row["sofistik"] and s not in WINDOWS and _runs_model(p, folder, model):
+            how = MODEL_HINT
         if how is None:
             continue
         if s in ("python", "pythonw"):
@@ -196,6 +215,10 @@ def _advice(h: dict) -> str:
     if h["kind"] == "reader":
         return f"This server is reading it (process {h['pid']}); that ends by itself."
     if h["kind"] == "orphan":
+        if h.get("how") != "open file":
+            return (f"{h['name']} (process {h['pid']}, started {h['started']}) seems to be left behind by a "
+                    "stopped run of this model, but it cannot be confirmed that it has the .cdb open, so it is not "
+                    "ended: end it in Task Manager if no calculation of this model is running.")
         return (f"{h['name']} (process {h['pid']}, started {h['started']}) was left behind by a stopped or crashed "
                 "run: clear_cdb_lock ends it.")
     return f"{h['name']} (process {h['pid']}) has it open; close that program."
@@ -227,6 +250,22 @@ def _end(pid: int, create_time: float):
         return None
 
 
+SETTLE_CHECKS = 3
+SETTLE_GAP_S = 2.0
+
+
+def quiet(cdb: str, root: str | None = None, own_pids: set | None = None) -> dict:
+    """check() SETTLE_CHECKS times, SETTLE_GAP_S apart: a calculation is only idle-looking between two of
+    its programs for a moment.  -> the first check that found something, else the last one."""
+    r = check(cdb, root, own_pids)
+    for _ in range(SETTLE_CHECKS - 1):
+        if r["locked"]:
+            return r
+        time.sleep(SETTLE_GAP_S)
+        r = check(cdb, root, own_pids)
+    return r
+
+
 def clear(cdb: str, root: str | None = None, own_pids: set | None = None, clean_flag: bool = False,
           clean_cmd: str = "") -> dict:
     """End the orphaned SOFiSTiK programs that hold cdb, then check again; with clean_flag also reset
@@ -236,8 +275,8 @@ def clear(cdb: str, root: str | None = None, own_pids: set | None = None, clean_
     before = check(cdb, root, own_pids)
     ended, failed, procs = [], [], []
     for h in before["holders"]:
-        if h["kind"] != "orphan":
-            continue
+        if h["kind"] != "orphan" or h["how"] != "open file":
+            continue                                 # never end a process on a guess
         try:
             p = _end(h["pid"], h["create_time"])
         except Exception as e:                       # access denied ...
@@ -256,6 +295,9 @@ def clear(cdb: str, root: str | None = None, own_pids: set | None = None, clean_
            "ended": ended, "failed": failed, "locked_now": after["locked"], "holders_now": after["holders"],
            "advice": after["advice"]}
     if clean_flag and after["exists"]:
+        if not after["locked"]:
+            after = quiet(cdb, root, own_pids)
+            out.update(locked_now=after["locked"], holders_now=after["holders"], advice=after["advice"])
         if after["locked"]:
             out["clean_locks"] = {"cleaned": False, "error": "Not run: a program still has the .cdb open (see "
                                                              "advice)."}

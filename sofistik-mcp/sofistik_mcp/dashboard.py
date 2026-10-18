@@ -168,6 +168,7 @@ class ServerState:
     def __init__(self, settings_fn, version: str):
         self._settings_fn = settings_fn
         self._jobs: dict = {}                        # key -> job dict, in start order
+        self._mutex = threading.RLock()              # runs and their watcher threads update it at once
         self.data: dict = {"pid": os.getpid(), "pid_started": _process_start(os.getpid()),
                            "host": socket.gethostname(), "version": version,
                            "started": _now(), "updated": _now(), "job": None, "jobs": [], "recent_runs": []}
@@ -185,16 +186,19 @@ class ServerState:
             return None
 
     def _save(self) -> None:
-        p = self.path()
-        if not p:
-            return
-        self.data["jobs"] = [{k: v for k, v in j.items() if not k.startswith("_")} for j in self._jobs.values()]
-        self.data["job"] = self.data["jobs"][0] if self.data["jobs"] else None
-        self.data["updated"] = _now()
         try:
+            p = self.path()
+            if not p:
+                return
+            with self._mutex:
+                self.data["jobs"] = [{k: v for k, v in j.items() if not k.startswith("_")}
+                                     for j in self._jobs.values()]
+                self.data["job"] = self.data["jobs"][0] if self.data["jobs"] else None
+                self.data["updated"] = _now()
+                snap = json.loads(json.dumps(self.data))
             with _lock:
-                _write_json(p, self.data)
-        except OSError:
+                _write_json(p, snap)
+        except Exception:                            # the dashboard must never fail a calculation
             pass
 
     def started(self) -> None:
@@ -204,6 +208,13 @@ class ServerState:
         return key if key is not None else next(iter(self._jobs), None)
 
     def job_started(self, dat: str, key=None, programs: int | None = None) -> None:
+        try:
+            with self._mutex:
+                self._job_started(dat, key, programs)
+        except Exception:                            # never fail a calculation over the dashboard
+            pass
+
+    def _job_started(self, dat: str, key=None, programs: int | None = None) -> None:
         h = self.history()
         prev = h.last_for(dat) if h else None
         k = key if key is not None else dat
@@ -216,17 +227,38 @@ class ServerState:
         return self._jobs.get(key)
 
     def job_programs(self, programs: int | None, key=None) -> None:
+        try:
+            with self._mutex:
+                self._job_programs(programs, key)
+        except Exception:                            # never fail a calculation over the dashboard
+            pass
+
+    def _job_programs(self, programs: int | None, key=None) -> None:
         job = self._jobs.get(self._key(key))
         if job is not None:
             job["programs_total"] = programs
 
     def job_process(self, pid: int, key=None) -> None:
+        try:
+            with self._mutex:
+                self._job_process(pid, key)
+        except Exception:                            # never fail a calculation over the dashboard
+            pass
+
+    def _job_process(self, pid: int, key=None) -> None:
         job = self._jobs.get(self._key(key))
         if job is not None:
             job["sps_pid"] = pid
             self._save()
 
     def job_progress(self, watch, key=None) -> None:
+        try:
+            with self._mutex:
+                self._job_progress(watch, key)
+        except Exception:                            # never fail a calculation over the dashboard
+            pass
+
+    def _job_progress(self, watch, key=None) -> None:
         """Called by the run's watcher every few seconds: running program, RAM, estimate."""
         job = self._jobs.get(self._key(key))
         if job is None:
@@ -237,6 +269,13 @@ class ServerState:
         self._save()
 
     def job_finished(self, result: dict, key=None) -> None:
+        try:
+            with self._mutex:
+                self._job_finished(result, key)
+        except Exception:                            # never fail a calculation over the dashboard
+            pass
+
+    def _job_finished(self, result: dict, key=None) -> None:
         job = self._jobs.pop(self._key(key), None) or {}
         r = result if isinstance(result, dict) else {}
         run = {"dat": job.get("dat") or r.get("dat"), "finished": _now(),

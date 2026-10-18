@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import datetime
 import fnmatch
+import glob
 import json
 import logging
 import os
@@ -73,6 +74,7 @@ MAX_CDB_JOBS = 4       # .cdb reads running at the same time (each is a worker p
 _jobs: dict = {}
 _calcs: dict = {}      # job id -> {"job", "proc", "stop", "cdb", "dat", "inputs"} of the calculations started
 _latest: dict = {"id": None}
+_copying: dict = {}    # normalised .cdb path -> clone job label, for as long as clone_cdb copies it
 _last_run: dict = {}   # normalised .cdb path -> {"status", "cdb_updated"} of the last run in this server
 BAD_RUN_STATUSES = ("errors", "not finished", "no protocol", "timed out", "stopped")
 _root_cache: dict = {}
@@ -334,7 +336,7 @@ async def run_calculation(dat_path: str, continue_on_error: bool = False, only_b
         return busy
     _forget_finished()
     entry: dict = {"job": None, "proc": None, "stop": False, "cdb": cdb_key, "dat": config._norm(full),
-                   "folder": config._norm(os.path.dirname(full)), "inputs": {config._norm(full)},
+                   "dat_path": full, "folder": config._norm(os.path.dirname(full)), "inputs": {config._norm(full)},
                    "inputs_pending": True}
 
     def on_start(proc):
@@ -387,6 +389,9 @@ def _register(job: dict, entry: dict, full: str) -> None:
 
 def _parallel_refusal(full: str, cdb_key: str, s: dict) -> dict | None:
     """Why this calculation may not start now (None: it may)."""
+    if cdb_key in _copying:
+        return {"status": "not run", "reason": f"This model's .cdb is being copied ({_copying[cdb_key]}); start it "
+                                               "after the copy has finished."}
     running = _running()
     for c in running:
         if c["cdb"] == cdb_key:
@@ -417,16 +422,18 @@ def _ram_check(full: str, running: list, s: dict) -> str | None:
     avail = psutil.virtual_memory().available / 2**20
     growth = 0.0
     biggest = 0.0
+    spare = s["min_free_ram_gb"] * 1024
     for c in running:
         job = _state.job_info(c["job"]["id"]) or {}
         now_mb = float(job.get("ram_mb") or 0)
-        peak = float((hist.peak_ram_mb(c["dat"]) if hist else None) or job.get("peak_ram_mb") or now_mb)
+        # never run here: at least the spare (its RAM is only known after it has run a while)
+        peak = float((hist.peak_ram_mb(c["dat_path"]) if hist else None) or max(job.get("peak_ram_mb") or 0, spare))
         growth += max(peak - now_mb, 0.0)
         biggest = max(biggest, peak)
     last = hist.peak_ram_mb(full) if hist else None
-    basis = "what it needed last time" if last else "the largest calculation running now (this file has not run here)"
-    need = float(last or biggest)
-    spare = s["min_free_ram_gb"] * 1024
+    basis = ("what it needed last time" if last else
+             "the largest calculation running now, as this file has not run here")
+    need = float(last or max(biggest, spare))
     if avail - growth - need < spare:
         return (f"Not enough free RAM to start a second calculation: {avail / 1024:.1f} GB free, the running "
                 f"calculation(s) may still need {growth / 1024:.1f} GB more, this one about {need / 1024:.1f} GB "
@@ -448,13 +455,17 @@ async def get_job_result(job_id: str | None = None, wait_seconds: float = 40) ->
 @mcp.tool()
 async def stop_calculation(job_id: str | None = None) -> dict:
     """Stop a running SOFiSTiK calculation (kills sps.exe and every program it started).  job_id: which
-    one; without it every running calculation is stopped.  Answers within a few seconds: 'stopped'
-    with the result, or 'stopping' (then get_job_result gives the final state)."""
+    one (needed when several run; job_id="all" stops every one).  Answers within a few seconds:
+    'stopped' with the result, or 'stopping' (then get_job_result gives the final state)."""
     running = _running()
-    if job_id:
+    if job_id and job_id != "all":
         running = [c for c in running if c["job"]["id"] == job_id]
     if not running:
         return {"status": "nothing running" + (f" with job_id {job_id}" if job_id else "")}
+    if not job_id and len(running) > 1:
+        return {"status": "not stopped", "running": [{"job_id": c["job"]["id"], "what": c["job"]["label"]}
+                                                     for c in running],
+                "reason": "Several calculations are running: give the job_id of the one to stop, or job_id='all'."}
     for c in running:
         c["stop"] = True
         if c["proc"] is not None:
@@ -569,14 +580,29 @@ async def clone_cdb(cdb_path: str, new_name: str, overwrite: bool = False) -> di
         return _err(e)
     if config._norm(target) == config._norm(src):
         return {"error": "new_name gives the same .cdb as the source."}
-    for c in _running():
-        if c["cdb"] in (config._norm(src), config._norm(target)):
-            return {"error": f"{os.path.basename(c['cdb'])} is being calculated right now ({c['job']['id']}); "
-                             "copy it after the calculation has finished."}
     if os.path.exists(target) and not overwrite:
         return {"error": f"{target} already exists. Use another name, or overwrite=True."}
+    keys = (config._norm(src), config._norm(target))
+    label = f"clone {os.path.basename(src)} -> {os.path.basename(target)}"
+    with _start_lock:                                     # no calculation of either may start during the copy
+        for c in _running():
+            if c["cdb"] in keys:
+                return {"error": f"{os.path.basename(c['cdb'])} is being calculated right now ({c['job']['id']}); "
+                                 "copy it after the calculation has finished."}
+        for k in keys:
+            if k in _copying:
+                return {"error": f"{os.path.basename(k)} is being copied right now ({_copying[k]})."}
+        for k in keys:
+            _copying[k] = label
 
     def work():
+        try:
+            return copy()
+        finally:
+            for k in keys:
+                _copying.pop(k, None)
+
+    def copy():
         for p, what in ((src, "source"), (target, "target")):
             if os.path.isfile(p):
                 chk = cdblock.check(p, info.get("root"))
@@ -589,6 +615,11 @@ async def clone_cdb(cdb_path: str, new_name: str, overwrite: bool = False) -> di
             return {"error": f"Not enough disk space: the copy needs {size / 2**30:.1f} GB and leaves less than "
                              f"1 GB free ({free / 2**30:.1f} GB free now)."}
         t0 = time.time()
+        for old in glob.glob(glob.escape(target) + ".*.copying"):   # left by a copy that was cut off
+            try:
+                os.remove(old)
+            except OSError:
+                pass
         tmp = target + f".{os.getpid()}.copying"
         try:
             shutil.copyfile(src, tmp)
@@ -601,7 +632,7 @@ async def clone_cdb(cdb_path: str, new_name: str, overwrite: bool = False) -> di
                 "dat_to_run": dat, "dat_exists": os.path.isfile(dat),
                 "note": "Run dat_to_run with run_calculation; it reads and writes this copy, not the original."}
 
-    job = _start_job("copy", f"clone {os.path.basename(src)} -> {os.path.basename(target)}", work)
+    job = _start_job("copy", label, work)
     return await _wait(job)
 
 

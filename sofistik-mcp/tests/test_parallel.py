@@ -124,14 +124,24 @@ def test_two_models_run_at_the_same_time(server_mod, settings):
     assert run(server_mod.get_job_result(None, 0))["dat"].endswith("b.dat")      # the latest one
 
 
-def test_stop_without_job_id_stops_all(server_mod, settings):
+def test_stop_needs_a_job_id_when_several_run(server_mod, settings):
+    work = settings["work_folders"][0]
+    a = run(server_mod.run_calculation(w_dat(work, "a.dat", "+PROG ASE\nEND\n$ FAKE sleep=60\n")))
+    b = run(server_mod.run_calculation(w_dat(work, "b.dat", "+PROG ASE\nEND\n$ FAKE sleep=60\n")))
+    r = run(server_mod.stop_calculation())
+    assert r["status"] == "not stopped" and {x["job_id"] for x in r["running"]} == {a["job_id"], b["job_id"]}
+    both = run(server_mod.stop_calculation(job_id="all"))
+    assert both["status"] == "stopped several" and len(both["results"]) == 2
+
+
+def test_stop_one_then_the_other(server_mod, settings):
     work = settings["work_folders"][0]
     a = run(server_mod.run_calculation(w_dat(work, "a.dat", "+PROG ASE\nEND\n$ FAKE sleep=60\n")))
     b = run(server_mod.run_calculation(w_dat(work, "b.dat", "+PROG ASE\nEND\n$ FAKE sleep=60\n")))
     one = run(server_mod.stop_calculation(job_id=a["job_id"]))
     assert one["status"] in ("stopped", "stopping") and not server_mod._calcs[b["job_id"]]["stop"]
     rest = run(server_mod.stop_calculation())
-    assert rest["status"] in ("stopped", "stopping")
+    assert rest["status"] in ("stopped", "stopping")                  # only b was left: no job_id needed
     assert run(server_mod.get_job_result(b["job_id"], 30))["status"] == "stopped"
     assert run(server_mod.stop_calculation(job_id="calc-nope"))["status"].startswith("nothing running")
 
@@ -215,3 +225,35 @@ def test_parallel_setting(tmp_path, value, expected):
     p.write_text(json.dumps({"max_parallel_runs": value, "min_free_ram_gb": "x", "auto_clear_cdb_locks": "false"}))
     s = config.load_settings(str(p))
     assert s["max_parallel_runs"] == expected and s["min_free_ram_gb"] == 4.0 and s["auto_clear_cdb_locks"] is False
+
+
+def test_no_run_while_its_cdb_is_copied(server_mod, settings):
+    work = settings["work_folders"][0]
+    d = w_dat(work, "m.dat", "+PROG ASE\nEND\n")
+    key = server_mod.config._norm(os.path.join(work, "m.cdb"))
+    server_mod._copying[key] = "clone x -> m"
+    try:
+        r = run(server_mod.run_calculation(d))
+        assert r["status"] == "not run" and "being copied" in r["reason"]
+        src = w_dat(work, "s.cdb", "x")
+        assert "being copied" in run(server_mod.clone_cdb(src, "m"))["error"]
+    finally:
+        server_mod._copying.clear()
+    assert run(server_mod.run_calculation(d))["status"] == "ok"
+    src = w_dat(work, "s.cdb", "x")
+    with open(os.path.join(work, "t.cdb.1.copying"), "w") as f:      # left by a cut-off copy
+        f.write("half")
+    assert run(server_mod.clone_cdb(src, "t"))["to"].endswith("t.cdb") and server_mod._copying == {}
+    assert not os.path.exists(os.path.join(work, "t.cdb.1.copying"))
+
+
+def test_unknown_model_counts_at_least_the_spare_ram(server_mod, settings, monkeypatch):
+    work = settings["work_folders"][0]
+
+    class VM:
+        available = 7 * 2**30                     # 7 GB free; spare 4 GB; a first-time run counts as 4 GB
+    monkeypatch.setattr(server_mod.psutil, "virtual_memory", lambda: VM())
+    a = run(server_mod.run_calculation(w_dat(work, "a.dat", "+PROG ASE\nEND\n$ FAKE sleep=4\n")))
+    r = run(server_mod.run_calculation(w_dat(work, "b.dat", "+PROG ASE\nEND\n")))
+    assert r["status"] == "not run" and "has not run here" in r["reason"]
+    run(server_mod.get_job_result(a["job_id"], 30))

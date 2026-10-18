@@ -908,14 +908,17 @@ def _pre_run_lock(cdb: str, root: str | None, auto_clear: bool) -> dict:
     return rep
 
 
-LOCK_WAIT_RE = re.compile(r"WAIT\s+FOR\s+LOCK", re.IGNORECASE)
+LOCK_WAIT_RE = re.compile(r"WAIT\s+FOR\s+LOCK\s+ABORTED", re.IGNORECASE)
 
 
 def _lock_abort(out: bytes, prt: str, fresh) -> bool:
-    """Did SOFiSTiK give up because the .cdb was locked ("CDBASE: WAIT FOR LOCK ABORTED BY USER")?"""
-    if LOCK_WAIT_RE.search((out or b"").decode("latin-1")):
-        return True
-    return bool(fresh(prt) and LOCK_WAIT_RE.search(messages.read_text(prt)))
+    """Did SOFiSTiK give up because the .cdb was locked ("CDBASE: WAIT FOR LOCK ABORTED BY USER") and
+    the run did not finish cleanly?  A run that waited for a lock and then went on is not one."""
+    hit = bool(LOCK_WAIT_RE.search((out or b"").decode("latin-1")) or
+               (fresh(prt) and LOCK_WAIT_RE.search(messages.read_text(prt))))
+    if not hit:
+        return False
+    return messages.summarize_run(prt if fresh(prt) else None).get("status") not in OK_STATUSES
 
 
 def run(dat_path: str, sps: str, timeout_s: float | None, allow_sys: bool = False,
@@ -1053,10 +1056,15 @@ def run(dat_path: str, sps: str, timeout_s: float | None, allow_sys: bool = Fals
             # SOFiSTiK gave up waiting for the .cdb: end what a stopped run left holding it, then once more
             again = _pre_run_lock(cdb, sofistik_root, True)
             if not again.get("refuse") and not again.get("warning") and os.path.isfile(cdb):
-                # no program holds it any more: the lock is the one written inside the .cdb
-                again["clean_locks"] = cdblock.clean_locks(cdb, sofistik_root, clean_cmd)
+                settled = cdblock.quiet(cdb, sofistik_root)          # not just a gap between two programs
+                if settled["locked"]:
+                    again["refuse"] = "Another program uses the database: " + " ".join(settled["advice"])
+                    again["holders"] = settled["holders"]
+                elif not stopped():
+                    # no program uses it: the lock is the one written inside the .cdb
+                    again["clean_locks"] = cdblock.clean_locks(cdb, sofistik_root, clean_cmd)
             lock_report.setdefault("after_lock_error", again)
-            if again.get("ended") or (again.get("clean_locks") or {}).get("cleaned"):
+            if not stopped() and (again.get("ended") or (again.get("clean_locks") or {}).get("cleaned")):
                 proc, out3, timed_out, _ = _launch(cmd, folder, _left(timeout_s, t0), started, watch_kw=watch_kw)
                 out = (out or b"") + (out3 or b"")
                 server_warnings.append("SOFiSTiK reported the .cdb as locked (WAIT FOR LOCK); " +

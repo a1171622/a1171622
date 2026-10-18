@@ -17,8 +17,8 @@ All notable changes to the SOFiSTiK MCP server. Versions follow `VERSION` in
 - Parallel runs: up to `max_parallel_runs` (default 2) calculations of different models at once. A
   second one starts only if the RAM it needed last time, or else what the running one needs, fits with
   `min_free_ram_gb` (default 4) to spare. `clone_cdb` copies a model's `.cdb` to the name of a check's
-  `.dat`, so several checks can run on one model at the same time. `stop_calculation` takes a `job_id`;
-  without one it stops all runs.
+  `.dat`, so several checks can run on one model at the same time. `stop_calculation` takes a `job_id`
+  (needed when several run; `"all"` stops every one).
 - Run-time estimate on the dashboard: "program 3 of 5", the time left and the finish time, based on
   the last clean run of the same file. Each program takes as long as it did then. Runs are kept in
   `_dashboard\run_history.json`, with the time per program and the peak RAM.
@@ -30,6 +30,10 @@ All notable changes to the SOFiSTiK MCP server. Versions follow `VERSION` in
   `sps.exe` that is still alive after the job object is ended is ended one by one. On 17 Oct 2026 a
   stopped BDK outlived its run. A calculation program still running after `sps.exe` ended normally is
   ended too, and the result says so.
+- Clean Locks only runs when SOFiSTiK reported "WAIT FOR LOCK ABORTED" and the run failed, and only
+  after three checks two seconds apart find no program using the model (a SOFiSTiK program in its
+  folder whose command line names it counts too, since `sps.exe` closes the `.cdb` between programs).
+  A program is only ended when it has the `.cdb` open.
 - The `.mcp-running` lock is per model, not per folder, so different models in one folder can run
   side by side. `write_dat_file` refuses only to change the input files of a running calculation.
 

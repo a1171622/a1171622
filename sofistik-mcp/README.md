@@ -75,7 +75,7 @@ checked without SOFiSTiK. The window ends with **ALL CHECKS PASSED** or lists wh
 | `sofistik_status` | Shows where SOFiSTiK is and which folders the server may use |
 | `write_dat_file` | Writes a `.dat` (never overwrites without asking; keeps a `.bak` copy) |
 | `run_calculation` | Runs the `.dat` with `sps.exe`; returns status, every error and warning with the input line before it, programs run, output files |
-| `get_job_result`, `stop_calculation` | A run (or a big `.cdb` read) longer than about 40 s answers "running"; Claude then waits for it with `get_job_result`, or stops it (one run by `job_id`, or all) |
+| `get_job_result`, `stop_calculation` | A run (or a big `.cdb` read) longer than about 40 s answers "running"; Claude then waits for it with `get_job_result`, or stops it (by `job_id` when several run, or `job_id="all"`) |
 | `check_cdb_lock` | Is a `.cdb` locked, and by which program (running calculation, open SOFiSTiK window, program left behind by a stopped run) |
 | `clear_cdb_lock` | Clears a stale lock: ends programs left behind by a stopped run, then runs SOFiSTiK's own Clean Locks on the `.cdb` |
 | `clone_cdb` | Copies a model's `.cdb` to the name of a check's `.dat`, so several checks can run at the same time |
