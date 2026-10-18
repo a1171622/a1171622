@@ -113,8 +113,8 @@ def test_closed_server_jobs_become_not_finished(tmp_path):
 
 def test_two_models_run_at_the_same_time(server_mod, settings):
     work = settings["work_folders"][0]
-    a = run(server_mod.run_calculation(w_dat(work, "a.dat", "+PROG ASE\nEND\n$ FAKE sleep=4\n")))
-    b = run(server_mod.run_calculation(w_dat(work, "b.dat", "+PROG ASE\nEND\n$ FAKE sleep=4\n")))
+    a = run(server_mod.run_calculation(w_dat(work, "a.dat", "+PROG ASE\nEND\n$ FAKE sleep=10\n")))
+    b = run(server_mod.run_calculation(w_dat(work, "b.dat", "+PROG ASE\nEND\n$ FAKE sleep=10\n")))
     assert a["status"] == "running" and b["status"] == "running" and a["job_id"] != b["job_id"]
     assert len(server_mod._running()) == 2
     third = run(server_mod.run_calculation(w_dat(work, "c.dat", "+PROG ASE\nEND\n")))
