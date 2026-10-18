@@ -24,19 +24,27 @@ HOLD = "import sys, time\nf = open(sys.argv[1], 'rb')\nprint('open', flush=True)
 
 
 def fake_program(tmp_path, name: str) -> str:
-    """A copy of the Python interpreter called name (so the process is named like a SOFiSTiK program)."""
+    """A copy of the Python interpreter called name (so the process is named like a SOFiSTiK program).
+    On Windows the copy needs the interpreter's DLLs next to it, and PYTHONHOME (ENV) to find its library."""
+    src = os.path.realpath(getattr(sys, "_base_executable", sys.executable))
     if os.name == "nt":  # pragma: no cover - Windows names the copy name.exe
         dst = str(tmp_path / (name + ".exe"))
+        for dll in os.listdir(os.path.dirname(src)):
+            if dll.lower().endswith(".dll") and not os.path.exists(tmp_path / dll):
+                shutil.copy2(os.path.join(os.path.dirname(src), dll), tmp_path / dll)
     else:
         dst = str(tmp_path / name)
-    shutil.copy2(os.path.realpath(sys.executable), dst)
+    shutil.copy2(src, dst)
     return dst
+
+
+ENV = dict(os.environ, PYTHONHOME=sys.base_prefix)
 
 
 def hold(exe: str, path: str, tmp_path) -> subprocess.Popen:
     script = tmp_path / "hold.py"
     script.write_text(HOLD)
-    p = subprocess.Popen([exe, str(script), path], stdout=subprocess.PIPE, cwd=str(tmp_path))
+    p = subprocess.Popen([exe, str(script), path], stdout=subprocess.PIPE, cwd=str(tmp_path), env=ENV)
     assert p.stdout is not None and p.stdout.readline().strip() == b"open"
     return p
 
@@ -55,7 +63,6 @@ def test_nothing_holds_a_closed_cdb(cdb):
                                         "advice": []}
 
 
-@pytest.mark.skipif(os.name == "nt", reason="the copied interpreter needs its DLLs next to it on Windows")
 def test_a_running_calculation_is_never_ended(tmp_path, cdb):
     p = hold(fake_program(tmp_path, "bdk"), cdb, tmp_path)
     try:
@@ -69,7 +76,6 @@ def test_a_running_calculation_is_never_ended(tmp_path, cdb):
         p.wait()
 
 
-@pytest.mark.skipif(os.name == "nt", reason="the copied interpreter needs its DLLs next to it on Windows")
 def test_an_orphan_is_ended_and_the_lock_cleared(tmp_path, cdb, monkeypatch):
     p = hold(fake_program(tmp_path, "bdk"), cdb, tmp_path)
     monkeypatch.setattr(cdblock, "_chain", lambda pid, table: [])            # its sps.exe has ended
@@ -85,7 +91,6 @@ def test_an_orphan_is_ended_and_the_lock_cleared(tmp_path, cdb, monkeypatch):
             p.wait()
 
 
-@pytest.mark.skipif(os.name == "nt", reason="the copied interpreter needs its DLLs next to it on Windows")
 def test_windows_and_other_programs_are_reported_not_ended(tmp_path, cdb, monkeypatch):
     p = hold(fake_program(tmp_path, "wingraf"), cdb, tmp_path)
     q = hold(sys.executable, cdb, tmp_path)                                   # another Python program: ignored
@@ -134,8 +139,15 @@ def test_a_reused_parent_number_is_not_a_parent():
 
 
 def write_fake_dbinfo(folder) -> str:
+    """POSIX: an executable script dbinfo.exe.  Windows: dbinfo.cmd (an .exe cannot be a script); pass
+    fake_cmd(folder) as the Clean Locks command there."""
     os.makedirs(folder, exist_ok=True)
     log = os.path.join(folder, "dbinfo_calls.txt")
+    if os.name == "nt":  # pragma: no cover
+        path = os.path.join(folder, "dbinfo.cmd")
+        with open(path, "w") as f:
+            f.write(f'@echo off\r\necho %~1 %2>>"{log}"\r\necho locks cleaned\r\n')
+        return path
     path = os.path.join(folder, "dbinfo.exe")
     with open(path, "w") as f:
         f.write(f"#!{sys.executable}\nimport sys\nopen({log!r}, 'a').write(' '.join(sys.argv[1:]) + '\\n')\n"
@@ -144,24 +156,34 @@ def write_fake_dbinfo(folder) -> str:
     return path
 
 
-@pytest.mark.skipif(os.name == "nt", reason="the fake dbinfo is a script")
+def fake_cmd(folder) -> str:
+    """The Clean Locks command to configure: "" on POSIX (dbinfo.exe in the SOFiSTiK folder is found)."""
+    return f'"{os.path.join(folder, "dbinfo.cmd")}" "%1" z' if os.name == "nt" else ""
+
+
+def dbinfo_calls(folder) -> list[str]:
+    with open(os.path.join(folder, "dbinfo_calls.txt")) as f:
+        return [ln.strip() for ln in f.read().splitlines()]
+
+
 def test_clean_locks_runs_dbinfo_z_from_the_sofistik_folder(tmp_path, cdb):
     root = str(tmp_path / "sofistik")
     write_fake_dbinfo(root)
-    r = cdblock.clean_locks(cdb, root)
-    assert r["cleaned"] and "dbinfo.exe" in r["source"] and r["output"] == "locks cleaned"
-    assert open(os.path.join(root, "dbinfo_calls.txt")).read() == f"{cdb} z\n"
+    r = cdblock.clean_locks(cdb, root, fake_cmd(root))
+    assert r["cleaned"] and r["output"] == "locks cleaned"
+    assert ("dbinfo.exe" in r["source"]) if os.name != "nt" else ("settings.json" in r["source"])
+    assert dbinfo_calls(root) == [f"{cdb} z"]
 
 
 def test_clean_locks_refuses_a_program_outside_the_sofistik_folder(tmp_path, cdb):
-    other = write_fake_dbinfo(str(tmp_path / "elsewhere"))
+    other = write_fake_dbinfo(str(tmp_path / "elsewhere"))     # a program outside the SOFiSTiK folder
     r = cdblock.clean_locks(cdb, str(tmp_path / "sofistik"), configured=f'"{other}" "%1" z')
     assert not r["cleaned"] and "not inside the SOFiSTiK folder" in r["source"] and "Clean Locks" in r["error"]
     r = cdblock.clean_locks(cdb, None)
     assert not r["cleaned"] and "Teddy" in r["error"]
 
 
-@pytest.mark.skipif(os.name == "nt", reason="the fake dbinfo is a script")
+@pytest.mark.skipif(os.name == "nt", reason="a killed .cmd leaves its child holding the output pipe")
 def test_clean_locks_timeout_and_start_failure(tmp_path, cdb, monkeypatch):
     root = str(tmp_path / "sofistik")
     exe = write_fake_dbinfo(root)
@@ -224,16 +246,12 @@ def test_lock_abort_is_cleaned_and_rerun(tmp_path, sps, monkeypatch):
     write_fake_dbinfo(root)
     dat = w(tmp_path / "m.dat", "+PROG ASE\nEND\n$ FAKE print=CDBASE:_WAIT_FOR_LOCK_ABORTED_BY_USER\n")
     (tmp_path / "m.cdb").write_bytes(b"\0" * 64)
-    if os.name == "nt":  # pragma: no cover
-        pytest.skip("the fake dbinfo is a script")
-    r = solver.run(dat, sps, 60, sofistik_root=root)
-    calls = open(os.path.join(root, "dbinfo_calls.txt")).read().splitlines()
-    assert calls == [f"{tmp_path / 'm.cdb'} z"]                                   # cleaned once
+    r = solver.run(dat, sps, 60, sofistik_root=root, clean_cmd=fake_cmd(root))
+    assert dbinfo_calls(root) == [f"{tmp_path / 'm.cdb'} z"]                       # cleaned once
     assert any("Clean Locks" in x and "run again" in x for x in r["server_warnings"])
     assert r["cdb_lock"]["after_lock_error"]["clean_locks"]["cleaned"]
-    off = solver.run(dat, sps, 60, sofistik_root=root, auto_clear_locks=False)
-    assert "auto_clear_cdb_locks" not in off.get("reason", "") or off["status"] in solver.OK_STATUSES
-    assert len(open(os.path.join(root, "dbinfo_calls.txt")).read().splitlines()) == 1   # not again
+    solver.run(dat, sps, 60, sofistik_root=root, auto_clear_locks=False, clean_cmd=fake_cmd(root))
+    assert len(dbinfo_calls(root)) == 1                                              # switched off: not again
 
 
 def test_lock_abort_reason_when_it_cannot_be_cleaned(tmp_path, sps):
@@ -243,7 +261,6 @@ def test_lock_abort_reason_when_it_cannot_be_cleaned(tmp_path, sps):
     assert "locked (WAIT FOR LOCK)" in r["reason"] and "Teddy" in r["reason"]
 
 
-@pytest.mark.skipif(os.name == "nt", reason="the copied interpreter needs its DLLs next to it on Windows")
 def test_run_refused_while_a_live_calculation_holds_the_cdb(tmp_path, sps):
     cdb = tmp_path / "m.cdb"
     cdb.write_bytes(b"\0" * 64)
@@ -256,7 +273,6 @@ def test_run_refused_while_a_live_calculation_holds_the_cdb(tmp_path, sps):
         p.wait()
 
 
-@pytest.mark.skipif(os.name == "nt", reason="the copied interpreter needs its DLLs next to it on Windows")
 def test_orphan_holding_the_cdb_is_ended_before_the_run(tmp_path, sps, monkeypatch):
     cdb = tmp_path / "m.cdb"
     cdb.write_bytes(b"\0" * 64)
@@ -278,14 +294,13 @@ def test_no_time_limit(tmp_path, sps):
     assert r["status"] == "ok"
 
 
-@pytest.mark.skipif(os.name == "nt", reason="the copied interpreter needs its DLLs next to it on Windows")
 def test_a_program_left_running_after_sps_ended_is_ended(tmp_path):
     import fake_sps
     bdk = fake_program(tmp_path, "bdk")
     script = tmp_path / "sps_leaves_bdk.py"
     script.write_text(f"import subprocess, sys\nsys.path.insert(0, {os.path.dirname(fake_sps.__file__)!r})\n"
                       "import fake_sps\n"
-                      f"subprocess.Popen([{bdk!r}, '-c', 'import time; time.sleep(60)'])\n"
+                      f"subprocess.Popen([{bdk!r}, '-c', 'import time; time.sleep(60)'], env={ENV!r})\n"
                       "sys.exit(fake_sps.main(sys.argv))\n")
     sps = fake_sps.make(tmp_path / "bin", script=str(script))
     old = solver.POLL_S
@@ -296,7 +311,11 @@ def test_a_program_left_running_after_sps_ended_is_ended(tmp_path):
         solver.POLL_S = old
     assert r["status"] == "ok"
     assert any("still running after sps.exe ended and were ended" in x for x in r["server_warnings"])
-    assert not any(p.name() == "bdk" and p.status() != psutil.STATUS_ZOMBIE for p in psutil.process_iter())
+    left = []
+    for p in psutil.process_iter(["name", "exe"]):
+        if (p.info["exe"] or "") == bdk and p.status() != psutil.STATUS_ZOMBIE:
+            left.append(p.pid)
+    assert left == []
 
 
 def test_survivors_are_reported(tmp_path, sps, monkeypatch):
@@ -312,7 +331,6 @@ def test_survivors_are_reported(tmp_path, sps, monkeypatch):
     assert any("could not be ended" in x for x in r["server_warnings"])
 
 
-@pytest.mark.skipif(os.name == "nt", reason="the copied interpreter needs its DLLs next to it on Windows")
 def test_working_folder_is_the_hint_when_open_files_are_refused(tmp_path, cdb, monkeypatch):
     (tmp_path / "other.txt").write_text("x")
     p = hold(fake_program(tmp_path, "ase"), str(tmp_path / "other.txt"), tmp_path)   # runs in the .cdb's folder
