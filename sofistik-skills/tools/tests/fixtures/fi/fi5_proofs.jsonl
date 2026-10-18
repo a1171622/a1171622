@@ -1,0 +1,14 @@
+{"tool": "canary_check", "verdict": "PASS", "checks": []}
+{"tool": "G2_protocol", "verdict": "PASS", "checks": []}
+{"tool": "A7_run_identity", "verdict": "PASS", "checks": []}
+{"tool": "equilibrium_check", "verdict": "PASS", "checks": []}
+{"tool": "mutation_drill", "verdict": "PASS", "checks": []}
+{"tool": "combo_check", "verdict": "PASS", "checks": []}
+{"tool": "R6_member_lcs", "verdict": "PASS", "checks": []}
+{"tool": "G6_alpha_cr", "verdict": "PASS", "checks": []}
+{"tool": "coverage_census", "verdict": "PASS", "checks": []}
+{"tool": "G8_plausibility", "verdict": "PASS", "checks": []}
+{"tool": "A12_assumptions", "verdict": "PASS", "checks": []}
+{"tool": "receipts", "action": "audit", "verdict": "PASS", "checks": []}
+{"tool": "member_check", "action": "pick", "verdict": "PASS", "picks": [{"member": "0"}, {"member": "1"}, {"member": "2"}, {"member": "3"}, {"member": "4"}, {"member": "5"}, {"member": "6"}], "stats": {"n_eta_gt_1": 3, "eta_max": 1.4}}
+{"tool": "member_check", "action": "hand", "member": "0", "verdict": "PASS", "checks": []}

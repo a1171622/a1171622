@@ -1,0 +1,53 @@
+{
+  "_comment": "Edited ONLY by the lead after a calibration read on real SOFiSTiK 2027 output (README 'member results' and 'calibration'). Haiku never edits this file and never passes --calibration (refused unless TOOLS_TEST=1). status: UNCALIBRATED | CALIBRATED. This file is the ONLY authoritative calibration status; the README is not edited when an item is calibrated.",
+  "alpha_cr": {
+    "status": "UNCALIBRATED",
+    "rule": null,
+    "rules_known": {
+      "omega": "lambda = 2*pi*frequency_Hz (CLC_EIGE m_omega holds the buckling factor itself)",
+      "omega2": "lambda = (2*pi*frequency_Hz)^2 (m_omega holds sqrt(lambda))"
+    },
+    "evidence": null,
+    "how": "member_check.py calibrate-alpha <cdb_load_cases of be13_buckling_bar.cdb, load_cases 101-104>; reference factors 38.553, 38.553, 154.215, 154.215 (sofistik-benchmarks/BENCHMARK_RESULTS.md:71); be13 .cdb in C:\\Sofistik workflow\\benchmarks on NguyenPC3, read-only"
+  },
+  "bdk": {
+    "status": "UNCALIBRATED",
+    "kwh": 127,
+    "kwl": "CTRL LCST number (26016: 9100)",
+    "class_name": "CDSLN_DES",
+    "id_field": "m_nr",
+    "eta_field": "m_scbn",
+    "evidence": null,
+    "how": "cdb_read_key(kwh=127, kwl=<LCST>, class_name='CDSLN_DES', max_records=500, skip=0|500) on the first clean run; then member_check.py calibrate-bdk --bdk <pages> --prt '{\"<member>\": [<ECHO SUM Check>, \"<governing column>\"], ...}' with >= 5 members whose governing ECHO SUM column differs (n-y, m-y, nm-y ...); exactly one field must equal Check within 0.01 on every member (review A-23)"
+  },
+  "aqb": {
+    "status": "UNCALIBRATED",
+    "kwh": 107,
+    "kwl": "the (D) load case number (101-154)",
+    "class_name": "CBEAM_DES",
+    "id_field": "m_nr",
+    "eta_field": "m_tcf",
+    "evidence": null,
+    "how": "cdb_read_key(kwh=107, kwl=<lc>, class_name='CBEAM_DES', max_records=500, skip=k) on the first clean run; compare m_tcf of 3 beams with the AQB utilisation table"
+  },
+  "ltb_load_height": {
+    "status": "UNCALIBRATED",
+    "rule": null,
+    "rules_known": {
+      "shear_centre": "BDK applies the load at the shear centre and the hand check may compare at the shear centre",
+      "max": "until calibrated: hand 6.3 = max(shear centre, top flange)"
+    },
+    "evidence": null,
+    "how": "26016_ltb_benchmark: a simply supported UB under top-flange load with BDK EZA set; if BDK's eta matches the sofrep top-flange value (not the shear-centre value) BDK models the load height and 'shear_centre' comparison is NOT safe; record the rule that reproduces BDK (review A-03)"
+  },
+  "server_lifetime": {
+    "status": "UNCALIBRATED",
+    "value": null,
+    "values_known": {
+      "PERSISTENT": "a run started by run_calculation keeps running and its result stays readable after the agent session that started it ends",
+      "DIES_WITH_AGENT": "the run (or its job record) is lost when the agent session ends"
+    },
+    "evidence": null,
+    "how": "run of 60-120 s (not a short canary), end agent, new agent get_job_result(job_id) + dashboard_status. The run must last longer than run_calculation's own wait (server.py:70 WAIT_S = 40 s; aim for 60-120 s, e.g. the BE25c 40-element eigen benchmark or a looped canary) - a shorter run finishes inside the call and returns no job_id, so it proves nothing. In full, lead only (L9): start that run with run_calculation, note the job_id it returns with status 'running', end the agent session at once; in a NEW agent session call get_job_result(job_id) and dashboard_status. Job finished with its result and the .cdb/.prt written -> PERSISTENT; job unknown or the run killed -> DIES_WITH_AGENT. Note server.py:451 'Jobs are forgotten when Claude restarts': if get_job_result says 'No job' but dashboard_status / run_history.json show the run finished ok, record PERSISTENT (run) with the job record lost, and say so in evidence. Until status CALIBRATED with value PERSISTENT, any run with estimate > 10 min -> STOP S-CALIB."
+  }
+}
