@@ -1,0 +1,929 @@
+"""Live dashboard for the SOFiSTiK MCP workflow: a small read-only web page on this PC.
+
+What it shows, and where each number comes from
+  PC resources        CPU and RAM of the whole PC (psutil).
+  SOFiSTiK programs   every running process started from the SOFiSTiK program folder (or with a known
+                      SOFiSTiK program name), with its CPU and RAM.  The newest one started by sps.exe is
+                      "the module running now" (AQUA, SOFIMSHA, SOFILOAD, ASE, BDK, MAXIMA ...).
+  Calculations        what each running MCP server writes to <first work folder>\\_dashboard\\server-<pid>.json:
+                      the calculation it is running and the last 20 runs (status, errors, warnings, time).
+  Checks              <first work folder>\\_dashboard\\checks\\<name>.json, written by a checking session
+                      with the report_check tool (or directly as a file, format in CHECK_FORMAT below).
+  Claude token usage  Claude Code sessions on THIS PC only: the usage lines Claude Code records in
+                      %USERPROFILE%\\.claude\\projects\\...\\*.jsonl (today, local time).  Claude Desktop chats
+                      and claude.ai / cloud sessions do not record usage on this PC, and the plan's usage
+                      limit is not visible anywhere on the PC.
+
+The page is served by the MCP server itself (a thread, started when Claude starts the server) and by
+dashboard.bat (on its own, for when Claude is closed).  The first to bind the port serves it (bound
+exclusively, so a second copy notices and steps aside).
+Only GET requests for the page and its JSON are answered, and only when the browser addressed this PC
+by its own name or address (blocks web pages that try to read it via a look-alike domain); nothing on
+the page can change anything.
+By default only this PC can open it (http://localhost:8765).  "dashboard_lan": true in settings.json
+lets a phone or laptop on the same Wi-Fi open http://<PC name>:8765 (Windows asks once to allow it).
+"""
+from __future__ import annotations
+
+import datetime
+import glob
+import hashlib
+import json
+import os
+import re
+import socket
+import sys
+import threading
+import time
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+try:
+    import psutil
+except ImportError:                                  # pragma: no cover - psutil is in requirements.txt
+    psutil = None
+
+from . import config
+
+DIR_NAME = "_dashboard"
+DEFAULT_PORT = 8765
+RECENT_RUNS = 20
+MAX_FINDINGS = 100
+CPU_MIN_INTERVAL_S = 1.0                             # PC-wide CPU is measured over at least this long
+TOKEN_WINDOW_S = 36 * 3600                           # only session files touched in the last 36 h are read
+CHECK_STATUSES = ("running", "passed", "failed", "attention", "waiting", "done")
+FINDING_LEVELS = ("info", "pass", "warn", "fail")
+# SOFiSTiK GUI programs: shown in the list, never "the module running now"
+GUI_PROGRAMS = {"ssd", "teddy", "wingraf", "animator", "sofiplus", "resultviewer", "sofistik"}
+# known by name when the program folder cannot be read (distinctive names only: a generic name such
+# as template.exe could be any program)
+SOFISTIK_NAMES = {"sps", "aqua", "aqb", "sofimsha", "sofimshb", "sofimshc", "sofiload", "ase", "bdk", "maxima",
+                  "talpa", "wingraf", "teddy", "ssd", "plbconverter", "wpsjob"}
+
+CHECK_FORMAT = """\
+{
+  "check": "26016 member checks",          name shown on the dashboard (also the file name)
+  "status": "running",                     running | passed | failed | attention | waiting | done
+  "step": "ASE: ULS combinations 101-154", what is happening now (one line)
+  "progress": "3 of 7",                    optional, free text
+  "updated": "2026-10-17T23:20:00",        local time, ISO format
+  "findings": [                            newest last; level info | pass | warn | fail
+    {"time": "2026-10-17T23:18:00", "level": "fail", "text": "B81 UB 457x191x89: LTB ratio 1.12 (LC 118)"}
+  ]
+}"""
+
+_lock = threading.Lock()
+
+
+# ------------------------------------------------------------------------------------------------
+# where the files are
+# ------------------------------------------------------------------------------------------------
+
+def state_dir(settings: dict) -> str:
+    """<first work folder>\\_dashboard: inside a work folder, so a checking session may write there."""
+    folders = settings.get("work_folders") or []
+    base = folders[0] if folders and os.path.isabs(folders[0]) else config.ROOT   # never a relative folder
+    return os.path.join(base, DIR_NAME)
+
+
+def _now() -> str:
+    return datetime.datetime.now().replace(microsecond=0).isoformat()
+
+
+def _write_json(path: str, data) -> None:
+    """Write via a temporary file and rename, so a reader never sees half a file.  On Windows the rename
+    fails while a reader has the file open for a moment, so it is retried for up to about 2 s."""
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    tmp = f"{path}.{os.getpid()}.{threading.get_ident()}.tmp"
+    try:
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=1, ensure_ascii=False)
+        for attempt in range(40):
+            try:
+                os.replace(tmp, path)
+                return
+            except PermissionError:
+                if attempt == 39:
+                    raise
+                time.sleep(0.05)
+    finally:
+        if os.path.exists(tmp):
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
+
+
+class _FileLock:
+    """A lock file shared by every process (two Claude windows, or a session writing a check file),
+    so a read-change-write of one check never loses the other's findings.  A lock older than 10 s
+    was left by a crash and is taken over."""
+
+    def __init__(self, path: str, timeout_s: float = 5.0):
+        self.path, self.timeout_s = path + ".lock", timeout_s
+        self.fd: int | None = None
+
+    def __enter__(self):
+        deadline = time.time() + self.timeout_s
+        while True:
+            try:
+                self.fd = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                return self
+            except FileExistsError:
+                try:
+                    if time.time() - os.path.getmtime(self.path) > 10:
+                        os.remove(self.path)
+                        continue
+                except OSError:
+                    pass
+                if time.time() > deadline:
+                    raise TimeoutError(f"{self.path} is held by another process") from None
+                time.sleep(0.05)
+
+    def __exit__(self, *exc):
+        if self.fd is not None:
+            os.close(self.fd)
+        try:
+            os.remove(self.path)
+        except OSError:
+            pass
+
+
+def _read_json(path: str):
+    try:
+        with open(path, encoding="utf-8-sig") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return None
+
+
+# ------------------------------------------------------------------------------------------------
+# written by the MCP server: the running calculation and the last runs
+# ------------------------------------------------------------------------------------------------
+
+class ServerState:
+    """The calculations this server is running ("jobs"; "job" is the first of them, for older pages)
+    and its last runs, kept in server-<pid>.json.  Every finished run is also added to the shared
+    run_history.json, which gives the run-time estimate of the next run of the same file.
+    Every write is best effort: the dashboard must never make a calculation fail."""
+
+    def __init__(self, settings_fn, version: str):
+        self._settings_fn = settings_fn
+        self._jobs: dict = {}                        # key -> job dict, in start order
+        self._mutex = threading.RLock()              # runs and their watcher threads update it at once
+        self.data: dict = {"pid": os.getpid(), "pid_started": _process_start(os.getpid()),
+                           "host": socket.gethostname(), "version": version,
+                           "started": _now(), "updated": _now(), "job": None, "jobs": [], "recent_runs": []}
+
+    def history(self) -> RunHistory | None:
+        try:
+            return RunHistory(state_dir(self._settings_fn()))
+        except Exception:
+            return None
+
+    def path(self) -> str | None:
+        try:
+            return os.path.join(state_dir(self._settings_fn()), f"server-{os.getpid()}.json")
+        except Exception:                            # unreadable settings.json: no dashboard file
+            return None
+
+    def _save(self) -> None:
+        try:
+            p = self.path()
+            if not p:
+                return
+            with self._mutex:
+                self.data["jobs"] = [{k: v for k, v in j.items() if not k.startswith("_")}
+                                     for j in self._jobs.values()]
+                self.data["job"] = self.data["jobs"][0] if self.data["jobs"] else None
+                self.data["updated"] = _now()
+                snap = json.loads(json.dumps(self.data))
+            with _lock:
+                _write_json(p, snap)
+        except Exception:                            # the dashboard must never fail a calculation
+            pass
+
+    def started(self) -> None:
+        self._save()
+
+    def _key(self, key):
+        return key if key is not None else next(iter(self._jobs), None)
+
+    def job_started(self, dat: str, key=None, programs: int | None = None) -> None:
+        try:
+            with self._mutex:
+                self._job_started(dat, key, programs)
+        except Exception:                            # never fail a calculation over the dashboard
+            pass
+
+    def _job_started(self, dat: str, key=None, programs: int | None = None) -> None:
+        h = self.history()
+        prev = h.last_for(dat) if h else None
+        k = key if key is not None else dat
+        self._jobs[k] = {"dat": dat, "started": _now(), "t0": time.time(), "sps_pid": None,
+                         "programs_total": programs, "estimate": estimate(prev, [], 0.0, programs),
+                         "_prev": prev}
+        self._save()
+
+    def job_info(self, key) -> dict | None:
+        return self._jobs.get(key)
+
+    def job_programs(self, programs: int | None, key=None) -> None:
+        try:
+            with self._mutex:
+                self._job_programs(programs, key)
+        except Exception:                            # never fail a calculation over the dashboard
+            pass
+
+    def _job_programs(self, programs: int | None, key=None) -> None:
+        job = self._jobs.get(self._key(key))
+        if job is not None:
+            job["programs_total"] = programs
+
+    def job_process(self, pid: int, key=None) -> None:
+        try:
+            with self._mutex:
+                self._job_process(pid, key)
+        except Exception:                            # never fail a calculation over the dashboard
+            pass
+
+    def _job_process(self, pid: int, key=None) -> None:
+        job = self._jobs.get(self._key(key))
+        if job is not None:
+            job["sps_pid"] = pid
+            self._save()
+
+    def job_progress(self, watch, key=None) -> None:
+        try:
+            with self._mutex:
+                self._job_progress(watch, key)
+        except Exception:                            # never fail a calculation over the dashboard
+            pass
+
+    def _job_progress(self, watch, key=None) -> None:
+        """Called by the run's watcher every few seconds: running program, RAM, estimate."""
+        job = self._jobs.get(self._key(key))
+        if job is None:
+            return
+        tl = [dict(t) for t in watch.timeline]
+        job.update(module=watch.module, ram_mb=watch.ram_mb, peak_ram_mb=watch.peak_ram_mb,
+                   estimate=estimate(job.get("_prev"), tl, time.time() - job["t0"], job.get("programs_total")))
+        self._save()
+
+    def job_finished(self, result: dict, key=None) -> None:
+        try:
+            with self._mutex:
+                self._job_finished(result, key)
+        except Exception:                            # never fail a calculation over the dashboard
+            pass
+
+    def _job_finished(self, result: dict, key=None) -> None:
+        job = self._jobs.pop(self._key(key), None) or {}
+        r = result if isinstance(result, dict) else {}
+        run = {"dat": job.get("dat") or r.get("dat"), "finished": _now(),
+               "status": r.get("status") or ("server error" if r.get("error") or not r else "?"),
+               "errors": _count(r.get("errors")), "warnings": _count(r.get("warnings")),
+               "seconds": r.get("seconds") if r.get("seconds") is not None
+               else (round(time.time() - job["t0"], 1) if job.get("t0") else None),
+               "first_error": _first_error(r), "reason": r.get("reason") or r.get("error")}
+        if r.get("peak_ram_mb"):
+            run["peak_ram_mb"] = r["peak_ram_mb"]
+        self.data["recent_runs"] = ([run] + list(self.data.get("recent_runs") or []))[:RECENT_RUNS]
+        if run["dat"] and run["status"] not in ("not run", "server error", "?"):
+            h = self.history()
+            if h is not None:
+                h.add({"dat": run["dat"], "finished": run["finished"], "status": run["status"],
+                       "seconds": run["seconds"], "peak_ram_mb": r.get("peak_ram_mb"),
+                       "modules": r.get("module_times") or []})
+        self._save()
+
+    def remove(self) -> None:
+        p = self.path()
+        if p:
+            try:
+                os.remove(p)
+            except OSError:
+                pass
+
+
+# ------------------------------------------------------------------------------------------------
+# run history and the run-time estimate
+# ------------------------------------------------------------------------------------------------
+
+GOOD_RUNS = ("ok", "ok with warnings")
+HISTORY_MAX = 300
+
+
+def _dat_key(dat: str) -> str:
+    return os.path.normcase(os.path.abspath(str(dat)))
+
+
+class RunHistory:
+    """<status folder>\\run_history.json: the finished runs of every server on this PC (file, status,
+    seconds, peak RAM, time per program), newest last."""
+
+    def __init__(self, folder: str):
+        self.path = os.path.join(folder, "run_history.json")
+
+    def runs(self) -> list[dict]:
+        d = _read_json(self.path)
+        runs = d.get("runs") if isinstance(d, dict) else None
+        return [r for r in runs or [] if isinstance(r, dict) and r.get("dat")]
+
+    def add(self, run: dict) -> None:
+        try:
+            os.makedirs(os.path.dirname(self.path), exist_ok=True)
+            with _lock, _FileLock(self.path):
+                runs = (self.runs() + [run])[-HISTORY_MAX:]
+                _write_json(self.path, {"runs": runs})
+        except (OSError, TimeoutError):
+            pass
+
+    def last_for(self, dat: str) -> dict | None:
+        """The newest clean run of this .dat (the basis of its estimate)."""
+        key = _dat_key(dat)
+        for r in reversed(self.runs()):
+            if _dat_key(r["dat"]) == key and r.get("status") in GOOD_RUNS and r.get("seconds"):
+                return r
+        return None
+
+    def peak_ram_mb(self, dat: str) -> int | None:
+        """The most RAM one of the last 3 runs of this .dat needed (None: never run here)."""
+        key = _dat_key(dat)
+        peaks = [_int(r.get("peak_ram_mb")) for r in self.runs() if _dat_key(r["dat"]) == key][-3:]
+        peaks = [p for p in peaks if p > 0]
+        return max(peaks) if peaks else None
+
+
+def _fmt_s(sec: float) -> str:
+    sec = int(round(max(0.0, sec)))
+    h, rest = divmod(sec, 3600)
+    m, s_ = divmod(rest, 60)
+    return f"{h} h {m:02d} min" if h else (f"{m} min" if m >= 2 else f"{m * 60 + s_} s")
+
+
+def estimate(prev: dict | None, timeline: list, elapsed: float, programs_total: int | None = None,
+             now: float | None = None) -> dict:
+    """Run-time estimate of a running calculation, from the last clean run of the same file.
+
+    timeline: [{"program", "t0", "t1"}] of the programs the .prt has started so far.  With the same
+    programs in the same order as last time: what is left of the running program plus the programs
+    after it, each as long as last time.  Otherwise: last run's total minus the time so far.
+    -> {program, program_no, programs_total, program_elapsed_s, remaining_s, finish_at, basis,
+        slower_than_last}"""
+    now = time.time() if now is None else now
+    out: dict = {"programs_total": programs_total, "remaining_s": None, "finish_at": None,
+                 "slower_than_last": False}
+    k = len(timeline) - 1
+    if k >= 0:
+        cur = timeline[k]
+        out.update(program=cur["program"], program_no=k + 1,
+                   program_elapsed_s=round((cur["t1"] or now) - cur["t0"]))
+    if not prev:
+        out["basis"] = "first run of this file on this PC: no estimate yet"
+        return out
+    pm = [m for m in prev.get("modules") or [] if isinstance(m, dict)]
+    same = k >= 0 and k < len(pm) and all(pm[i].get("program") == timeline[i]["program"] for i in range(k + 1))
+    if same:
+        cur = timeline[k]
+        last = float(pm[k].get("seconds") or 0)
+        cur_el = (cur["t1"] or now) - cur["t0"]
+        left = 0.0 if cur["t1"] is not None else max(last - cur_el, 0.0)
+        remaining = left + sum(float(m.get("seconds") or 0) for m in pm[k + 1:])
+        out["slower_than_last"] = cur["t1"] is None and cur_el > 1.1 * last + 30
+        out["programs_total"] = programs_total or len(pm)
+    else:
+        remaining = max(float(prev["seconds"]) - elapsed, 0.0)
+        out["slower_than_last"] = elapsed > 1.1 * float(prev["seconds"]) + 30
+    out["remaining_s"] = round(remaining)
+    out["finish_at"] = datetime.datetime.fromtimestamp(now + remaining).strftime("%H:%M")
+    out["basis"] = (f"last clean run of this file ({str(prev.get('finished') or '')[:16].replace('T', ' ')}) "
+                    f"took {_fmt_s(float(prev['seconds']))}" + ("" if same or k < 0 else
+                                                               "; its programs differ, so only the total is used"))
+    return out
+
+
+def _count(v) -> int:
+    """The protocol gives counts as numbers; accept a list of messages too."""
+    if isinstance(v, list):
+        return len(v)
+    return _int(v)
+
+
+def _first_error(r: dict) -> str | None:
+    """'E 123 ASE: text' of the first error message of a run, for the recent-runs table."""
+    for m in r.get("messages") or []:
+        if isinstance(m, dict) and m.get("kind") == "error":
+            head = " ".join(str(x) for x in ("E", m.get("number"), m.get("program")) if x not in (None, ""))
+            return f"{head}: {m.get('text') or ''}".strip(": ")[:300]
+    return None
+
+
+# ------------------------------------------------------------------------------------------------
+# checks: written by a checking session (report_check tool, or the file directly)
+# ------------------------------------------------------------------------------------------------
+
+def check_file_name(check: str) -> str:
+    """A safe file name for a check: readable part plus a short hash of the exact name, so names that
+    differ only in punctuation or non-ASCII letters never share a file."""
+    name = str(check).strip()
+    slug = re.sub(r"[^A-Za-z0-9._-]+", "-", name).strip("-.")[:60]
+    return f"{slug or 'check'}-{hashlib.sha1(name.encode('utf-8')).hexdigest()[:6]}.json"
+
+
+def report_check(settings: dict, check: str, status: str | None = None, step: str | None = None,
+                 progress: str | None = None, findings: list | None = None, clear_findings: bool = False) -> dict:
+    """Create or update one check's file.  New findings are added after the earlier ones (newest last,
+    at most MAX_FINDINGS kept).  Returns the saved check, or {"error": ...}."""
+    if not str(check or "").strip():
+        return {"error": "check: give the check a name, e.g. '26016 member checks'."}
+    if status is not None and status not in CHECK_STATUSES:
+        return {"error": f"status must be one of {', '.join(CHECK_STATUSES)}."}
+    new = []
+    for f in findings or []:
+        if isinstance(f, str):
+            f = {"text": f}
+        if not isinstance(f, dict) or not str(f.get("text") or "").strip():
+            return {"error": "each finding needs a text, e.g. {'level': 'fail', 'text': 'B81: ratio 1.12'}."}
+        level = str(f.get("level") or "info").lower()
+        if level not in FINDING_LEVELS:
+            return {"error": f"finding level must be one of {', '.join(FINDING_LEVELS)}."}
+        new.append({"time": _now(), "level": level, "text": str(f["text"]).strip()[:500]})
+    path = os.path.join(state_dir(settings), "checks", check_file_name(check))
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with _lock, _FileLock(path):
+        old = _read_json(path)
+        cur = old if isinstance(old, dict) else {}
+        cur["check"] = str(check).strip()
+        if status is not None:
+            cur["status"] = status
+        cur.setdefault("status", "running")
+        if step is not None:
+            cur["step"] = str(step)[:300]
+        if progress is not None:
+            cur["progress"] = str(progress)[:100]
+        kept = [] if clear_findings else [x for x in cur.get("findings") or [] if isinstance(x, dict)]
+        cur["findings"] = (kept + new)[-MAX_FINDINGS:]
+        cur["updated"] = _now()
+        _write_json(path, cur)
+    return {"saved": path, "check": cur}
+
+
+# ------------------------------------------------------------------------------------------------
+# collected by the dashboard on every page refresh
+# ------------------------------------------------------------------------------------------------
+
+class Collector:
+    """Gathers everything the page shows.  Keeps psutil process objects between calls (CPU % needs
+    two samples) and reads the Claude Code session files incrementally."""
+
+    def __init__(self, settings_fn, sofistik_root_fn=lambda: None, claude_dir: str | None = None):
+        self._settings_fn = settings_fn
+        self._root_fn = sofistik_root_fn
+        self.claude_dir = claude_dir or os.path.join(os.path.expanduser("~"), ".claude", "projects")
+        self._procs: dict = {}
+        self._token_files: dict = {}                 # path -> {"offset", "msgs": {id: (ts, usage)}, ...}
+        self._files_cache: tuple = (0.0, [])         # (time, jsonl files) - the folder is listed every 30 s
+        self._busy = threading.Lock()                # page requests and dashboard_status share this object
+        self._cpu: tuple = (0.0, None)               # (time, last PC-wide CPU %)
+        if psutil is not None:
+            psutil.cpu_percent(None)
+            self._cpu = (time.time(), None)
+
+    # --- PC and processes -------------------------------------------------------------------------
+    def pc_cpu(self) -> float:
+        """PC-wide CPU % over at least CPU_MIN_INTERVAL_S.  psutil.cpu_percent(None) measures since its
+        previous call, so two calls close together (page polling plus dashboard_status) read 0: keep the
+        last value until enough time has passed, and sample for a moment when there is none yet."""
+        last_t, last = self._cpu
+        now = time.time()
+        if last is not None and now - last_t < CPU_MIN_INTERVAL_S:
+            return last
+        if now - last_t < CPU_MIN_INTERVAL_S:
+            cpu = psutil.cpu_percent(CPU_MIN_INTERVAL_S)
+        else:
+            cpu = psutil.cpu_percent(None)
+        self._cpu = (time.time(), cpu)
+        return cpu
+
+    def resources(self) -> dict:
+        if psutil is None:                           # pragma: no cover
+            return {"error": "psutil is not installed: run install.bat again."}
+        vm = psutil.virtual_memory()
+        return {"cpu_percent": self.pc_cpu(), "cpu_count": psutil.cpu_count(),
+                "ram_used_gb": round((vm.total - vm.available) / 2**30, 1), "ram_total_gb": round(vm.total / 2**30, 1),
+                "ram_percent": vm.percent}
+
+    def _is_sofistik(self, name: str, exe: str, root: str | None) -> bool:
+        if root and exe and config.is_inside(exe, [root]):
+            return True
+        return os.path.splitext(name.lower())[0] in SOFISTIK_NAMES
+
+    def processes(self) -> dict:
+        """SOFiSTiK processes and Claude processes with CPU and RAM."""
+        if psutil is None:                           # pragma: no cover
+            return {"sofistik": [], "claude": [], "module": None}
+        root = self._root_fn()
+        sof: list[dict] = []
+        claude: list[dict] = []
+        seen: set = set()
+        for p in psutil.process_iter(["pid", "name", "exe", "create_time", "ppid"]):
+            try:
+                info = p.info
+                name = info.get("name") or ""
+                low = name.lower()
+                is_claude = low.startswith("claude") or (low in ("node", "node.exe") and _is_claude_node(p))
+                if not is_claude and not self._is_sofistik(name, info.get("exe") or "", root):
+                    continue
+                pid = info["pid"]
+                seen.add(pid)
+                keep = self._procs.get(pid)
+                if keep is None or keep.create_time() != info.get("create_time"):
+                    keep = self._procs[pid] = p
+                    keep.cpu_percent(None)           # first sample: 0, the next call gives the real value
+                    cpu = 0.0
+                else:
+                    cpu = keep.cpu_percent(None)
+                row = {"pid": pid, "name": os.path.splitext(name)[0].upper() if not is_claude else name,
+                       "cpu_percent": round(cpu / max(1, psutil.cpu_count() or 1), 1),
+                       "ram_mb": round(keep.memory_info().rss / 2**20),
+                       "started": datetime.datetime.fromtimestamp(info.get("create_time") or 0).strftime("%H:%M:%S"),
+                       "create_time": info.get("create_time") or 0, "ppid": info.get("ppid")}
+                (claude if is_claude else sof).append(row)
+            except Exception:                        # process ended or access denied while reading it
+                continue
+        for pid in list(self._procs):
+            if pid not in seen:
+                self._procs.pop(pid, None)
+        return {"sofistik": sorted(sof, key=lambda r: r["create_time"]),
+                "claude": sorted(claude, key=lambda r: -r["ram_mb"]), "module": running_module(sof)}
+
+    # --- MCP servers and checks ------------------------------------------------------------------
+    def servers(self, folder: str) -> list[dict]:
+        out = []
+        for path in sorted(glob.glob(os.path.join(folder, "server-*.json"))):
+            data = _read_json(path)
+            if not isinstance(data, dict):
+                continue
+            alive = _pid_alive(data.get("pid"), data.get("pid_started"))
+            if not alive:
+                # a closed server: its runs stay visible for a day, a job it was running is not "running"
+                try:
+                    old = time.time() - os.path.getmtime(path) > 24 * 3600
+                except OSError:
+                    old = True
+                if old or not (data.get("recent_runs") or data.get("jobs") or data.get("job")):
+                    if old:
+                        try:
+                            os.remove(path)
+                        except OSError:
+                            pass
+                    continue
+                jobs = [j for j in (data.get("jobs") or [data.get("job")]) if isinstance(j, dict)]
+                if jobs:
+                    runs = list(data.get("recent_runs") or [])
+                    for j in jobs:
+                        runs.insert(0, {"dat": j.get("dat"), "finished": data.get("updated"),
+                                        "status": "not finished", "errors": 0, "warnings": 0, "seconds": None,
+                                        "reason": "Claude or the server closed while it ran"})
+                    data["recent_runs"] = runs[:RECENT_RUNS]
+                data["job"], data["jobs"] = None, []
+            data["alive"] = alive
+            jobs = [j for j in (data.get("jobs") or ([data["job"]] if data.get("job") else [])) if isinstance(j, dict)]
+            for job in jobs:
+                job.pop("_prev", None)
+                if job.get("t0"):
+                    job["elapsed_s"] = round(time.time() - float(job["t0"]))
+            data["jobs"] = jobs
+            data["job"] = jobs[0] if jobs else None
+            out.append(data)
+        return out
+
+    def checks(self, folder: str) -> list[dict]:
+        out = []
+        for path in glob.glob(os.path.join(folder, "checks", "*.json")):
+            data = _read_json(path)
+            if isinstance(data, dict):
+                data.setdefault("check", os.path.splitext(os.path.basename(path))[0])
+                data["findings"] = [f for f in data.get("findings") or [] if isinstance(f, dict)]
+                out.append(data)
+        return sorted(out, key=lambda c: str(c.get("updated") or ""), reverse=True)
+
+    # --- Claude Code token usage -----------------------------------------------------------------
+    def _jsonl_files(self) -> list[str]:
+        t, files = self._files_cache
+        if time.time() - t > 30:
+            files = glob.glob(os.path.join(self.claude_dir, "**", "*.jsonl"), recursive=True)
+            self._files_cache = (time.time(), files)
+        return files
+
+    def tokens(self) -> dict:
+        today = datetime.date.today()
+        cutoff = time.time() - TOKEN_WINDOW_S
+        sessions: list[dict] = []
+        tot = {"input": 0, "output": 0, "cache_write": 0, "cache_read": 0}
+        recent = []
+        for path in self._jsonl_files():
+            try:
+                st = os.stat(path)
+            except OSError:
+                continue
+            if st.st_mtime >= cutoff:
+                recent.append((st.st_mtime, path, st.st_size))
+        for path in [p for p in self._token_files if p not in {r[1] for r in recent}]:
+            self._token_files.pop(path, None)        # out of the window: forget it
+        # oldest file first: a message copied into a resumed session counts once, for the session it was in
+        seen: set = set()
+        for _, path, size in sorted(recent):
+            rec = self._read_tokens(path, size)
+            day = {"input": 0, "output": 0, "cache_write": 0, "cache_read": 0}
+            for key, (ts, u) in rec["msgs"].items():
+                if key in seen:
+                    continue
+                seen.add(key)
+                if ts and ts.date() == today:
+                    for k in day:
+                        day[k] += u[k]
+            if not any(day.values()):
+                continue
+            for k in tot:
+                tot[k] += day[k]
+            sessions.append({"project": rec.get("cwd") or _project_name(path), "session": rec.get("session"),
+                             "subagent": "subagents" in path.replace("\\", "/").split("/"),
+                             "last": rec["last"].strftime("%H:%M") if rec.get("last") else None,
+                             "last_ts": rec["last"].timestamp() if rec.get("last") else 0, **day})
+        sessions.sort(key=lambda s: -s["last_ts"])
+        return {"today": tot, "total_today": sum(tot.values()), "sessions": sessions[:12],
+                "note": "Claude Code sessions on this PC only (today, local time). Claude Desktop chats and "
+                        "claude.ai / cloud sessions are not recorded on this PC; the plan's usage limit is not "
+                        "visible here."}
+
+    def _read_tokens(self, path: str, size: int) -> dict:
+        rec = self._token_files.get(path)
+        if rec is None or size < rec["offset"]:      # new file, or it was rewritten
+            rec = self._token_files[path] = {"offset": 0, "msgs": {}, "cwd": None, "session": None, "last": None}
+        if size == rec["offset"]:
+            return rec
+        try:
+            with open(path, "rb") as f:
+                f.seek(rec["offset"])
+                chunk = f.read()
+        except OSError:
+            return rec
+        end = chunk.rfind(b"\n") + 1                 # an unfinished last line is read next time
+        for line in chunk[:end].splitlines():
+            if b'"usage"' not in line:
+                continue
+            try:
+                d = json.loads(line)
+            except ValueError:
+                continue
+            msg = d.get("message") if isinstance(d, dict) else None
+            if not isinstance(msg, dict) or not isinstance(msg.get("usage"), dict):
+                continue
+            usage = msg["usage"]
+            ts = _parse_ts(d.get("timestamp"))
+            key = (msg.get("id") or d.get("uuid") or f"{path}:{rec['offset']}:{len(rec['msgs'])}", d.get("requestId"))
+            rec["msgs"][key] = (ts, {"input": _int(usage.get("input_tokens")),
+                                     "output": _int(usage.get("output_tokens")),
+                                     "cache_write": _int(usage.get("cache_creation_input_tokens")),
+                                     "cache_read": _int(usage.get("cache_read_input_tokens"))})
+            rec["cwd"] = d.get("cwd") or rec["cwd"]
+            rec["session"] = (d.get("sessionId") or rec["session"] or "")[:8] or None
+            if ts and (rec["last"] is None or ts > rec["last"]):
+                rec["last"] = ts
+        rec["offset"] += end
+        return rec
+
+    # --- everything ------------------------------------------------------------------------------
+    def collect(self) -> dict:
+        with self._busy:
+            return self._collect()
+
+    def _collect(self) -> dict:
+        notes = []
+        try:
+            settings = self._settings_fn()
+            folder = state_dir(settings)
+        except Exception as e:
+            settings, folder = {}, ""
+            notes.append(f"settings.json could not be read: {e}")
+        procs = self.processes()
+        return {"time": _now(), "host": socket.gethostname(), "resources": self.resources(),
+                "processes": procs, "servers": self.servers(folder) if folder else [],
+                "checks": self.checks(folder) if folder else [], "tokens": self.tokens(),
+                "status_folder": folder, "notes": notes}
+
+
+def _is_claude_node(p) -> bool:
+    """Claude Code installed with npm runs as node.exe."""
+    try:
+        return any("claude" in str(a).lower() for a in p.cmdline()[1:3])
+    except Exception:
+        return False
+
+
+# SOFiSTiK's own job wrappers between sps.exe and the program doing the work
+JOB_WRAPPERS = {"SPS", "WPSJOB"}
+
+
+def running_module(sofistik_rows: list[dict]) -> str | None:
+    """The SOFiSTiK program doing the work now: the newest process below sps.exe (directly or through
+    its job wrapper WPSJOB) that is not a wrapper or GUI.  A calculation from Claude, Teddy or SSD
+    always runs through sps.exe.  'SPS' between programs; None when idle."""
+    by_pid = {r["pid"]: r for r in sofistik_rows}
+    sps = {r["pid"] for r in sofistik_rows if r["name"] == "SPS"}
+
+    def under_sps(r) -> bool:
+        seen, pp = set(), r.get("ppid")
+        while pp in by_pid and pp not in seen:
+            if pp in sps:
+                return True
+            seen.add(pp)
+            pp = by_pid[pp].get("ppid")
+        return pp in sps
+
+    work = [r for r in sofistik_rows if r["name"] not in JOB_WRAPPERS and r["name"].lower() not in GUI_PROGRAMS
+            and under_sps(r)]
+    if work:
+        return max(work, key=lambda r: r["create_time"])["name"]
+    return "SPS" if sps else None
+
+
+def _process_start(pid: int) -> float | None:
+    try:
+        return psutil.Process(pid).create_time() if psutil is not None else None
+    except Exception:                                # pragma: no cover
+        return None
+
+
+def _pid_alive(pid, started=None) -> bool:
+    """The process is still running (and, when its start time is known, is the same process: Windows
+    reuses process numbers)."""
+    if not isinstance(pid, int) or psutil is None:
+        return False
+    try:
+        if not psutil.pid_exists(pid):
+            return False
+        return started is None or abs(psutil.Process(pid).create_time() - float(started)) < 1
+    except Exception:
+        return False
+
+
+def _int(v) -> int:
+    try:
+        return int(v or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _parse_ts(v):
+    """ISO time (Claude Code writes UTC with Z) as local naive datetime, or None."""
+    if not isinstance(v, str):
+        return None
+    try:
+        dt = datetime.datetime.fromisoformat(v.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if dt.tzinfo is not None:
+        dt = dt.astimezone().replace(tzinfo=None)
+    return dt
+
+
+def _project_name(path: str) -> str:
+    return os.path.basename(os.path.dirname(path))
+
+
+# ------------------------------------------------------------------------------------------------
+# the web page
+# ------------------------------------------------------------------------------------------------
+
+PAGE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dashboard.html")
+
+
+def host_allowed(host: str | None, lan: bool) -> bool:
+    """Only answer requests that name this PC: blocks a web page that points its own domain at
+    127.0.0.1 (DNS rebinding) from reading the dashboard through the engineer's browser."""
+    if not host:
+        return False
+    h = host.strip().lower()
+    h = h[1:].split("]", 1)[0] if h.startswith("[") else h.rsplit(":", 1)[0] if h.count(":") == 1 else h
+    me = socket.gethostname().lower()
+    if h in ("localhost", "127.0.0.1", "::1", me, me + ".local") or h.endswith(".localhost"):
+        return True
+    return lan and bool(re.fullmatch(r"\d{1,3}(\.\d{1,3}){3}", h))
+
+
+def make_handler(collector: Collector, lan: bool = False):
+    class Handler(BaseHTTPRequestHandler):
+        server_version = "sofistik-dashboard"
+
+        def log_message(self, format, *args):        # never print: stdout is the MCP channel
+            pass
+
+        def _send(self, code: int, body: bytes, ctype: str):
+            self.send_response(code)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def do_GET(self):
+            if not host_allowed(self.headers.get("Host"), lan):
+                return self._send(403, b"Open this page as http://localhost:<port> (or the PC's name).",
+                                  "text/plain; charset=utf-8")
+            route = self.path.split("?", 1)[0]
+            if route in ("/", "/index.html"):
+                try:
+                    with open(PAGE_PATH, "rb") as f:
+                        body = f.read()
+                except OSError:
+                    return self._send(500, b"dashboard.html is missing", "text/plain; charset=utf-8")
+                return self._send(200, body, "text/html; charset=utf-8")
+            if route == "/api/state":
+                try:
+                    data = collector.collect()
+                except Exception as e:               # pragma: no cover - shown on the page, never fatal
+                    data = {"time": _now(), "notes": [f"{type(e).__name__}: {e}"]}
+                return self._send(200, json.dumps(data, default=str).encode("utf-8"),
+                                  "application/json; charset=utf-8")
+            return self._send(404, b"not found", "text/plain; charset=utf-8")
+
+    return Handler
+
+
+class _Server(ThreadingHTTPServer):
+    """Binds the port exclusively.  HTTPServer sets SO_REUSEADDR, which on Windows lets a second process
+    bind the same port too (both 'serve', requests go to either), so the second copy would not notice."""
+    allow_reuse_address = False
+    daemon_threads = True
+
+    def server_bind(self):
+        if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):    # Windows
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        super().server_bind()
+
+
+def dashboard_options(settings: dict) -> tuple[str, int]:
+    try:
+        port = int(settings.get("dashboard_port", DEFAULT_PORT))
+    except (TypeError, ValueError):
+        port = DEFAULT_PORT
+    lan = settings.get("dashboard_lan") is True
+    return ("0.0.0.0" if lan else "127.0.0.1"), port
+
+
+def start(collector: Collector, host: str, port: int):
+    """Serve the page in a background thread.  Returns the server, or None if the port is taken
+    (another Claude window or dashboard.bat already serves it) or the port is 0 (switched off)."""
+    if not port:
+        return None
+    try:
+        httpd = _Server((host, port), make_handler(collector, lan=host != "127.0.0.1"))
+    except OSError:
+        return None
+    threading.Thread(target=httpd.serve_forever, name="dashboard", daemon=True).start()
+    return httpd
+
+
+def main(argv=None) -> int:
+    """dashboard.bat: serve the page on its own and open it in the browser."""
+    import webbrowser
+
+    from . import install
+
+    def root():
+        try:
+            return install.find(config.load_settings()).get("root")
+        except Exception:
+            return None
+
+    settings = config.load_settings()
+    host, port = dashboard_options(settings)
+    if not port:
+        print('The dashboard is switched off ("dashboard_port": 0 in settings.json).')
+        return 0
+    httpd = start(Collector(config.load_settings, root), host, port)
+    url = f"http://localhost:{port}"
+    if httpd is None:
+        print(f"The dashboard is already running (Claude serves it): {url}")
+    else:
+        print(f"SOFiSTiK dashboard: {url}")
+        if host == "0.0.0.0":
+            print(f"From a phone on the same Wi-Fi: http://{socket.gethostname()}:{port}")
+        print("Leave this window open; close it to stop the dashboard.")
+    if "--no-browser" not in (argv or sys.argv[1:]):
+        webbrowser.open(url)
+    if httpd is None:
+        return 0
+    try:
+        while True:
+            time.sleep(3600)
+    except KeyboardInterrupt:
+        httpd.shutdown()
+    return 0
+
+
+if __name__ == "__main__":                           # pragma: no cover
+    sys.exit(main())
