@@ -3,6 +3,10 @@
 All notable changes to the SOFiSTiK MCP server. Versions follow `VERSION` in
 `sofistik_mcp/server.py`, which must equal `version` in `pyproject.toml` (CI checks this).
 
+## Unreleased
+
+- Dashboard: PC-wide CPU % no longer reads 0 when the page and `dashboard_status` ask close together; it is measured over at least 1 s.
+
 ## 1.3.0 - 2026-10-18
 
 ### Added

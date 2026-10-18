@@ -48,6 +48,7 @@ DIR_NAME = "_dashboard"
 DEFAULT_PORT = 8765
 RECENT_RUNS = 20
 MAX_FINDINGS = 100
+CPU_MIN_INTERVAL_S = 1.0                             # PC-wide CPU is measured over at least this long
 TOKEN_WINDOW_S = 36 * 3600                           # only session files touched in the last 36 h are read
 CHECK_STATUSES = ("running", "passed", "failed", "attention", "waiting", "done")
 FINDING_LEVELS = ("info", "pass", "warn", "fail")
@@ -483,15 +484,32 @@ class Collector:
         self._token_files: dict = {}                 # path -> {"offset", "msgs": {id: (ts, usage)}, ...}
         self._files_cache: tuple = (0.0, [])         # (time, jsonl files) - the folder is listed every 30 s
         self._busy = threading.Lock()                # page requests and dashboard_status share this object
+        self._cpu: tuple = (0.0, None)               # (time, last PC-wide CPU %)
         if psutil is not None:
             psutil.cpu_percent(None)
+            self._cpu = (time.time(), None)
 
     # --- PC and processes -------------------------------------------------------------------------
+    def pc_cpu(self) -> float:
+        """PC-wide CPU % over at least CPU_MIN_INTERVAL_S.  psutil.cpu_percent(None) measures since its
+        previous call, so two calls close together (page polling plus dashboard_status) read 0: keep the
+        last value until enough time has passed, and sample for a moment when there is none yet."""
+        last_t, last = self._cpu
+        now = time.time()
+        if last is not None and now - last_t < CPU_MIN_INTERVAL_S:
+            return last
+        if now - last_t < CPU_MIN_INTERVAL_S:
+            cpu = psutil.cpu_percent(CPU_MIN_INTERVAL_S)
+        else:
+            cpu = psutil.cpu_percent(None)
+        self._cpu = (time.time(), cpu)
+        return cpu
+
     def resources(self) -> dict:
         if psutil is None:                           # pragma: no cover
             return {"error": "psutil is not installed: run install.bat again."}
         vm = psutil.virtual_memory()
-        return {"cpu_percent": psutil.cpu_percent(None), "cpu_count": psutil.cpu_count(),
+        return {"cpu_percent": self.pc_cpu(), "cpu_count": psutil.cpu_count(),
                 "ram_used_gb": round((vm.total - vm.available) / 2**30, 1), "ram_total_gb": round(vm.total / 2**30, 1),
                 "ram_percent": vm.percent}
 
