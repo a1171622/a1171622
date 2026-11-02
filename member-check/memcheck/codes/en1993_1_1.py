@@ -407,6 +407,8 @@ def check(sec: SectionData, grade: str, dem: Demand, bk: Buckling, st: Settings 
               ("Bending Mz (with shear)", "6.2.5/6.2.8", uMz),
               ("Bending + axial (biaxial)", "6.2.9", uNM)]
     if section_only:
+        if cls == 4:   # effective section (6.2.2.5, EN 1993-1-5) not implemented: flag, never pass silently
+            checks.append(("Class 4 section: effective properties not implemented, check by hand", "6.2.2.5", 9.99))
         v["checks"] = checks
         return v
     # --- 7 flexural buckling 6.3.1

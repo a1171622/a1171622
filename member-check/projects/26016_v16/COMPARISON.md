@@ -13,11 +13,11 @@ Model: `26016_check_v16.dat` / `.cdb` (NguyenPC), 43 ULS combinations (101-130, 
 
 ## Agreement with BDK (eq. 6.61 / 6.62, 174 members with BDK > 0.2)
 
-139 within 0.03, 153 within 0.05, mean difference -0.01. See `bdk_comparison.png`. The differences:
+139 within 0.03, 154 within 0.05, mean difference -0.01. See `bdk_comparison.png`. The differences:
 
 | members | this | BDK | why |
 |---|---|---|---|
-| L1 radials 169, 196, 211, 263 | 0.39-0.41 | 0.57-0.63 | BDK's number matches a buckling analysis of the whole 10.1 m member **with no intermediate restraint**. The BDK file gives the column at 3.5 m and the ring at 9.0 m (CVL REF STRT) on a joined member (MEMB + CONT); it looks as if BDK did not apply them. This workflow uses them. To confirm: one BDK run of member 263 with ECHO FULL. |
+| L1 radials 169, 196, 211, 263 | 0.39-0.43 | 0.57-0.63 | BDK's number matches a buckling analysis of the whole 10.1 m member **with no intermediate restraint**. The BDK file gives the column at 3.5 m and the ring at 9.0 m (CVL REF STRT) on a joined member (MEMB + CONT); it looks as if BDK did not apply them. This workflow uses them. To confirm: one BDK run of member 263 with ECHO FULL. |
 | L2 radials (UB 457, e.g. 92, 115, 122) | 0.06 lower | | Both use the ring restraints. The rest is not pinned down (BDK's own eigen model of the restraint at the centre line); this workflow is about 6 % less conservative here. |
 | 223 (L1 radial piece, own member) | 0.70 | 0.58 | This workflow takes max My and max Mz over the length together (conservative); BDK combines section by section. |
 | stair RHS 130, 133, 487 | +0.05 to +0.09 | | same reason (non-concurrent maxima), conservative. |

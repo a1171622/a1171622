@@ -5,7 +5,7 @@
 
 overrides CSV (optional, one row per member id, blank = default): id, Ly_mode, k_y, k_z, k_LT, zg_mm, c1_method,
 mcr_method,
-torsion_restrained, lt_at_lateral.  This is where the engineer changes effective lengths and restraint assumptions.
+torsion_restrained, lt_at_lateral, sway.  This is where the engineer changes effective lengths and restraint assumptions.
 """
 from __future__ import annotations
 
@@ -49,6 +49,8 @@ def load_overrides(path, members):
                            ("c1_method", str), ("mcr_method", str)):
                 if r.get(k, "").strip():
                     setattr(d, k, typ(r[k]))
+            if r.get("sway", "").strip():
+                d.sway = r["sway"].strip().lower() in ("1", "yes", "true", "y")
             if r.get("torsion_restrained", "").strip():
                 d.torsion_restrained = r["torsion_restrained"].strip().lower() in ("1", "yes", "true", "y")
 

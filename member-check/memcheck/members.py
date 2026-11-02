@@ -26,6 +26,7 @@ class DesignInput:
     mcr_method: str = "eigen"     # 'eigen' = Mcr from the real diagram and the lateral-only restraints (ltb.py, as
                                   # BDK / LTBeam; I-sections with zg = 0); 'formula' = SN003b with C1 (spreadsheet)
     torsion_restrained: bool = False   # True = continuous torsional restraint (no LTB, as spreadsheet 'No')
+    sway: bool = False            # True = sway buckling mode: Cmy = Cmz = 0.9 (Table B.3), as BDK SWY/SWZ
     lt_at_lateral: bool = False   # True = a lateral-only restraint (ring beam at the shear centre, no twist hold)
                                   # also ends the LTB length; False (default) = only twist-holding restraints do
 

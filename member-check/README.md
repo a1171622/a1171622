@@ -39,12 +39,22 @@ Defaults reproduce the BDK file of the model. They can be changed per member in 
 | `mcr_method` | `eigen` | `eigen` = Mcr from the real moment diagram and the restraints (like BDK / LTBeam); `formula` = SN003b with C1 (the spreadsheet) |
 | `c1_method` | `diagram` | C1 from the real diagram, or `one` (C1 = 1, conservative) |
 | `lt_at_lateral` | no | yes = a ring beam (sideways restraint only) also ends the LTB length |
+| `sway` | no | yes = sway buckling mode: Cmy = Cmz = 0.9 (Table B.3) |
 | `torsion_restrained` | no | yes = no LTB (continuous restraint, e.g. a deck fixed to the top flange) |
 
 Restraints come from the BDK block of the .dat: `CY+DX` (a column: holds sideways movement and twist) ends an LTB
 length; `CY` (ring beams only: holds sideways movement at the beam centre, twist free) is used as a support inside
 the Mcr buckling solver (`memcheck/ltb.py`). The solver is checked against the published C1 tables in
 `tests/test_ltb.py`.
+
+## Limits (from the independent review, 2 Nov 2026)
+
+- Class 4 sections are flagged (utilisation 9.99, "check by hand"), not designed: no effective properties yet.
+- Torsion: St Venant shear stress only; warping (bimoment) stresses are not added. Fine where Mt is small.
+- N, My and Mz are each the worst value over the buckling length, combined (conservative; BDK combines section by
+  section, so it can be lower).
+- kc uses C1 from the moment shape alone (slightly conservative where ring beams restrain the member).
+- Joined lines are assumed to keep the same local z axis (true for the 26016 radials).
 
 ## How to run it (26016 v16 as the example)
 
