@@ -20,7 +20,7 @@ Load with `sofistik-working-knowledge`. Every lesson here cost at least one reru
 - SOFiSTiK `+PROG SAF_EXPORT`: `CTRL OPT LCS VAL1 'ZYX_IDEA'`, `EXPO TO "f.xlsx" RESU YES` (without RESU no forces), select only the ULS combinations wanted (26016: 101 to 130, 135, 141 to 148, 151 to 154; temperature dropped by Wing's decision).
 - SAF result signs = IDEA's convention; vs vector convention N +, Vy -, Vz -, Mx -, My -, Mz +. Check every node balances (< 1 N).
 - Combinations go in as an Exclusive Variable group + one CombiInputEC each.
-- Send only the critical ULS cases per joint (all cases made runs too slow): per member the top 3 cases by N/Npl + Mx/Mt + My/Mpl,y + Mz/Mpl,z plus the largest shear ratio; per joint the top 3 by that sum. Cases Wing ruled out are dropped first. Ranking uses absolute values, so a sign-reversal case can drop out: any joint above ~90% gets a final all-cases run.
+- Send only the critical ULS cases per joint (all cases made runs too slow): per member the top 3 cases by N/Npl + Mx/Mt + My/Mpl,y + Mz/Mpl,z plus the largest shear ratio; per joint the top 3 by that sum. Cases Wing ruled out are dropped first. Ranking uses absolute values, so a sign-reversal case can drop out: any joint above ~90% gets a final all-cases run. On 26016 this kept 8 to 17 of 43 cases per joint and every governing case. Tool: `critical_cases.py` (default in build_joints.py; `--all-cases` sends everything).
 - Never zero a force on the IDEA side (leaves the joint unbalanced): take forces from a SOFiSTiK model with the matching release.
 
 ## 3. Building the IOM (the 26.0 API cannot add plates, bolts or welds)
