@@ -7,7 +7,7 @@ description: Use on any SOFiSTiK 2027 / CADINP / steel design job for Wing: how 
 
 Load this at the start of any SOFiSTiK, CADINP or steel design task. It is what a previous project learned the hard way.
 Job-specific state is NOT here; ask for the job's own notes or handoff.
-Related skills: `idea-statica-joint-workflow` (connections), `structural-design-report` (reports), and the step-by-step
+Related skills: `idea-statica-joint-workflow` (connections; all IDEA rules moved there), `structural-design-report` (reports), and the step-by-step
 Haiku skills `sofistik-cadinp-author`, `sofistik-run-and-fix`, `sofistik-results-proof`.
 
 ## 1. Working with Wing
@@ -15,6 +15,7 @@ Haiku skills `sofistik-cadinp-author`, `sofistik-run-and-fix`, `sofistik-results
 - Wing is a structural engineer, not a coder (Eurocode + UK NA, AS/NZS, SOFiSTiK 2027, IDEA StatiCa v26.0). Explain in engineering terms; guide step by step on anything Wing must click.
 - Wing is the judge. Present your reading and a recommendation; let Wing decide. Questions = one-word answers, options on short lines, recommendation marked.
 - Every findings report carries a picture from the model: zoomed, members/nodes/joints labelled, AND showing your reading (assumptions, boundaries, which member is continuous, where a void edge was taken) so Wing can correct it.
+- Connections: geometry first (draw every joint type, get Wing's yes, then IDEA). Details in `idea-statica-joint-workflow`.
 - Engineering work gets an independent, adversarial reviewer separate from the builder. "Make no mistake" = one reviewer + evidence. Big builds = lead + builders + reviewers; report what reviewers found and what was fixed.
 - Lean by default; scale agents up only when Wing asks. Use a named model only when Wing names it. When usage is tight: small models for drawing/building helpers, a mid model for checkers.
 - Scripts do arithmetic; every number has a receipt someone can re-check.
