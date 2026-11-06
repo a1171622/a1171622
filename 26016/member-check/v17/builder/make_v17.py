@@ -43,12 +43,19 @@ for n in B:
 
 # ---------------- 1b. L1-L2 column SLN 121 (under the cut L2 radial end at r 8.5) moves with the opening, 60 -> 40 deg
 #      (stair A has the same: column SLN 85 under the cut radial end at 280 deg; independent review 6 Nov 2026)
-v = sln[121]; assert v['grp'] == 13
-for bl in v['blines']:
-    L[bl] = re.sub(r'(X[12M])\s+(\S+)\s+(\S+)\s+(\S+)', lambda mm: '%s %s' % (mm.group(1), fmt3(rot([float(mm.group(2)), float(mm.group(3)), float(mm.group(4))]))), L[bl])
-m = re.search(r'DRX\s+(\S+)\s+(\S+)\s+(\S+)', L[v['line']])
-L[v['line']] = L[v['line']][:m.start()] + 'DRX %.6g %.6g %.6g' % tuple(rot([float(x) for x in m.groups()])) + L[v['line']][m.end():]
-bump('col121_rotated')
+#      v17a (Wing 6 Nov 2026): both stair-B columns follow the stair, 121 60 -> 40 deg and 131 80 -> 60 deg
+for cn in (121, 131):
+    v = sln[cn]; assert v['grp'] == 13
+    for bl in v['blines']:
+        L[bl] = re.sub(r'(X[12M])\s+(\S+)\s+(\S+)\s+(\S+)', lambda mm: '%s %s' % (mm.group(1), fmt3(rot([float(mm.group(2)), float(mm.group(3)), float(mm.group(4))]))), L[bl])
+    m = re.search(r'DRX\s+(\S+)\s+(\S+)\s+(\S+)', L[v['line']])
+    L[v['line']] = L[v['line']][:m.start()] + 'DRX %.6g %.6g %.6g' % tuple(rot([float(x) for x in m.groups()])) + L[v['line']][m.end():]
+    bump('col_rotated')
+    # snap the column foot onto the top of the L1 column below (r 8.5, same angle) so SOFIMSHC merges it well inside TOLG
+    below = sln[{121: 40, 131: 41}[cn]]
+    top = below['segs'][0][0] if below['segs'][0][0][2] > below['segs'][-1][1][2] else below['segs'][-1][1]
+    bl = v['blines'][-1]
+    L[bl] = re.sub(r'X2\s+\S+\s+\S+\s+(\S+)', lambda mm: 'X2 %12.8f %12.8f %s' % (top[0], top[1], mm.group(1)), L[bl])
 
 # ---------------- 2. L2 radials: 40 deg stops at r 8.5 (opening), 60 deg runs to r 12 ----------------
 P85_40 = (6.51186867, 5.46284146, 8.055); P12_60 = (5.99999907, 10.3923016, 8.055)
@@ -246,8 +253,16 @@ new81 = radial_block(81, 40, 8.5, 7.84, 'column 121 (moved to 40 deg in v17) / k
                      ['CVL REF STRT S 5.500 CY FIX DX #DXR EZ #EZR          $ r 3.0: ring beams only'], '5.50 / 2.34 m')
 new87 = radial_block(87, 60, 12.0, 11.34, 'ring r12 + perimeter diagonals / kingpost plates',
                      ['CVL REF STRT S 9.000 CY FIX DX #DXR EZ #EZR          $ r 3.0: ring beams only',
-                      'CVL REF STRT S 3.500 CY FIX DX #DXR EZ #EZR          $ r 8.5: ring beams only (column 121 moved to 40 deg)'], '3.50 / 5.50 / 2.34 m')
+                      'CVL REF STRT S 3.500 CY FIX DX FIX  EZ #EZR          $ r 8.5: column 131 (moved 80 -> 60 deg in v17a)'], '3.50 / 5.50 / 2.34 m')
 txt = txt.replace(blk81.group(0), new81).replace(blk87.group(0), new87)
+# v17a: L2 radial 80 deg (SLN 89) loses column 131 at r 8.5 -> ring beams only, as the other radials without a column
+o89 = 'CVL REF STRT S 3.500 CY FIX DX FIX  EZ #EZR          $ r 8.5: column 131\n'
+assert txt.count(o89) == 1
+txt = txt.replace(o89, 'CVL REF STRT S 3.500 CY FIX DX #DXR EZ #EZR          $ r 8.5: ring beams only (column 131 moved to 60 deg in v17a)\n')
+txt = txt.replace('restraint stations: r 3.0 at 9.00 m (column 423), r 8.5 at 3.50 m (column 131)', 'restraint stations: r 3.0 at 9.00 m (column 423), r 8.5 at 3.50 m (ring beams only, v17a)')
+txt = txt.replace('r 8.5 at 3.50 m (column 41/121/452)', 'r 8.5 at 3.50 m (column 41/131/452, v17a)')
+txt = txt.replace('r 8.5 at 3.50 m (column 42/131)', 'r 8.5 at 3.50 m (column 42)')
+txt = txt.replace('r 8.5 at 3.50 m (column 40)\n', 'r 8.5 at 3.50 m (column 40/121, v17a)\n')
 memb = []
 for l in lines:
     if l['kind'] == 'tread': continue
@@ -269,7 +284,8 @@ hdr = ['$ 26016 member check v17 (6 Nov 2026) = v16 + (a) stair B moved one bay:
        '$   start platform at 332-348 deg (taken as ground), two arms with landings at +2.43 and +4.43 m (L1 at 15-25 and 295-305 deg),',
        '$   RHS 200x100x6 stringers + landing beams, 300x5 treads, SHS 100x100x5 legs (pinned bases) and 4 SHS ring brackets pinned on the',
        '$   L1 r12 ring at 15, 25, 295, 305 deg (S1-S4). Loads: handrail, DL, LL, barrier, wind (stair generator, all stairs regenerated),',
-       '$   EHF, temperature as group 60. Built by make_v17.py.']
+       '$   EHF, temperature as group 60. Built by make_v17.py.',
+       '$ v17a (Wing 6 Nov 2026): both L1-L2 columns at r 8.5 follow stair B: SLN 121 60 -> 40 deg, SLN 131 80 -> 60 deg (v17 moved 121 only).']
 L = hdr + [l.replace('radial SLN 266 at 60 deg', 'radial SLN 263 at 40 deg') for l in L]
 open(dst, 'w', newline='').write('\n'.join(L))
 print(cnt, 'B lines', len(B), 'ext lines', len(lines), 'supports', len(supports))
