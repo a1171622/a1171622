@@ -1,0 +1,8 @@
+{"table": {
+ "exit code / errors": ["0 / 0", "0 / 0"],
+ "warnings (erg)": ["278", "284"],
+ "warning difference": ["-", "+6 x BDK no. 205 (Ncr found analytically, member in tension): BDK ID 445 LC 125. All other warning numbers and counts identical"],
+ "mechanism / singularity / error 197": ["none", "none"],
+ "run time": ["~33 min", "32.9 min (1972 s), peak RAM 10.1 GB"],
+ "programs": ["AQUA SOFIMSHC SOFILOAD ASE MAXIMA BDK x2 ASE x2 (eigen) AQB", "same, all finished"]
+}}
