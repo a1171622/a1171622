@@ -1,0 +1,5096 @@
+{
+ "source": {
+  "model": "26016 member check v19 (run 12 Nov 2026, NguyenPC, 0 errors, 278 warnings)",
+  "cdb": "C:\\Sofistik workflow\\26016-member-check\\v19\\26016_check_v19.cdb",
+  "erg": "C:\\Sofistik workflow\\26016-member-check\\v19\\26016_check_v19.erg",
+  "extracted": "2026-11-12 23:23",
+  "reader": "SOFiSTiK MCP server read-only CDB reader (sof_cdb_w DLL), .erg tables parsed by erg.py",
+  "units": "forces kN, moments kNm, displacements mm, coordinates m"
+ },
+ "what": "External stair ground to L1 (group 62): members, supports, ring brackets, SLS deflections",
+ "notes": [
+  "BDK = EN 1993-1-1 6.3 member check (BDK summary table, util = max(nm-y, nm-z)); legs with Lcr = 2 L (SKY = SKZ = 2.0) as run in v19.",
+  "AQB = cross-section check EN 1993-1-1 6.2 (util = 'Tot-int' plastic interaction where printed, else the elastic von Mises ratio, as the AQB 'Total' line).",
+  "Treads (5 mm plate, section 7) are AQB only; AQB prints a stress envelope for them without a governing LC.",
+  "Beam forces in local beam axes, SOFiSTiK sign convention (N > 0 tension).",
+  "Split structural lines (SOFiMSHC 16xx / 17xx) are mapped back to the input SLN by geometry.",
+  "Ring brackets: released VY VZ MT MY MZ at the ring, so they pass only N. force_on_ring_global = N times the unit vector ring -> landing; reaction_on_landing_global is the opposite (the support force of the ring on the stair, same sign rule as the supports).",
+  "Deflections absolute in global axes (uz < 0 down); relative_uz = deflection relative to the line between the member's own end nodes, worst member of that part.",
+  "Support forces as stored by SOFiSTiK = force of the support on the structure in global axes: pz > 0 = support pushes the structure up (bearing / compression on the foundation), pz < 0 = uplift (tension in the anchors)."
+ ],
+ "load_case_titles": {
+  "102": "102 ULS 1.35G+1.5Q",
+  "201": "201 SLS G+Q",
+  "202": "202 SLS G+W +X+psiQ uplift",
+  "203": "203 SLS G+W -X+psiQ uplift",
+  "204": "204 SLS G+W -Y+psiQ uplift",
+  "205": "205 SLS G+W +Y+psiQ uplift",
+  "206": "206 SLS G+W +X uplift",
+  "207": "207 SLS G+W -X uplift",
+  "208": "208 SLS G+W -Y uplift",
+  "209": "209 SLS G+W +Y uplift",
+  "210": "210 SLS G+Q+psiW +X uplift",
+  "211": "211 SLS G+Q+psiW -X uplift",
+  "212": "212 SLS G+Q+psiW -Y uplift",
+  "213": "213 SLS G+Q+psiW +Y uplift",
+  "214": "214 SLS G+W +X+psiQ down",
+  "215": "215 SLS G+W -X+psiQ down",
+  "216": "216 SLS G+W -Y+psiQ down",
+  "217": "217 SLS G+W +Y+psiQ down",
+  "218": "218 SLS G+Q+psiW +X down",
+  "219": "219 SLS G+Q+psiW -X down",
+  "220": "220 SLS G+Q+psiW -Y down",
+  "221": "221 SLS G+Q+psiW +Y down"
+ },
+ "members": [
+  {
+   "sln": 701,
+   "title": "right flight 1 inner stringer",
+   "kind": "stringer",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190321,
+    190322,
+    190323,
+    190324,
+    190325,
+    190326,
+    190327,
+    190328,
+    190329,
+    190330,
+    190331
+   ],
+   "length_m": 3.038,
+   "bdk": {
+    "util": 0.168,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.06,
+    "n_z": 0.07,
+    "m_y": 0.11,
+    "m_z": 0.06,
+    "nm_y": 0.159,
+    "nm_z": 0.168
+   },
+   "aqb": {
+    "util": 0.216,
+    "lc": 123,
+    "beam": 190331,
+    "x": 0.249,
+    "note": null
+   }
+  },
+  {
+   "sln": 702,
+   "title": "right flight 1 outer stringer",
+   "kind": "stringer",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190332,
+    190333,
+    190334,
+    190335,
+    190336,
+    190337,
+    190338,
+    190339,
+    190340,
+    190341,
+    190342
+   ],
+   "length_m": 3.062,
+   "bdk": {
+    "util": 0.165,
+    "lc": 123,
+    "check": "Passed",
+    "n_y": 0.07,
+    "n_z": 0.08,
+    "m_y": 0.07,
+    "m_z": 0.09,
+    "nm_y": 0.149,
+    "nm_z": 0.165
+   },
+   "aqb": {
+    "util": 0.221,
+    "lc": 111,
+    "beam": 190342,
+    "x": 0.268,
+    "note": null
+   }
+  },
+  {
+   "sln": 703,
+   "title": "right landing 1 edge at flight 1",
+   "kind": "landing 1 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190001,
+    190002,
+    190003,
+    190004,
+    190005
+   ],
+   "length_m": 2.077,
+   "bdk": {
+    "util": 0.1,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.02,
+    "n_z": 0.02,
+    "m_y": 0.12,
+    "m_z": 0.06,
+    "nm_y": 0.1,
+    "nm_z": 0.084
+   },
+   "aqb": {
+    "util": 0.179,
+    "lc": 111,
+    "beam": 190005,
+    "x": 0.415,
+    "note": null
+   }
+  },
+  {
+   "sln": 704,
+   "title": "right landing 1 outer edge",
+   "kind": "landing 1 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190006,
+    190007,
+    190008
+   ],
+   "length_m": 1.414,
+   "bdk": {
+    "util": 0.084,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.08,
+    "m_z": 0.09,
+    "nm_y": 0.084,
+    "nm_z": 0.073
+   },
+   "aqb": {
+    "util": 0.185,
+    "lc": 103,
+    "beam": 190006,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 705,
+   "title": "right landing 1 edge at flight 2",
+   "kind": "landing 1 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190009,
+    190010,
+    190011,
+    190012,
+    190013
+   ],
+   "length_m": 2.082,
+   "bdk": {
+    "util": 0.072,
+    "lc": 123,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.12,
+    "m_z": 0.11,
+    "nm_y": 0.072,
+    "nm_z": 0.071
+   },
+   "aqb": {
+    "util": 0.151,
+    "lc": 111,
+    "beam": 190009,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 706,
+   "title": "right landing 1 inner edge",
+   "kind": "landing 1 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190014,
+    190015
+   ],
+   "length_m": 0.727,
+   "bdk": {
+    "util": 0.275,
+    "lc": 119,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.35,
+    "m_z": 0.12,
+    "nm_y": 0.275,
+    "nm_z": 0.196
+   },
+   "aqb": {
+    "util": 0.404,
+    "lc": 119,
+    "beam": 190014,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 707,
+   "title": "right landing 1 leg inner-low",
+   "kind": "leg",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190343,
+    190344,
+    190345,
+    190346,
+    190347,
+    190348
+   ],
+   "length_m": 2.43,
+   "bdk": {
+    "util": 0.271,
+    "lc": 123,
+    "check": "Passed",
+    "n_y": 0.17,
+    "n_z": 0.17,
+    "m_y": 0.11,
+    "m_z": 0.05,
+    "nm_y": 0.271,
+    "nm_z": 0.249
+   },
+   "aqb": {
+    "util": 0.16,
+    "lc": 111,
+    "beam": 190343,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 708,
+   "title": "right landing 1 leg outer-low",
+   "kind": "leg",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190349,
+    190350,
+    190351,
+    190352,
+    190353,
+    190354
+   ],
+   "length_m": 2.43,
+   "bdk": {
+    "util": 0.241,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.21,
+    "n_z": 0.21,
+    "m_y": 0.01,
+    "m_z": 0.07,
+    "nm_y": 0.232,
+    "nm_z": 0.241
+   },
+   "aqb": {
+    "util": 0.116,
+    "lc": 135,
+    "beam": 190349,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 709,
+   "title": "right landing 1 leg outer-high",
+   "kind": "leg",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190355,
+    190356,
+    190357,
+    190358,
+    190359,
+    190360
+   ],
+   "length_m": 2.43,
+   "bdk": {
+    "util": 0.278,
+    "lc": 123,
+    "check": "Passed",
+    "n_y": 0.18,
+    "n_z": 0.18,
+    "m_y": 0.12,
+    "m_z": 0.03,
+    "nm_y": 0.278,
+    "nm_z": 0.246
+   },
+   "aqb": {
+    "util": 0.162,
+    "lc": 111,
+    "beam": 190355,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 710,
+   "title": "right landing 1 leg inner-high",
+   "kind": "leg",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190361,
+    190362,
+    190363,
+    190364,
+    190365,
+    190366
+   ],
+   "length_m": 2.43,
+   "bdk": {
+    "util": 0.543,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.47,
+    "n_z": 0.47,
+    "m_y": 0.04,
+    "m_z": 0.08,
+    "nm_y": 0.543,
+    "nm_z": 0.542
+   },
+   "aqb": {
+    "util": 0.24,
+    "lc": 119,
+    "beam": 190361,
+    "x": 0.0,
+    "note": null
+   },
+   "governing_forces": {
+    "bdk_lc_135": {
+     "N": {
+      "max": {
+       "value": -58.726,
+       "beam": 190361,
+       "x": 0.0
+      },
+      "min": {
+       "value": -59.2631,
+       "beam": 190366,
+       "x": 0.4117
+      }
+     },
+     "My": {
+      "max": {
+       "value": 0.0,
+       "beam": 190366,
+       "x": 0.4117
+      },
+      "min": {
+       "value": -0.5605,
+       "beam": 190361,
+       "x": 0.0
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": 1.0525,
+       "beam": 190361,
+       "x": 0.0
+      },
+      "min": {
+       "value": -0.114,
+       "beam": 190363,
+       "x": 0.3983
+      }
+     }
+    },
+    "aqb_lc_119": {
+     "N": {
+      "max": {
+       "value": -35.867,
+       "beam": 190361,
+       "x": 0.0
+      },
+      "min": {
+       "value": -36.4041,
+       "beam": 190366,
+       "x": 0.4117
+      }
+     },
+     "My": {
+      "max": {
+       "value": 1.7311,
+       "beam": 190361,
+       "x": 0.0
+      },
+      "min": {
+       "value": -0.0,
+       "beam": 190366,
+       "x": 0.4117
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": 1.5227,
+       "beam": 190361,
+       "x": 0.0
+      },
+      "min": {
+       "value": -0.135,
+       "beam": 190364,
+       "x": 0.0
+      }
+     }
+    },
+    "at_aqb_station": {
+     "N": -35.867,
+     "Vy": 1.3691,
+     "Vz": -0.7835,
+     "Mt": 0.0,
+     "My": 1.7311,
+     "Mz": 1.5227
+    }
+   }
+  },
+  {
+   "sln": 711,
+   "title": "right flight 2 inner stringer seat",
+   "kind": "stringer seat",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190016
+   ],
+   "length_m": 0.21,
+   "bdk": {
+    "util": 0.662,
+    "lc": 122,
+    "check": "Passed",
+    "n_y": 0.02,
+    "n_z": 0.02,
+    "m_y": 0.09,
+    "m_z": 0.66,
+    "nm_y": 0.452,
+    "nm_z": 0.662
+   },
+   "aqb": {
+    "util": 0.672,
+    "lc": 122,
+    "beam": 190016,
+    "x": 0.0,
+    "note": null
+   },
+   "governing_forces": {
+    "bdk_lc_122": {
+     "N": {
+      "max": {
+       "value": -14.5725,
+       "beam": 190016,
+       "x": 0.21
+      },
+      "min": {
+       "value": -14.6485,
+       "beam": 190016,
+       "x": 0.0
+      }
+     },
+     "My": {
+      "max": {
+       "value": 5.3299,
+       "beam": 190016,
+       "x": 0.21
+      },
+      "min": {
+       "value": 3.5578,
+       "beam": 190016,
+       "x": 0.0
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": -18.9758,
+       "beam": 190016,
+       "x": 0.21
+      },
+      "min": {
+       "value": -24.2789,
+       "beam": 190016,
+       "x": 0.0
+      }
+     }
+    },
+    "aqb_lc_122": {
+     "N": {
+      "max": {
+       "value": -14.5725,
+       "beam": 190016,
+       "x": 0.21
+      },
+      "min": {
+       "value": -14.6485,
+       "beam": 190016,
+       "x": 0.0
+      }
+     },
+     "My": {
+      "max": {
+       "value": 5.3299,
+       "beam": 190016,
+       "x": 0.21
+      },
+      "min": {
+       "value": 3.5578,
+       "beam": 190016,
+       "x": 0.0
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": -18.9758,
+       "beam": 190016,
+       "x": 0.21
+      },
+      "min": {
+       "value": -24.2789,
+       "beam": 190016,
+       "x": 0.0
+      }
+     }
+    },
+    "at_aqb_station": {
+     "N": -14.6485,
+     "Vy": -25.2718,
+     "Vz": 8.4387,
+     "Mt": -0.5933,
+     "My": 3.5578,
+     "Mz": -24.2789
+    }
+   }
+  },
+  {
+   "sln": 712,
+   "title": "right flight 2 outer stringer seat",
+   "kind": "stringer seat",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190017
+   ],
+   "length_m": 0.21,
+   "bdk": {
+    "util": 0.127,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.09,
+    "m_z": 0.11,
+    "nm_y": 0.127,
+    "nm_z": 0.125
+   },
+   "aqb": {
+    "util": 0.145,
+    "lc": 135,
+    "beam": 190017,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 713,
+   "title": "right flight 2 inner stringer",
+   "kind": "stringer",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190367,
+    190368,
+    190369,
+    190370,
+    190371,
+    190372,
+    190373,
+    190374,
+    190375,
+    190376,
+    190377
+   ],
+   "length_m": 3.071,
+   "bdk": {
+    "util": 0.195,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.05,
+    "n_z": 0.05,
+    "m_y": 0.31,
+    "m_z": 0.07,
+    "nm_y": 0.195,
+    "nm_z": 0.166
+   },
+   "aqb": {
+    "util": 0.366,
+    "lc": 135,
+    "beam": 190367,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 714,
+   "title": "right flight 2 outer stringer",
+   "kind": "stringer",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190378,
+    190379,
+    190380,
+    190381,
+    190382,
+    190383,
+    190384,
+    190385,
+    190386,
+    190387,
+    190388
+   ],
+   "length_m": 3.116,
+   "bdk": {
+    "util": 0.094,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.13,
+    "m_z": 0.07,
+    "nm_y": 0.094,
+    "nm_z": 0.074
+   },
+   "aqb": {
+    "util": 0.205,
+    "lc": 119,
+    "beam": 190388,
+    "x": 0.236,
+    "note": null
+   }
+  },
+  {
+   "sln": 715,
+   "title": "right landing 2 edge at flight 2",
+   "kind": "landing 2 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190018,
+    190019,
+    190020,
+    190021,
+    190022
+   ],
+   "length_m": 2.179,
+   "bdk": {
+    "util": 0.092,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.02,
+    "n_z": 0.02,
+    "m_y": 0.06,
+    "m_z": 0.06,
+    "nm_y": 0.092,
+    "nm_z": 0.077
+   },
+   "aqb": {
+    "util": 0.163,
+    "lc": 119,
+    "beam": 190022,
+    "x": 0.436,
+    "note": null
+   }
+  },
+  {
+   "sln": 716,
+   "title": "right landing 2 outer edge (a)",
+   "kind": "landing 2 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190023,
+    190024
+   ],
+   "length_m": 0.902,
+   "bdk": {
+    "util": 0.069,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.11,
+    "m_z": 0.09,
+    "nm_y": 0.069,
+    "nm_z": 0.066
+   },
+   "aqb": {
+    "util": 0.186,
+    "lc": 135,
+    "beam": 190023,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 717,
+   "title": "right landing 2 outer edge (b)",
+   "kind": "landing 2 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190025,
+    190026,
+    190027
+   ],
+   "length_m": 1.02,
+   "bdk": {
+    "util": 0.107,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.01,
+    "n_z": 0.01,
+    "m_y": 0.11,
+    "m_z": 0.03,
+    "nm_y": 0.107,
+    "nm_z": 0.074
+   },
+   "aqb": {
+    "util": 0.16,
+    "lc": 135,
+    "beam": 190027,
+    "x": 0.34,
+    "note": null
+   }
+  },
+  {
+   "sln": 718,
+   "title": "right landing 2 far edge",
+   "kind": "landing 2 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190028,
+    190029,
+    190030,
+    190031,
+    190032,
+    190033
+   ],
+   "length_m": 2.538,
+   "bdk": {
+    "util": 0.103,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.07,
+    "m_z": 0.09,
+    "nm_y": 0.103,
+    "nm_z": 0.092
+   },
+   "aqb": {
+    "util": 0.22,
+    "lc": 122,
+    "beam": 190033,
+    "x": 0.423,
+    "note": null
+   }
+  },
+  {
+   "sln": 719,
+   "title": "right landing 2 inner edge (b), along the ring",
+   "kind": "landing 2 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190034,
+    190035,
+    190036
+   ],
+   "length_m": 1.166,
+   "bdk": {
+    "util": 0.206,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.01,
+    "n_z": 0.01,
+    "m_y": 0.23,
+    "m_z": 0.09,
+    "nm_y": 0.206,
+    "nm_z": 0.149
+   },
+   "aqb": {
+    "util": 0.244,
+    "lc": 135,
+    "beam": 190036,
+    "x": 0.389,
+    "note": null
+   }
+  },
+  {
+   "sln": 720,
+   "title": "right landing 2 inner edge (a), along the ring",
+   "kind": "landing 2 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190037,
+    190038
+   ],
+   "length_m": 0.924,
+   "bdk": {
+    "util": 0.223,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.01,
+    "n_z": 0.01,
+    "m_y": 0.22,
+    "m_z": 0.02,
+    "nm_y": 0.223,
+    "nm_z": 0.143
+   },
+   "aqb": {
+    "util": 0.261,
+    "lc": 152,
+    "beam": 190038,
+    "x": 0.462,
+    "note": null
+   }
+  },
+  {
+   "sln": 721,
+   "title": "right landing 2 middle beam",
+   "kind": "landing 2 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190039,
+    190040,
+    190041,
+    190042,
+    190043
+   ],
+   "length_m": 2.118,
+   "bdk": {
+    "util": 0.128,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.11,
+    "m_z": 0.07,
+    "nm_y": 0.128,
+    "nm_z": 0.095
+   },
+   "aqb": {
+    "util": 0.131,
+    "lc": 119,
+    "beam": 190039,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 722,
+   "title": "right landing 2 leg outer-low",
+   "kind": "leg",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190389,
+    190390,
+    190391,
+    190392,
+    190393,
+    190394,
+    190395,
+    190396,
+    190397,
+    190398,
+    190399,
+    190400
+   ],
+   "length_m": 4.43,
+   "bdk": {
+    "util": 1.013,
+    "lc": 122,
+    "check": "Not passed",
+    "n_y": 0.85,
+    "n_z": 0.85,
+    "m_y": 0.13,
+    "m_z": 0.02,
+    "nm_y": 1.013,
+    "nm_z": 0.972
+   },
+   "aqb": {
+    "util": 0.192,
+    "lc": 152,
+    "beam": 190389,
+    "x": 0.0,
+    "note": null
+   },
+   "governing_forces": {
+    "bdk_lc_122": {
+     "N": {
+      "max": {
+       "value": -33.0893,
+       "beam": 190389,
+       "x": 0.0
+      },
+      "min": {
+       "value": -34.3104,
+       "beam": 190400,
+       "x": 0.3625
+      }
+     },
+     "My": {
+      "max": {
+       "value": 1.7331,
+       "beam": 190389,
+       "x": 0.0
+      },
+      "min": {
+       "value": 0.0,
+       "beam": 190400,
+       "x": 0.3625
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": 0.0,
+       "beam": 190400,
+       "x": 0.3625
+      },
+      "min": {
+       "value": -0.2997,
+       "beam": 190396,
+       "x": 0.3625
+      }
+     }
+    },
+    "aqb_lc_152": {
+     "N": {
+      "max": {
+       "value": -30.3942,
+       "beam": 190389,
+       "x": 0.0
+      },
+      "min": {
+       "value": -31.6152,
+       "beam": 190400,
+       "x": 0.3625
+      }
+     },
+     "My": {
+      "max": {
+       "value": 1.7948,
+       "beam": 190389,
+       "x": 0.0
+      },
+      "min": {
+       "value": 0.0,
+       "beam": 190400,
+       "x": 0.3625
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": 0.0,
+       "beam": 190400,
+       "x": 0.3625
+      },
+      "min": {
+       "value": -0.4484,
+       "beam": 190389,
+       "x": 0.0
+      }
+     }
+    },
+    "at_aqb_station": {
+     "N": -30.3942,
+     "Vy": -0.184,
+     "Vz": -0.2487,
+     "Mt": -0.0,
+     "My": 1.7948,
+     "Mz": -0.4484
+    }
+   }
+  },
+  {
+   "sln": 723,
+   "title": "right landing 2 leg outer-high",
+   "kind": "leg",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190401,
+    190402,
+    190403,
+    190404,
+    190405,
+    190406,
+    190407,
+    190408,
+    190409,
+    190410,
+    190411,
+    190412
+   ],
+   "length_m": 4.43,
+   "bdk": {
+    "util": 0.637,
+    "lc": 119,
+    "check": "Passed",
+    "n_y": 0.44,
+    "n_z": 0.44,
+    "m_y": 0.2,
+    "m_z": 0.02,
+    "nm_y": 0.637,
+    "nm_z": 0.575
+   },
+   "aqb": {
+    "util": 0.23,
+    "lc": 119,
+    "beam": 190401,
+    "x": 0.0,
+    "note": null
+   },
+   "governing_forces": {
+    "bdk_lc_119": {
+     "N": {
+      "max": {
+       "value": -16.6357,
+       "beam": 190401,
+       "x": 0.0
+      },
+      "min": {
+       "value": -17.8568,
+       "beam": 190412,
+       "x": 0.3625
+      }
+     },
+     "My": {
+      "max": {
+       "value": 2.7498,
+       "beam": 190401,
+       "x": 0.0
+      },
+      "min": {
+       "value": -0.0,
+       "beam": 190412,
+       "x": 0.3625
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": 0.0,
+       "beam": 190412,
+       "x": 0.3625
+      },
+      "min": {
+       "value": -0.2901,
+       "beam": 190405,
+       "x": 0.0
+      }
+     }
+    },
+    "aqb_lc_119": {
+     "N": {
+      "max": {
+       "value": -16.6357,
+       "beam": 190401,
+       "x": 0.0
+      },
+      "min": {
+       "value": -17.8568,
+       "beam": 190412,
+       "x": 0.3625
+      }
+     },
+     "My": {
+      "max": {
+       "value": 2.7498,
+       "beam": 190401,
+       "x": 0.0
+      },
+      "min": {
+       "value": -0.0,
+       "beam": 190412,
+       "x": 0.3625
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": 0.0,
+       "beam": 190412,
+       "x": 0.3625
+      },
+      "min": {
+       "value": -0.2901,
+       "beam": 190405,
+       "x": 0.0
+      }
+     }
+    },
+    "at_aqb_station": {
+     "N": -16.6357,
+     "Vy": 0.0035,
+     "Vz": -0.5561,
+     "Mt": -0.0,
+     "My": 2.7498,
+     "Mz": -0.2417
+    }
+   }
+  },
+  {
+   "sln": 724,
+   "title": "right landing 2 support on L1 ring 0-20 (SLN 161)",
+   "kind": "ring bracket",
+   "section": "SHS 100x100x5 stair landing posts",
+   "sno": 8,
+   "beams": [
+    190044
+   ],
+   "length_m": 0.376,
+   "bdk": {
+    "util": 0.009,
+    "lc": 110,
+    "check": "Passed",
+    "n_y": 0.01,
+    "n_z": 0.01,
+    "m_y": 0.0,
+    "m_z": 0.0,
+    "nm_y": 0.009,
+    "nm_z": 0.009
+   },
+   "aqb": {
+    "util": 0.017,
+    "lc": 151,
+    "beam": 190044,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 725,
+   "title": "right landing 2 support on L1 ring 20-40 (SLN 170)",
+   "kind": "ring bracket",
+   "section": "SHS 100x100x5 stair landing posts",
+   "sno": 8,
+   "beams": [
+    190045
+   ],
+   "length_m": 0.376,
+   "bdk": {
+    "util": 0.033,
+    "lc": 122,
+    "check": "Passed",
+    "n_y": 0.03,
+    "n_z": 0.03,
+    "m_y": 0.0,
+    "m_z": 0.0,
+    "nm_y": 0.033,
+    "nm_z": 0.033
+   },
+   "aqb": {
+    "util": 0.033,
+    "lc": 152,
+    "beam": 190045,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 726,
+   "title": "right flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190046,
+    190047,
+    190048,
+    190049,
+    190050
+   ],
+   "length_m": 2.081,
+   "bdk": null,
+   "aqb": {
+    "util": 0.676,
+    "lc": null,
+    "beam": 190050,
+    "x": 0.416,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   },
+   "governing_forces": {}
+  },
+  {
+   "sln": 727,
+   "title": "right flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190051,
+    190052,
+    190053,
+    190054,
+    190055
+   ],
+   "length_m": 2.081,
+   "bdk": null,
+   "aqb": {
+    "util": 0.699,
+    "lc": null,
+    "beam": 190055,
+    "x": 0.416,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   },
+   "governing_forces": {}
+  },
+  {
+   "sln": 728,
+   "title": "right flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190056,
+    190057,
+    190058,
+    190059,
+    190060
+   ],
+   "length_m": 2.08,
+   "bdk": null,
+   "aqb": {
+    "util": 0.697,
+    "lc": null,
+    "beam": 190060,
+    "x": 0.416,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   },
+   "governing_forces": {}
+  },
+  {
+   "sln": 729,
+   "title": "right flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190061,
+    190062,
+    190063,
+    190064,
+    190065
+   ],
+   "length_m": 2.079,
+   "bdk": null,
+   "aqb": {
+    "util": 0.68,
+    "lc": null,
+    "beam": 190065,
+    "x": 0.416,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   },
+   "governing_forces": {}
+  },
+  {
+   "sln": 730,
+   "title": "right flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190066,
+    190067,
+    190068,
+    190069,
+    190070
+   ],
+   "length_m": 2.079,
+   "bdk": null,
+   "aqb": {
+    "util": 0.649,
+    "lc": null,
+    "beam": 190070,
+    "x": 0.416,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   },
+   "governing_forces": {}
+  },
+  {
+   "sln": 731,
+   "title": "right flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190071,
+    190072,
+    190073,
+    190074,
+    190075
+   ],
+   "length_m": 2.079,
+   "bdk": null,
+   "aqb": {
+    "util": 0.604,
+    "lc": null,
+    "beam": 190075,
+    "x": 0.416,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   },
+   "governing_forces": {}
+  },
+  {
+   "sln": 732,
+   "title": "right flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190076,
+    190077,
+    190078,
+    190079,
+    190080
+   ],
+   "length_m": 2.079,
+   "bdk": null,
+   "aqb": {
+    "util": 0.546,
+    "lc": null,
+    "beam": 190080,
+    "x": 0.416,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   },
+   "governing_forces": {}
+  },
+  {
+   "sln": 733,
+   "title": "right flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190081,
+    190082,
+    190083,
+    190084,
+    190085
+   ],
+   "length_m": 2.078,
+   "bdk": null,
+   "aqb": {
+    "util": 0.472,
+    "lc": null,
+    "beam": 190085,
+    "x": 0.416,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 734,
+   "title": "right flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190086,
+    190087,
+    190088,
+    190089,
+    190090
+   ],
+   "length_m": 2.077,
+   "bdk": null,
+   "aqb": {
+    "util": 0.384,
+    "lc": null,
+    "beam": 190090,
+    "x": 0.415,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 735,
+   "title": "right flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190091,
+    190092,
+    190093,
+    190094,
+    190095
+   ],
+   "length_m": 2.077,
+   "bdk": null,
+   "aqb": {
+    "util": 0.3,
+    "lc": null,
+    "beam": 190095,
+    "x": 0.415,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 736,
+   "title": "right flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190096,
+    190097,
+    190098,
+    190099,
+    190100
+   ],
+   "length_m": 2.086,
+   "bdk": null,
+   "aqb": {
+    "util": 0.238,
+    "lc": null,
+    "beam": 190096,
+    "x": 0.0,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 737,
+   "title": "right flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190101,
+    190102,
+    190103,
+    190104,
+    190105
+   ],
+   "length_m": 2.095,
+   "bdk": null,
+   "aqb": {
+    "util": 0.265,
+    "lc": null,
+    "beam": 190101,
+    "x": 0.0,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 738,
+   "title": "right flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190106,
+    190107,
+    190108,
+    190109,
+    190110
+   ],
+   "length_m": 2.105,
+   "bdk": null,
+   "aqb": {
+    "util": 0.302,
+    "lc": null,
+    "beam": 190110,
+    "x": 0.421,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 739,
+   "title": "right flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190111,
+    190112,
+    190113,
+    190114,
+    190115
+   ],
+   "length_m": 2.115,
+   "bdk": null,
+   "aqb": {
+    "util": 0.328,
+    "lc": null,
+    "beam": 190115,
+    "x": 0.423,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 740,
+   "title": "right flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190116,
+    190117,
+    190118,
+    190119,
+    190120
+   ],
+   "length_m": 2.124,
+   "bdk": null,
+   "aqb": {
+    "util": 0.341,
+    "lc": null,
+    "beam": 190120,
+    "x": 0.425,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 741,
+   "title": "right flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190121,
+    190122,
+    190123,
+    190124,
+    190125
+   ],
+   "length_m": 2.134,
+   "bdk": null,
+   "aqb": {
+    "util": 0.345,
+    "lc": null,
+    "beam": 190125,
+    "x": 0.427,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 742,
+   "title": "right flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190126,
+    190127,
+    190128,
+    190129,
+    190130
+   ],
+   "length_m": 2.143,
+   "bdk": null,
+   "aqb": {
+    "util": 0.341,
+    "lc": null,
+    "beam": 190130,
+    "x": 0.429,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 743,
+   "title": "right flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190131,
+    190132,
+    190133,
+    190134,
+    190135
+   ],
+   "length_m": 2.153,
+   "bdk": null,
+   "aqb": {
+    "util": 0.316,
+    "lc": null,
+    "beam": 190135,
+    "x": 0.431,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 744,
+   "title": "right flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190136,
+    190137,
+    190138,
+    190139,
+    190140
+   ],
+   "length_m": 2.163,
+   "bdk": null,
+   "aqb": {
+    "util": 0.265,
+    "lc": null,
+    "beam": 190140,
+    "x": 0.433,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 745,
+   "title": "right flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190141,
+    190142,
+    190143,
+    190144,
+    190145
+   ],
+   "length_m": 2.172,
+   "bdk": null,
+   "aqb": {
+    "util": 0.192,
+    "lc": null,
+    "beam": 190145,
+    "x": 0.435,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 746,
+   "title": "left flight 1 inner stringer",
+   "kind": "stringer",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190413,
+    190414,
+    190415,
+    190416,
+    190417,
+    190418,
+    190419,
+    190420,
+    190421,
+    190422,
+    190423
+   ],
+   "length_m": 3.042,
+   "bdk": {
+    "util": 0.167,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.06,
+    "n_z": 0.07,
+    "m_y": 0.11,
+    "m_z": 0.06,
+    "nm_y": 0.159,
+    "nm_z": 0.167
+   },
+   "aqb": {
+    "util": 0.183,
+    "lc": 123,
+    "beam": 190423,
+    "x": 0.252,
+    "note": null
+   }
+  },
+  {
+   "sln": 747,
+   "title": "left flight 1 outer stringer",
+   "kind": "stringer",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190424,
+    190425,
+    190426,
+    190427,
+    190428,
+    190429,
+    190430,
+    190431,
+    190432,
+    190433,
+    190434
+   ],
+   "length_m": 3.05,
+   "bdk": {
+    "util": 0.145,
+    "lc": 123,
+    "check": "Passed",
+    "n_y": 0.07,
+    "n_z": 0.08,
+    "m_y": 0.05,
+    "m_z": 0.08,
+    "nm_y": 0.123,
+    "nm_z": 0.145
+   },
+   "aqb": {
+    "util": 0.197,
+    "lc": 111,
+    "beam": 190434,
+    "x": 0.261,
+    "note": null
+   }
+  },
+  {
+   "sln": 748,
+   "title": "left landing 1 edge at flight 1",
+   "kind": "landing 1 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190146,
+    190147,
+    190148,
+    190149,
+    190150
+   ],
+   "length_m": 2.07,
+   "bdk": {
+    "util": 0.098,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.02,
+    "n_z": 0.02,
+    "m_y": 0.12,
+    "m_z": 0.06,
+    "nm_y": 0.098,
+    "nm_z": 0.082
+   },
+   "aqb": {
+    "util": 0.169,
+    "lc": 111,
+    "beam": 190150,
+    "x": 0.414,
+    "note": null
+   }
+  },
+  {
+   "sln": 749,
+   "title": "left landing 1 outer edge",
+   "kind": "landing 1 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190151,
+    190152,
+    190153
+   ],
+   "length_m": 1.422,
+   "bdk": {
+    "util": 0.088,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.09,
+    "m_z": 0.09,
+    "nm_y": 0.088,
+    "nm_z": 0.075
+   },
+   "aqb": {
+    "util": 0.18,
+    "lc": 105,
+    "beam": 190151,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 750,
+   "title": "left landing 1 edge at flight 2",
+   "kind": "landing 1 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190154,
+    190155,
+    190156,
+    190157,
+    190158
+   ],
+   "length_m": 2.086,
+   "bdk": {
+    "util": 0.069,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.13,
+    "m_z": 0.05,
+    "nm_y": 0.069,
+    "nm_z": 0.056
+   },
+   "aqb": {
+    "util": 0.146,
+    "lc": 135,
+    "beam": 190158,
+    "x": 0.417,
+    "note": null
+   }
+  },
+  {
+   "sln": 751,
+   "title": "left landing 1 inner edge",
+   "kind": "landing 1 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190159,
+    190160
+   ],
+   "length_m": 0.722,
+   "bdk": {
+    "util": 0.306,
+    "lc": 121,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.41,
+    "m_z": 0.11,
+    "nm_y": 0.306,
+    "nm_z": 0.212
+   },
+   "aqb": {
+    "util": 0.454,
+    "lc": 121,
+    "beam": 190159,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 752,
+   "title": "left landing 1 leg inner-low",
+   "kind": "leg",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190435,
+    190436,
+    190437,
+    190438,
+    190439,
+    190440
+   ],
+   "length_m": 2.43,
+   "bdk": {
+    "util": 0.251,
+    "lc": 125,
+    "check": "Passed",
+    "n_y": 0.17,
+    "n_z": 0.17,
+    "m_y": 0.06,
+    "m_z": 0.09,
+    "nm_y": 0.251,
+    "nm_z": 0.243
+   },
+   "aqb": {
+    "util": 0.131,
+    "lc": 111,
+    "beam": 190435,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 753,
+   "title": "left landing 1 leg outer-low",
+   "kind": "leg",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190441,
+    190442,
+    190443,
+    190444,
+    190445,
+    190446
+   ],
+   "length_m": 2.43,
+   "bdk": {
+    "util": 0.239,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.2,
+    "n_z": 0.2,
+    "m_y": 0.05,
+    "m_z": 0.04,
+    "nm_y": 0.239,
+    "nm_z": 0.237
+   },
+   "aqb": {
+    "util": 0.119,
+    "lc": 135,
+    "beam": 190441,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 754,
+   "title": "left landing 1 leg outer-high",
+   "kind": "leg",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190447,
+    190448,
+    190449,
+    190450,
+    190451,
+    190452
+   ],
+   "length_m": 2.43,
+   "bdk": {
+    "util": 0.261,
+    "lc": 123,
+    "check": "Passed",
+    "n_y": 0.17,
+    "n_z": 0.17,
+    "m_y": 0.09,
+    "m_z": 0.06,
+    "nm_y": 0.261,
+    "nm_z": 0.249
+   },
+   "aqb": {
+    "util": 0.145,
+    "lc": 111,
+    "beam": 190447,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 755,
+   "title": "left landing 1 leg inner-high",
+   "kind": "leg",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190453,
+    190454,
+    190455,
+    190456,
+    190457,
+    190458
+   ],
+   "length_m": 2.43,
+   "bdk": {
+    "util": 0.569,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.5,
+    "n_z": 0.5,
+    "m_y": 0.03,
+    "m_z": 0.09,
+    "nm_y": 0.561,
+    "nm_z": 0.569
+   },
+   "aqb": {
+    "util": 0.242,
+    "lc": 121,
+    "beam": 190453,
+    "x": 0.0,
+    "note": null
+   },
+   "governing_forces": {
+    "bdk_lc_135": {
+     "N": {
+      "max": {
+       "value": -62.1418,
+       "beam": 190453,
+       "x": 0.0
+      },
+      "min": {
+       "value": -62.6784,
+       "beam": 190458,
+       "x": 0.4117
+      }
+     },
+     "My": {
+      "max": {
+       "value": 0.3656,
+       "beam": 190453,
+       "x": 0.0
+      },
+      "min": {
+       "value": -0.3725,
+       "beam": 190456,
+       "x": 0.0
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": 0.0,
+       "beam": 190458,
+       "x": 0.4117
+      },
+      "min": {
+       "value": -1.2369,
+       "beam": 190453,
+       "x": 0.0
+      }
+     }
+    },
+    "aqb_lc_121": {
+     "N": {
+      "max": {
+       "value": -43.2387,
+       "beam": 190453,
+       "x": 0.0
+      },
+      "min": {
+       "value": -43.7753,
+       "beam": 190458,
+       "x": 0.4117
+      }
+     },
+     "My": {
+      "max": {
+       "value": 2.266,
+       "beam": 190453,
+       "x": 0.0
+      },
+      "min": {
+       "value": 0.0,
+       "beam": 190458,
+       "x": 0.4117
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": 0.633,
+       "beam": 190456,
+       "x": 0.0
+      },
+      "min": {
+       "value": -0.3559,
+       "beam": 190453,
+       "x": 0.0
+      }
+     }
+    },
+    "at_aqb_station": {
+     "N": -43.2387,
+     "Vy": -0.7821,
+     "Vz": -1.6006,
+     "Mt": 0.0,
+     "My": 2.266,
+     "Mz": -0.3559
+    }
+   }
+  },
+  {
+   "sln": 756,
+   "title": "left flight 2 inner stringer seat",
+   "kind": "stringer seat",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190161
+   ],
+   "length_m": 0.21,
+   "bdk": {
+    "util": 0.646,
+    "lc": 121,
+    "check": "Passed",
+    "n_y": 0.01,
+    "n_z": 0.01,
+    "m_y": 0.35,
+    "m_z": 0.49,
+    "nm_y": 0.605,
+    "nm_z": 0.646
+   },
+   "aqb": {
+    "util": 0.65,
+    "lc": 121,
+    "beam": 190161,
+    "x": 0.0,
+    "note": null
+   },
+   "governing_forces": {
+    "bdk_lc_121": {
+     "N": {
+      "max": {
+       "value": -14.0127,
+       "beam": 190161,
+       "x": 0.21
+      },
+      "min": {
+       "value": -14.0888,
+       "beam": 190161,
+       "x": 0.0
+      }
+     },
+     "My": {
+      "max": {
+       "value": 20.9232,
+       "beam": 190161,
+       "x": 0.0
+      },
+      "min": {
+       "value": 18.4212,
+       "beam": 190161,
+       "x": 0.21
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": 18.1605,
+       "beam": 190161,
+       "x": 0.0
+      },
+      "min": {
+       "value": 12.642,
+       "beam": 190161,
+       "x": 0.21
+      }
+     }
+    },
+    "aqb_lc_121": {
+     "N": {
+      "max": {
+       "value": -14.0127,
+       "beam": 190161,
+       "x": 0.21
+      },
+      "min": {
+       "value": -14.0888,
+       "beam": 190161,
+       "x": 0.0
+      }
+     },
+     "My": {
+      "max": {
+       "value": 20.9232,
+       "beam": 190161,
+       "x": 0.0
+      },
+      "min": {
+       "value": 18.4212,
+       "beam": 190161,
+       "x": 0.21
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": 18.1605,
+       "beam": 190161,
+       "x": 0.0
+      },
+      "min": {
+       "value": 12.642,
+       "beam": 190161,
+       "x": 0.21
+      }
+     }
+    },
+    "at_aqb_station": {
+     "N": -14.0888,
+     "Vy": 26.2972,
+     "Vz": -11.9145,
+     "Mt": -0.0815,
+     "My": 20.9232,
+     "Mz": 18.1605
+    }
+   }
+  },
+  {
+   "sln": 757,
+   "title": "left flight 2 outer stringer seat",
+   "kind": "stringer seat",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190162
+   ],
+   "length_m": 0.21,
+   "bdk": {
+    "util": 0.113,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.1,
+    "m_z": 0.06,
+    "nm_y": 0.113,
+    "nm_z": 0.087
+   },
+   "aqb": {
+    "util": 0.121,
+    "lc": 135,
+    "beam": 190162,
+    "x": 0.21,
+    "note": null
+   }
+  },
+  {
+   "sln": 758,
+   "title": "left flight 2 inner stringer",
+   "kind": "stringer",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190459,
+    190460,
+    190461,
+    190462,
+    190463,
+    190464,
+    190465,
+    190466,
+    190467,
+    190468,
+    190469
+   ],
+   "length_m": 3.076,
+   "bdk": {
+    "util": 0.21,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.05,
+    "n_z": 0.05,
+    "m_y": 0.35,
+    "m_z": 0.07,
+    "nm_y": 0.21,
+    "nm_z": 0.176
+   },
+   "aqb": {
+    "util": 0.4,
+    "lc": 135,
+    "beam": 190459,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 759,
+   "title": "left flight 2 outer stringer",
+   "kind": "stringer",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190470,
+    190471,
+    190472,
+    190473,
+    190474,
+    190475,
+    190476,
+    190477,
+    190478,
+    190479,
+    190480
+   ],
+   "length_m": 3.114,
+   "bdk": {
+    "util": 0.091,
+    "lc": 121,
+    "check": "Passed",
+    "n_y": 0.02,
+    "n_z": 0.02,
+    "m_y": 0.08,
+    "m_z": 0.07,
+    "nm_y": 0.091,
+    "nm_z": 0.082
+   },
+   "aqb": {
+    "util": 0.212,
+    "lc": 121,
+    "beam": 190480,
+    "x": 0.235,
+    "note": null
+   }
+  },
+  {
+   "sln": 760,
+   "title": "left landing 2 edge at flight 2",
+   "kind": "landing 2 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190163,
+    190164,
+    190165,
+    190166,
+    190167
+   ],
+   "length_m": 2.226,
+   "bdk": {
+    "util": 0.093,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.01,
+    "n_z": 0.02,
+    "m_y": 0.07,
+    "m_z": 0.05,
+    "nm_y": 0.093,
+    "nm_z": 0.077
+   },
+   "aqb": {
+    "util": 0.158,
+    "lc": 121,
+    "beam": 190167,
+    "x": 0.445,
+    "note": null
+   }
+  },
+  {
+   "sln": 761,
+   "title": "left landing 2 outer edge (a)",
+   "kind": "landing 2 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190168,
+    190169
+   ],
+   "length_m": 0.906,
+   "bdk": {
+    "util": 0.071,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.12,
+    "m_z": 0.09,
+    "nm_y": 0.071,
+    "nm_z": 0.066
+   },
+   "aqb": {
+    "util": 0.188,
+    "lc": 135,
+    "beam": 190168,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 762,
+   "title": "left landing 2 outer edge (b)",
+   "kind": "landing 2 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190170,
+    190171,
+    190172
+   ],
+   "length_m": 1.025,
+   "bdk": {
+    "util": 0.11,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.01,
+    "n_z": 0.01,
+    "m_y": 0.11,
+    "m_z": 0.03,
+    "nm_y": 0.11,
+    "nm_z": 0.077
+   },
+   "aqb": {
+    "util": 0.164,
+    "lc": 135,
+    "beam": 190172,
+    "x": 0.342,
+    "note": null
+   }
+  },
+  {
+   "sln": 763,
+   "title": "left landing 2 far edge",
+   "kind": "landing 2 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190173,
+    190174,
+    190175,
+    190176,
+    190177,
+    190178
+   ],
+   "length_m": 2.625,
+   "bdk": {
+    "util": 0.106,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.08,
+    "m_z": 0.09,
+    "nm_y": 0.106,
+    "nm_z": 0.096
+   },
+   "aqb": {
+    "util": 0.227,
+    "lc": 121,
+    "beam": 190178,
+    "x": 0.437,
+    "note": null
+   }
+  },
+  {
+   "sln": 764,
+   "title": "left landing 2 inner edge (b), along the ring",
+   "kind": "landing 2 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190179,
+    190180,
+    190181
+   ],
+   "length_m": 1.177,
+   "bdk": {
+    "util": 0.208,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.01,
+    "n_z": 0.01,
+    "m_y": 0.23,
+    "m_z": 0.09,
+    "nm_y": 0.208,
+    "nm_z": 0.15
+   },
+   "aqb": {
+    "util": 0.244,
+    "lc": 135,
+    "beam": 190181,
+    "x": 0.392,
+    "note": null
+   }
+  },
+  {
+   "sln": 765,
+   "title": "left landing 2 inner edge (a), along the ring",
+   "kind": "landing 2 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190182,
+    190183
+   ],
+   "length_m": 0.918,
+   "bdk": {
+    "util": 0.217,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.01,
+    "n_z": 0.01,
+    "m_y": 0.21,
+    "m_z": 0.02,
+    "nm_y": 0.217,
+    "nm_z": 0.14
+   },
+   "aqb": {
+    "util": 0.26,
+    "lc": 152,
+    "beam": 190183,
+    "x": 0.459,
+    "note": null
+   }
+  },
+  {
+   "sln": 766,
+   "title": "left landing 2 middle beam",
+   "kind": "landing 2 beam",
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "sno": 5,
+   "beams": [
+    190184,
+    190185,
+    190186,
+    190187,
+    190188
+   ],
+   "length_m": 2.118,
+   "bdk": {
+    "util": 0.133,
+    "lc": 135,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.12,
+    "m_z": 0.07,
+    "nm_y": 0.133,
+    "nm_z": 0.098
+   },
+   "aqb": {
+    "util": 0.13,
+    "lc": 121,
+    "beam": 190184,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 767,
+   "title": "left landing 2 leg outer-low",
+   "kind": "leg",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190481,
+    190482,
+    190483,
+    190484,
+    190485,
+    190486,
+    190487,
+    190488,
+    190489,
+    190490,
+    190491,
+    190492
+   ],
+   "length_m": 4.43,
+   "bdk": {
+    "util": 0.993,
+    "lc": 121,
+    "check": "Passed",
+    "n_y": 0.82,
+    "n_z": 0.82,
+    "m_y": 0.08,
+    "m_z": 0.09,
+    "nm_y": 0.986,
+    "nm_z": 0.993
+   },
+   "aqb": {
+    "util": 0.192,
+    "lc": 152,
+    "beam": 190481,
+    "x": 0.0,
+    "note": null
+   },
+   "governing_forces": {
+    "bdk_lc_121": {
+     "N": {
+      "max": {
+       "value": -31.7213,
+       "beam": 190481,
+       "x": 0.0
+      },
+      "min": {
+       "value": -32.9437,
+       "beam": 190492,
+       "x": 0.3625
+      }
+     },
+     "My": {
+      "max": {
+       "value": 1.1562,
+       "beam": 190481,
+       "x": 0.0
+      },
+      "min": {
+       "value": 0.0,
+       "beam": 190492,
+       "x": 0.3625
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": 1.253,
+       "beam": 190481,
+       "x": 0.0
+      },
+      "min": {
+       "value": -0.0,
+       "beam": 190492,
+       "x": 0.3625
+      }
+     }
+    },
+    "aqb_lc_152": {
+     "N": {
+      "max": {
+       "value": -30.4229,
+       "beam": 190481,
+       "x": 0.0
+      },
+      "min": {
+       "value": -31.6453,
+       "beam": 190492,
+       "x": 0.3625
+      }
+     },
+     "My": {
+      "max": {
+       "value": 1.0557,
+       "beam": 190481,
+       "x": 0.0
+      },
+      "min": {
+       "value": 0.0,
+       "beam": 190492,
+       "x": 0.3625
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": 1.4331,
+       "beam": 190481,
+       "x": 0.0
+      },
+      "min": {
+       "value": 0.0,
+       "beam": 190492,
+       "x": 0.3625
+      }
+     }
+    },
+    "at_aqb_station": {
+     "N": -30.4229,
+     "Vy": 0.3012,
+     "Vz": -0.0598,
+     "Mt": 0.0,
+     "My": 1.0557,
+     "Mz": 1.4331
+    }
+   }
+  },
+  {
+   "sln": 768,
+   "title": "left landing 2 leg outer-high",
+   "kind": "leg",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190493,
+    190494,
+    190495,
+    190496,
+    190497,
+    190498,
+    190499,
+    190500,
+    190501,
+    190502,
+    190503,
+    190504
+   ],
+   "length_m": 4.43,
+   "bdk": {
+    "util": 0.64,
+    "lc": 119,
+    "check": "Passed",
+    "n_y": 0.45,
+    "n_z": 0.45,
+    "m_y": 0.13,
+    "m_z": 0.14,
+    "nm_y": 0.64,
+    "nm_z": 0.638
+   },
+   "aqb": {
+    "util": 0.238,
+    "lc": 152,
+    "beam": 190493,
+    "x": 0.0,
+    "note": null
+   },
+   "governing_forces": {
+    "bdk_lc_119": {
+     "N": {
+      "max": {
+       "value": -16.8709,
+       "beam": 190493,
+       "x": 0.0
+      },
+      "min": {
+       "value": -18.0933,
+       "beam": 190504,
+       "x": 0.3625
+      }
+     },
+     "My": {
+      "max": {
+       "value": 1.8037,
+       "beam": 190493,
+       "x": 0.0
+      },
+      "min": {
+       "value": -0.0,
+       "beam": 190504,
+       "x": 0.3625
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": 1.9271,
+       "beam": 190493,
+       "x": 0.0
+      },
+      "min": {
+       "value": 0.0,
+       "beam": 190504,
+       "x": 0.3625
+      }
+     }
+    },
+    "aqb_lc_152": {
+     "N": {
+      "max": {
+       "value": -16.395,
+       "beam": 190493,
+       "x": 0.0
+      },
+      "min": {
+       "value": -17.6175,
+       "beam": 190504,
+       "x": 0.3625
+      }
+     },
+     "My": {
+      "max": {
+       "value": 1.9539,
+       "beam": 190493,
+       "x": 0.0
+      },
+      "min": {
+       "value": 0.0,
+       "beam": 190504,
+       "x": 0.3625
+      }
+     },
+     "Mz": {
+      "max": {
+       "value": 1.854,
+       "beam": 190493,
+       "x": 0.0
+      },
+      "min": {
+       "value": 0.0,
+       "beam": 190504,
+       "x": 0.3625
+      }
+     }
+    },
+    "at_aqb_station": {
+     "N": -16.395,
+     "Vy": 0.4408,
+     "Vz": -0.6195,
+     "Mt": 0.0,
+     "My": 1.9539,
+     "Mz": 1.854
+    }
+   }
+  },
+  {
+   "sln": 769,
+   "title": "left landing 2 support on L1 ring 300-320 (SLN 164)",
+   "kind": "ring bracket",
+   "section": "SHS 100x100x5 stair landing posts",
+   "sno": 8,
+   "beams": [
+    190189
+   ],
+   "length_m": 0.376,
+   "bdk": {
+    "util": 0.007,
+    "lc": 108,
+    "check": "Passed",
+    "n_y": 0.01,
+    "n_z": 0.01,
+    "m_y": 0.0,
+    "m_z": 0.0,
+    "nm_y": 0.007,
+    "nm_z": 0.007
+   },
+   "aqb": {
+    "util": 0.017,
+    "lc": 151,
+    "beam": 190189,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 770,
+   "title": "left landing 2 support on L1 ring 280-300 (SLN 165)",
+   "kind": "ring bracket",
+   "section": "SHS 100x100x5 stair landing posts",
+   "sno": 8,
+   "beams": [
+    190190
+   ],
+   "length_m": 0.376,
+   "bdk": {
+    "util": 0.033,
+    "lc": 121,
+    "check": "Passed",
+    "n_y": 0.03,
+    "n_z": 0.03,
+    "m_y": 0.0,
+    "m_z": 0.0,
+    "nm_y": 0.033,
+    "nm_z": 0.033
+   },
+   "aqb": {
+    "util": 0.034,
+    "lc": 152,
+    "beam": 190190,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 771,
+   "title": "left flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190191,
+    190192,
+    190193,
+    190194,
+    190195
+   ],
+   "length_m": 2.087,
+   "bdk": null,
+   "aqb": {
+    "util": 0.634,
+    "lc": null,
+    "beam": 190195,
+    "x": 0.417,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   },
+   "governing_forces": {}
+  },
+  {
+   "sln": 772,
+   "title": "left flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190196,
+    190197,
+    190198,
+    190199,
+    190200
+   ],
+   "length_m": 2.086,
+   "bdk": null,
+   "aqb": {
+    "util": 0.64,
+    "lc": null,
+    "beam": 190200,
+    "x": 0.417,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   },
+   "governing_forces": {}
+  },
+  {
+   "sln": 773,
+   "title": "left flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190201,
+    190202,
+    190203,
+    190204,
+    190205
+   ],
+   "length_m": 2.084,
+   "bdk": null,
+   "aqb": {
+    "util": 0.636,
+    "lc": null,
+    "beam": 190205,
+    "x": 0.417,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   },
+   "governing_forces": {}
+  },
+  {
+   "sln": 774,
+   "title": "left flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190206,
+    190207,
+    190208,
+    190209,
+    190210
+   ],
+   "length_m": 2.082,
+   "bdk": null,
+   "aqb": {
+    "util": 0.622,
+    "lc": null,
+    "beam": 190210,
+    "x": 0.416,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   },
+   "governing_forces": {}
+  },
+  {
+   "sln": 775,
+   "title": "left flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190211,
+    190212,
+    190213,
+    190214,
+    190215
+   ],
+   "length_m": 2.081,
+   "bdk": null,
+   "aqb": {
+    "util": 0.595,
+    "lc": null,
+    "beam": 190215,
+    "x": 0.416,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   },
+   "governing_forces": {}
+  },
+  {
+   "sln": 776,
+   "title": "left flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190216,
+    190217,
+    190218,
+    190219,
+    190220
+   ],
+   "length_m": 2.079,
+   "bdk": null,
+   "aqb": {
+    "util": 0.555,
+    "lc": null,
+    "beam": 190220,
+    "x": 0.416,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   },
+   "governing_forces": {}
+  },
+  {
+   "sln": 777,
+   "title": "left flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190221,
+    190222,
+    190223,
+    190224,
+    190225
+   ],
+   "length_m": 2.077,
+   "bdk": null,
+   "aqb": {
+    "util": 0.503,
+    "lc": null,
+    "beam": 190225,
+    "x": 0.415,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   },
+   "governing_forces": {}
+  },
+  {
+   "sln": 778,
+   "title": "left flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190226,
+    190227,
+    190228,
+    190229,
+    190230
+   ],
+   "length_m": 2.075,
+   "bdk": null,
+   "aqb": {
+    "util": 0.436,
+    "lc": null,
+    "beam": 190230,
+    "x": 0.415,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 779,
+   "title": "left flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190231,
+    190232,
+    190233,
+    190234,
+    190235
+   ],
+   "length_m": 2.074,
+   "bdk": null,
+   "aqb": {
+    "util": 0.355,
+    "lc": null,
+    "beam": 190235,
+    "x": 0.415,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 780,
+   "title": "left flight 1 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190236,
+    190237,
+    190238,
+    190239,
+    190240
+   ],
+   "length_m": 2.071,
+   "bdk": null,
+   "aqb": {
+    "util": 0.274,
+    "lc": null,
+    "beam": 190240,
+    "x": 0.414,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 781,
+   "title": "left flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190241,
+    190242,
+    190243,
+    190244,
+    190245
+   ],
+   "length_m": 2.092,
+   "bdk": null,
+   "aqb": {
+    "util": 0.234,
+    "lc": null,
+    "beam": 190241,
+    "x": 0.0,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 782,
+   "title": "left flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190246,
+    190247,
+    190248,
+    190249,
+    190250
+   ],
+   "length_m": 2.105,
+   "bdk": null,
+   "aqb": {
+    "util": 0.271,
+    "lc": null,
+    "beam": 190246,
+    "x": 0.0,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 783,
+   "title": "left flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190251,
+    190252,
+    190253,
+    190254,
+    190255
+   ],
+   "length_m": 2.119,
+   "bdk": null,
+   "aqb": {
+    "util": 0.304,
+    "lc": null,
+    "beam": 190251,
+    "x": 0.0,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 784,
+   "title": "left flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190256,
+    190257,
+    190258,
+    190259,
+    190260
+   ],
+   "length_m": 2.133,
+   "bdk": null,
+   "aqb": {
+    "util": 0.32,
+    "lc": null,
+    "beam": 190256,
+    "x": 0.0,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 785,
+   "title": "left flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190261,
+    190262,
+    190263,
+    190264,
+    190265
+   ],
+   "length_m": 2.147,
+   "bdk": null,
+   "aqb": {
+    "util": 0.326,
+    "lc": null,
+    "beam": 190265,
+    "x": 0.429,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 786,
+   "title": "left flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190266,
+    190267,
+    190268,
+    190269,
+    190270
+   ],
+   "length_m": 2.161,
+   "bdk": null,
+   "aqb": {
+    "util": 0.337,
+    "lc": null,
+    "beam": 190270,
+    "x": 0.432,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 787,
+   "title": "left flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190271,
+    190272,
+    190273,
+    190274,
+    190275
+   ],
+   "length_m": 2.175,
+   "bdk": null,
+   "aqb": {
+    "util": 0.332,
+    "lc": null,
+    "beam": 190275,
+    "x": 0.435,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 788,
+   "title": "left flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190276,
+    190277,
+    190278,
+    190279,
+    190280
+   ],
+   "length_m": 2.188,
+   "bdk": null,
+   "aqb": {
+    "util": 0.308,
+    "lc": null,
+    "beam": 190280,
+    "x": 0.438,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 789,
+   "title": "left flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190281,
+    190282,
+    190283,
+    190284,
+    190285
+   ],
+   "length_m": 2.202,
+   "bdk": null,
+   "aqb": {
+    "util": 0.259,
+    "lc": null,
+    "beam": 190285,
+    "x": 0.44,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 790,
+   "title": "left flight 2 tread",
+   "kind": "tread",
+   "section": "H = 5 mm",
+   "sno": 7,
+   "beams": [
+    190286,
+    190287,
+    190288,
+    190289,
+    190290
+   ],
+   "length_m": 2.216,
+   "bdk": null,
+   "aqb": {
+    "util": 0.187,
+    "lc": null,
+    "beam": 190290,
+    "x": 0.443,
+    "note": "AQB prints no governing LC for this station (stress envelope only)"
+   }
+  },
+  {
+   "sln": 791,
+   "title": "right landing 1 inner legs beam +1.235",
+   "kind": "transverse leg beam",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190291,
+    190292
+   ],
+   "length_m": 0.727,
+   "bdk": {
+    "util": 0.004,
+    "lc": 119,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.0,
+    "m_z": 0.0,
+    "nm_y": 0.004,
+    "nm_z": 0.004
+   },
+   "aqb": {
+    "util": 0.017,
+    "lc": 123,
+    "beam": 190291,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 792,
+   "title": "right landing 1 outer legs beam +1.235",
+   "kind": "transverse leg beam",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190293,
+    190294,
+    190295
+   ],
+   "length_m": 1.414,
+   "bdk": {
+    "util": 0.006,
+    "lc": 124,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.0,
+    "m_z": 0.0,
+    "nm_y": 0.006,
+    "nm_z": 0.006
+   },
+   "aqb": {
+    "util": 0.012,
+    "lc": 123,
+    "beam": 190293,
+    "x": 0.471,
+    "note": null
+   }
+  },
+  {
+   "sln": 793,
+   "title": "right landing 2 legs beam +1.45",
+   "kind": "transverse leg beam",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190296,
+    190297,
+    190298,
+    190299,
+    190300
+   ],
+   "length_m": 1.921,
+   "bdk": {
+    "util": 0.009,
+    "lc": 123,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.01,
+    "m_z": 0.0,
+    "nm_y": 0.009,
+    "nm_z": 0.008
+   },
+   "aqb": {
+    "util": 0.036,
+    "lc": 119,
+    "beam": 190296,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 794,
+   "title": "right landing 2 legs beam +2.90",
+   "kind": "transverse leg beam",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190301,
+    190302,
+    190303,
+    190304,
+    190305
+   ],
+   "length_m": 1.921,
+   "bdk": {
+    "util": 0.009,
+    "lc": 124,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.01,
+    "m_z": 0.0,
+    "nm_y": 0.009,
+    "nm_z": 0.009
+   },
+   "aqb": {
+    "util": 0.024,
+    "lc": 119,
+    "beam": 190302,
+    "x": 0.384,
+    "note": null
+   }
+  },
+  {
+   "sln": 795,
+   "title": "left landing 1 inner legs beam +1.235",
+   "kind": "transverse leg beam",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190306,
+    190307
+   ],
+   "length_m": 0.722,
+   "bdk": {
+    "util": 0.004,
+    "lc": 121,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.0,
+    "m_z": 0.0,
+    "nm_y": 0.004,
+    "nm_z": 0.004
+   },
+   "aqb": {
+    "util": 0.015,
+    "lc": 123,
+    "beam": 190306,
+    "x": 0.361,
+    "note": null
+   }
+  },
+  {
+   "sln": 796,
+   "title": "left landing 1 outer legs beam +1.235",
+   "kind": "transverse leg beam",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190308,
+    190309,
+    190310
+   ],
+   "length_m": 1.422,
+   "bdk": {
+    "util": 0.006,
+    "lc": 124,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.0,
+    "m_z": 0.0,
+    "nm_y": 0.006,
+    "nm_z": 0.006
+   },
+   "aqb": {
+    "util": 0.01,
+    "lc": 123,
+    "beam": 190308,
+    "x": 0.474,
+    "note": null
+   }
+  },
+  {
+   "sln": 797,
+   "title": "left landing 2 legs beam +1.45",
+   "kind": "transverse leg beam",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190311,
+    190312,
+    190313,
+    190314,
+    190315
+   ],
+   "length_m": 1.927,
+   "bdk": {
+    "util": 0.008,
+    "lc": 126,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.01,
+    "m_z": 0.0,
+    "nm_y": 0.008,
+    "nm_z": 0.007
+   },
+   "aqb": {
+    "util": 0.035,
+    "lc": 121,
+    "beam": 190311,
+    "x": 0.0,
+    "note": null
+   }
+  },
+  {
+   "sln": 798,
+   "title": "left landing 2 legs beam +2.90",
+   "kind": "transverse leg beam",
+   "section": "SHS 80x80x6.3 external stair legs",
+   "sno": 9,
+   "beams": [
+    190316,
+    190317,
+    190318,
+    190319,
+    190320
+   ],
+   "length_m": 1.927,
+   "bdk": {
+    "util": 0.009,
+    "lc": 125,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.01,
+    "m_z": 0.0,
+    "nm_y": 0.009,
+    "nm_z": 0.008
+   },
+   "aqb": {
+    "util": 0.023,
+    "lc": 121,
+    "beam": 190317,
+    "x": 0.386,
+    "note": null
+   }
+  }
+ ],
+ "supports": {
+  "lc102": [
+   {
+    "node": 901,
+    "x": 11.68,
+    "y": -2.48,
+    "z": 0.64,
+    "location": "external stair base (SPT 901): right flight 1 inner foot",
+    "px": -17.4536,
+    "py": -29.6211,
+    "pz": -12.4975
+   },
+   {
+    "node": 902,
+    "x": 13.73,
+    "y": -2.84,
+    "z": 0.64,
+    "location": "external stair base (SPT 902): right flight 1 outer foot",
+    "px": 9.2298,
+    "py": 17.1843,
+    "pz": 23.1113
+   },
+   {
+    "node": 903,
+    "x": 12.09,
+    "y": -0.06,
+    "z": 0.0,
+    "location": "external stair base (SPT 903): right landing 1 leg inner-low base",
+    "px": -0.3107,
+    "py": 0.337,
+    "pz": 15.3669
+   },
+   {
+    "node": 904,
+    "x": 14.14,
+    "y": -0.39,
+    "z": 0.0,
+    "location": "external stair base (SPT 904): right landing 1 leg outer-low base",
+    "px": -0.0955,
+    "py": 0.1132,
+    "pz": 15.8576
+   },
+   {
+    "node": 905,
+    "x": 14.04,
+    "y": 1.02,
+    "z": 0.0,
+    "location": "external stair base (SPT 905): right landing 1 leg outer-high base",
+    "px": -0.2538,
+    "py": -0.0673,
+    "pz": 20.2938
+   },
+   {
+    "node": 906,
+    "x": 11.99,
+    "y": 0.66,
+    "z": 0.0,
+    "location": "external stair base (SPT 906): right landing 1 leg inner-high base",
+    "px": -0.3916,
+    "py": -0.1227,
+    "pz": 41.2793
+   },
+   {
+    "node": 907,
+    "x": 13.59,
+    "y": 3.53,
+    "z": 0.0,
+    "location": "external stair base (SPT 907): right landing 2 leg outer-low base",
+    "px": -0.264,
+    "py": -0.0422,
+    "pz": 31.3834
+   },
+   {
+    "node": 908,
+    "x": 13.25,
+    "y": 5.42,
+    "z": 0.0,
+    "location": "external stair base (SPT 908): right landing 2 leg outer-high base",
+    "px": -0.7247,
+    "py": -0.1084,
+    "pz": 17.5472
+   },
+   {
+    "node": 909,
+    "x": 10.55,
+    "y": -5.61,
+    "z": 0.64,
+    "location": "external stair base (SPT 909): left flight 1 inner foot",
+    "px": 7.11,
+    "py": 32.9085,
+    "pz": -12.3375
+   },
+   {
+    "node": 910,
+    "x": 12.36,
+    "y": -6.65,
+    "z": 0.64,
+    "location": "external stair base (SPT 910): left flight 1 outer foot",
+    "px": -5.4425,
+    "py": -18.0492,
+    "pz": 22.9702
+   },
+   {
+    "node": 911,
+    "x": 9.32,
+    "y": -7.74,
+    "z": 0.0,
+    "location": "external stair base (SPT 911): left landing 1 leg inner-low base",
+    "px": -0.4819,
+    "py": -0.0863,
+    "pz": 12.4502
+   },
+   {
+    "node": 912,
+    "x": 11.11,
+    "y": -8.78,
+    "z": 0.0,
+    "location": "external stair base (SPT 912): left landing 1 leg outer-low base",
+    "px": -0.1379,
+    "py": -0.0338,
+    "pz": 15.4819
+   },
+   {
+    "node": 913,
+    "x": 10.14,
+    "y": -9.82,
+    "z": 0.0,
+    "location": "external stair base (SPT 913): left landing 1 leg outer-high base",
+    "px": -0.128,
+    "py": 0.1925,
+    "pz": 20.2639
+   },
+   {
+    "node": 914,
+    "x": 8.79,
+    "y": -8.23,
+    "z": 0.0,
+    "location": "external stair base (SPT 914): left landing 1 leg inner-high base",
+    "px": -0.2511,
+    "py": 0.3717,
+    "pz": 45.3428
+   },
+   {
+    "node": 915,
+    "x": 8.19,
+    "y": -11.46,
+    "z": 0.0,
+    "location": "external stair base (SPT 915): left landing 2 leg outer-low base",
+    "px": -0.1686,
+    "py": 0.1891,
+    "pz": 31.357
+   },
+   {
+    "node": 916,
+    "x": 6.74,
+    "y": -12.73,
+    "z": 0.0,
+    "location": "external stair base (SPT 916): left landing 2 leg outer-high base",
+    "px": -0.4809,
+    "py": 0.518,
+    "pz": 17.5275
+   }
+  ],
+  "lc201": [
+   {
+    "node": 901,
+    "x": 11.68,
+    "y": -2.48,
+    "z": 0.64,
+    "location": "external stair base (SPT 901): right flight 1 inner foot",
+    "px": -11.5769,
+    "py": -19.7078,
+    "pz": -8.1229
+   },
+   {
+    "node": 902,
+    "x": 13.73,
+    "y": -2.84,
+    "z": 0.64,
+    "location": "external stair base (SPT 902): right flight 1 outer foot",
+    "px": 6.1094,
+    "py": 11.4177,
+    "pz": 15.5574
+   },
+   {
+    "node": 903,
+    "x": 12.09,
+    "y": -0.06,
+    "z": 0.0,
+    "location": "external stair base (SPT 903): right landing 1 leg inner-low base",
+    "px": -0.2077,
+    "py": 0.2296,
+    "pz": 10.3562
+   },
+   {
+    "node": 904,
+    "x": 14.14,
+    "y": -0.39,
+    "z": 0.0,
+    "location": "external stair base (SPT 904): right landing 1 leg outer-low base",
+    "px": -0.0642,
+    "py": 0.0767,
+    "pz": 10.9449
+   },
+   {
+    "node": 905,
+    "x": 14.04,
+    "y": 1.02,
+    "z": 0.0,
+    "location": "external stair base (SPT 905): right landing 1 leg outer-high base",
+    "px": -0.1697,
+    "py": -0.0472,
+    "pz": 13.7631
+   },
+   {
+    "node": 906,
+    "x": 11.99,
+    "y": 0.66,
+    "z": 0.0,
+    "location": "external stair base (SPT 906): right landing 1 leg inner-high base",
+    "px": -0.2616,
+    "py": -0.0835,
+    "pz": 28.3864
+   },
+   {
+    "node": 907,
+    "x": 13.59,
+    "y": 3.53,
+    "z": 0.0,
+    "location": "external stair base (SPT 907): right landing 2 leg outer-low base",
+    "px": -0.1797,
+    "py": -0.0292,
+    "pz": 21.5028
+   },
+   {
+    "node": 908,
+    "x": 13.25,
+    "y": 5.42,
+    "z": 0.0,
+    "location": "external stair base (SPT 908): right landing 2 leg outer-high base",
+    "px": -0.4924,
+    "py": -0.0744,
+    "pz": 11.9504
+   },
+   {
+    "node": 909,
+    "x": 10.55,
+    "y": -5.61,
+    "z": 0.64,
+    "location": "external stair base (SPT 909): left flight 1 inner foot",
+    "px": 4.7575,
+    "py": 21.8748,
+    "pz": -8.0181
+   },
+   {
+    "node": 910,
+    "x": 12.36,
+    "y": -6.65,
+    "z": 0.64,
+    "location": "external stair base (SPT 910): left flight 1 outer foot",
+    "px": -3.6344,
+    "py": -11.9781,
+    "pz": 15.4641
+   },
+   {
+    "node": 911,
+    "x": 9.32,
+    "y": -7.74,
+    "z": 0.0,
+    "location": "external stair base (SPT 911): left landing 1 leg inner-low base",
+    "px": -0.3253,
+    "py": -0.0614,
+    "pz": 8.3664
+   },
+   {
+    "node": 912,
+    "x": 11.11,
+    "y": -8.78,
+    "z": 0.0,
+    "location": "external stair base (SPT 912): left landing 1 leg outer-low base",
+    "px": -0.0932,
+    "py": -0.0233,
+    "pz": 10.6858
+   },
+   {
+    "node": 913,
+    "x": 10.14,
+    "y": -9.82,
+    "z": 0.0,
+    "location": "external stair base (SPT 913): left landing 1 leg outer-high base",
+    "px": -0.0841,
+    "py": 0.1303,
+    "pz": 13.7498
+   },
+   {
+    "node": 914,
+    "x": 8.79,
+    "y": -8.23,
+    "z": 0.0,
+    "location": "external stair base (SPT 914): left landing 1 leg inner-high base",
+    "px": -0.167,
+    "py": 0.2498,
+    "pz": 31.1595
+   },
+   {
+    "node": 915,
+    "x": 8.19,
+    "y": -11.46,
+    "z": 0.0,
+    "location": "external stair base (SPT 915): left landing 2 leg outer-low base",
+    "px": -0.1145,
+    "py": 0.129,
+    "pz": 21.4821
+   },
+   {
+    "node": 916,
+    "x": 6.74,
+    "y": -12.73,
+    "z": 0.0,
+    "location": "external stair base (SPT 916): left landing 2 leg outer-high base",
+    "px": -0.3262,
+    "py": 0.3525,
+    "pz": 11.9393
+   }
+  ],
+  "ULS_envelope": {
+   "901": {
+    "px_max": 20.7979,
+    "px_max_lc": 135,
+    "px_min": -30.4207,
+    "px_min_lc": 111,
+    "py_max": 35.127,
+    "py_max_lc": 135,
+    "py_min": -53.0105,
+    "py_min_lc": 111,
+    "pz_max": 36.9064,
+    "pz_max_lc": 135,
+    "pz_min": -31.3566,
+    "pz_min_lc": 111
+   },
+   "902": {
+    "px_max": 9.8337,
+    "px_max_lc": 105,
+    "px_min": -10.7374,
+    "px_min_lc": 135,
+    "py_max": 45.2063,
+    "py_max_lc": 111,
+    "py_min": -31.3684,
+    "py_min_lc": 128,
+    "pz_max": 39.768,
+    "pz_max_lc": 111,
+    "pz_min": -20.2595,
+    "pz_min_lc": 132
+   },
+   "903": {
+    "px_max": 0.5612,
+    "px_max_lc": 132,
+    "px_min": -0.8018,
+    "px_min_lc": 123,
+    "py_max": 0.4034,
+    "py_max_lc": 121,
+    "py_min": -0.1093,
+    "py_min_lc": 134,
+    "pz_max": 22.6733,
+    "pz_max_lc": 151,
+    "pz_min": -9.9087,
+    "pz_min_lc": 128
+   },
+   "904": {
+    "px_max": 0.5512,
+    "px_max_lc": 128,
+    "px_min": -0.6444,
+    "px_min_lc": 111,
+    "py_max": 0.2313,
+    "py_max_lc": 125,
+    "py_min": -0.1419,
+    "py_min_lc": 134,
+    "pz_max": 25.9742,
+    "pz_max_lc": 135,
+    "pz_min": -4.7849,
+    "pz_min_lc": 133
+   },
+   "905": {
+    "px_max": 0.7036,
+    "px_max_lc": 132,
+    "px_min": -0.9117,
+    "px_min_lc": 123,
+    "py_max": 0.215,
+    "py_max_lc": 133,
+    "py_min": -0.2693,
+    "py_min_lc": 126,
+    "pz_max": 24.0251,
+    "pz_max_lc": 103,
+    "pz_min": -4.3415,
+    "pz_min_lc": 132
+   },
+   "906": {
+    "px_max": 0.7143,
+    "px_max_lc": 108,
+    "px_min": -1.0159,
+    "px_min_lc": 123,
+    "py_max": 0.1945,
+    "py_max_lc": 133,
+    "py_min": -0.2868,
+    "py_min_lc": 114,
+    "pz_max": 59.2631,
+    "pz_max_lc": 135,
+    "pz_min": -2.8153,
+    "pz_min_lc": 131
+   },
+   "907": {
+    "px_max": 0.4284,
+    "px_max_lc": 132,
+    "px_min": -0.6468,
+    "px_min_lc": 123,
+    "py_max": 0.3349,
+    "py_max_lc": 133,
+    "py_min": -0.3707,
+    "py_min_lc": 126,
+    "pz_max": 34.833,
+    "pz_max_lc": 135,
+    "pz_min": -2.6517,
+    "pz_min_lc": 133
+   },
+   "908": {
+    "px_max": 0.4596,
+    "px_max_lc": 132,
+    "px_min": -1.0473,
+    "px_min_lc": 123,
+    "py_max": 0.3286,
+    "py_max_lc": 133,
+    "py_min": -0.4219,
+    "py_min_lc": 126,
+    "pz_max": 18.1033,
+    "pz_max_lc": 121,
+    "pz_min": 1.3556,
+    "pz_min_lc": 134
+   },
+   "909": {
+    "px_max": 17.2394,
+    "px_max_lc": 113,
+    "px_min": -12.6223,
+    "px_min_lc": 130,
+    "py_max": 50.6818,
+    "py_max_lc": 113,
+    "py_min": -38.771,
+    "py_min_lc": 135,
+    "pz_max": 36.538,
+    "pz_max_lc": 135,
+    "pz_min": -26.6665,
+    "pz_min_lc": 113
+   },
+   "910": {
+    "px_max": 23.8946,
+    "px_max_lc": 128,
+    "px_min": -30.3345,
+    "px_min_lc": 111,
+    "py_max": 23.5223,
+    "py_max_lc": 128,
+    "py_min": -38.1909,
+    "py_min_lc": 111,
+    "pz_max": 38.6714,
+    "pz_max_lc": 111,
+    "pz_min": -18.5775,
+    "pz_min_lc": 132
+   },
+   "911": {
+    "px_max": 0.4296,
+    "px_max_lc": 132,
+    "px_min": -0.8206,
+    "px_min_lc": 123,
+    "py_max": 0.2021,
+    "py_max_lc": 133,
+    "py_min": -0.3808,
+    "py_min_lc": 135,
+    "pz_max": 21.8366,
+    "pz_max_lc": 113,
+    "pz_min": -12.7859,
+    "pz_min_lc": 130
+   },
+   "912": {
+    "px_max": 0.4304,
+    "px_max_lc": 132,
+    "px_min": -0.5617,
+    "px_min_lc": 111,
+    "py_max": 0.2378,
+    "py_max_lc": 133,
+    "py_min": -0.2582,
+    "py_min_lc": 126,
+    "pz_max": 25.3593,
+    "pz_max_lc": 135,
+    "pz_min": -7.2644,
+    "pz_min_lc": 131
+   },
+   "913": {
+    "px_max": 0.6138,
+    "px_max_lc": 128,
+    "px_min": -0.7221,
+    "px_min_lc": 111,
+    "py_max": 0.4545,
+    "py_max_lc": 125,
+    "py_min": -0.2935,
+    "py_min_lc": 134,
+    "pz_max": 23.3821,
+    "pz_max_lc": 103,
+    "pz_min": -3.3889,
+    "pz_min_lc": 132
+   },
+   "914": {
+    "px_max": 0.5637,
+    "px_max_lc": 116,
+    "px_min": -0.764,
+    "px_min_lc": 123,
+    "py_max": 0.6277,
+    "py_max_lc": 125,
+    "py_min": -0.3395,
+    "py_min_lc": 134,
+    "pz_max": 62.6784,
+    "pz_max_lc": 135,
+    "pz_min": -2.436,
+    "pz_min_lc": 131
+   },
+   "915": {
+    "px_max": 0.3998,
+    "px_max_lc": 132,
+    "px_min": -0.5417,
+    "px_min_lc": 123,
+    "py_max": 0.5177,
+    "py_max_lc": 125,
+    "py_min": -0.3609,
+    "py_min_lc": 134,
+    "pz_max": 34.5158,
+    "pz_max_lc": 135,
+    "pz_min": -2.751,
+    "pz_min_lc": 131
+   },
+   "916": {
+    "px_max": 0.3962,
+    "px_max_lc": 132,
+    "px_min": -0.7862,
+    "px_min_lc": 123,
+    "py_max": 0.8126,
+    "py_max_lc": 125,
+    "py_min": -0.3921,
+    "py_min_lc": 134,
+    "pz_max": 18.0933,
+    "pz_max_lc": 119,
+    "pz_min": 1.371,
+    "pz_min_lc": 132
+   }
+  },
+  "ULS_load_cases": [
+   101,
+   102,
+   103,
+   104,
+   105,
+   106,
+   107,
+   108,
+   109,
+   110,
+   111,
+   112,
+   113,
+   114,
+   115,
+   116,
+   117,
+   118,
+   119,
+   120,
+   121,
+   122,
+   123,
+   124,
+   125,
+   126,
+   127,
+   128,
+   129,
+   130,
+   131,
+   132,
+   133,
+   134,
+   135,
+   141,
+   142,
+   143,
+   144,
+   145,
+   146,
+   147,
+   148,
+   151,
+   152,
+   153,
+   154
+  ]
+ },
+ "ring_brackets": {
+  "lc102": [
+   {
+    "sln": 724,
+    "title": "right landing 2 support on L1 ring 0-20 (SLN 161)",
+    "beam": 190044,
+    "ring_node": 1791,
+    "ring_xyz": [
+     11.453884,
+     3.097158,
+     4.054
+    ],
+    "landing_node": 1785,
+    "N": 2.2384,
+    "Vy": 0.0,
+    "Vz": 0.0,
+    "My": 0.0,
+    "Mz": 0.0,
+    "force_on_ring_global": {
+     "px": 0.0,
+     "py": 0.0,
+     "pz": 2.2384
+    },
+    "reaction_on_landing_global": {
+     "px": -0.0,
+     "py": -0.0,
+     "pz": -2.2384
+    }
+   },
+   {
+    "sln": 725,
+    "title": "right landing 2 support on L1 ring 20-40 (SLN 170)",
+    "beam": 190045,
+    "ring_node": 1792,
+    "ring_xyz": [
+     10.742526,
+     5.028779,
+     4.054
+    ],
+    "landing_node": 1789,
+    "N": -16.7562,
+    "Vy": 0.0,
+    "Vz": 0.0,
+    "My": 0.0,
+    "Mz": 0.0,
+    "force_on_ring_global": {
+     "px": -0.0,
+     "py": -0.0,
+     "pz": -16.7562
+    },
+    "reaction_on_landing_global": {
+     "px": 0.0,
+     "py": 0.0,
+     "pz": 16.7562
+    }
+   },
+   {
+    "sln": 769,
+    "title": "left landing 2 support on L1 ring 300-320 (SLN 164)",
+    "beam": 190189,
+    "ring_node": 1845,
+    "ring_xyz": [
+     6.788563,
+     -9.730617,
+     4.054
+    ],
+    "landing_node": 1839,
+    "N": 2.6433,
+    "Vy": 0.0,
+    "Vz": 0.0,
+    "My": 0.0,
+    "Mz": 0.0,
+    "force_on_ring_global": {
+     "px": 0.0,
+     "py": 0.0,
+     "pz": 2.6433
+    },
+    "reaction_on_landing_global": {
+     "px": -0.0,
+     "py": -0.0,
+     "pz": -2.6433
+    }
+   },
+   {
+    "sln": 770,
+    "title": "left landing 2 support on L1 ring 280-300 (SLN 165)",
+    "beam": 190190,
+    "ring_node": 1846,
+    "ring_xyz": [
+     5.016462,
+     -10.750279,
+     4.054
+    ],
+    "landing_node": 1843,
+    "N": -17.047,
+    "Vy": 0.0,
+    "Vz": 0.0,
+    "My": 0.0,
+    "Mz": 0.0,
+    "force_on_ring_global": {
+     "px": -0.0,
+     "py": -0.0,
+     "pz": -17.047
+    },
+    "reaction_on_landing_global": {
+     "px": 0.0,
+     "py": 0.0,
+     "pz": 17.047
+    }
+   }
+  ],
+  "lc201": [
+   {
+    "sln": 724,
+    "title": "right landing 2 support on L1 ring 0-20 (SLN 161)",
+    "beam": 190044,
+    "ring_node": 1791,
+    "ring_xyz": [
+     11.453884,
+     3.097158,
+     4.054
+    ],
+    "landing_node": 1785,
+    "N": 1.5971,
+    "Vy": 0.0,
+    "Vz": 0.0,
+    "My": 0.0,
+    "Mz": 0.0,
+    "force_on_ring_global": {
+     "px": 0.0,
+     "py": 0.0,
+     "pz": 1.5971
+    },
+    "reaction_on_landing_global": {
+     "px": -0.0,
+     "py": -0.0,
+     "pz": -1.5971
+    }
+   },
+   {
+    "sln": 725,
+    "title": "right landing 2 support on L1 ring 20-40 (SLN 170)",
+    "beam": 190045,
+    "ring_node": 1792,
+    "ring_xyz": [
+     10.742526,
+     5.028779,
+     4.054
+    ],
+    "landing_node": 1789,
+    "N": -11.4164,
+    "Vy": 0.0,
+    "Vz": 0.0,
+    "My": 0.0,
+    "Mz": 0.0,
+    "force_on_ring_global": {
+     "px": -0.0,
+     "py": -0.0,
+     "pz": -11.4164
+    },
+    "reaction_on_landing_global": {
+     "px": 0.0,
+     "py": 0.0,
+     "pz": 11.4164
+    }
+   },
+   {
+    "sln": 769,
+    "title": "left landing 2 support on L1 ring 300-320 (SLN 164)",
+    "beam": 190189,
+    "ring_node": 1845,
+    "ring_xyz": [
+     6.788563,
+     -9.730617,
+     4.054
+    ],
+    "landing_node": 1839,
+    "N": 1.8702,
+    "Vy": 0.0,
+    "Vz": 0.0,
+    "My": 0.0,
+    "Mz": 0.0,
+    "force_on_ring_global": {
+     "px": 0.0,
+     "py": 0.0,
+     "pz": 1.8702
+    },
+    "reaction_on_landing_global": {
+     "px": -0.0,
+     "py": -0.0,
+     "pz": -1.8702
+    }
+   },
+   {
+    "sln": 770,
+    "title": "left landing 2 support on L1 ring 280-300 (SLN 165)",
+    "beam": 190190,
+    "ring_node": 1846,
+    "ring_xyz": [
+     5.016462,
+     -10.750279,
+     4.054
+    ],
+    "landing_node": 1843,
+    "N": -11.612,
+    "Vy": 0.0,
+    "Vz": 0.0,
+    "My": 0.0,
+    "Mz": 0.0,
+    "force_on_ring_global": {
+     "px": -0.0,
+     "py": -0.0,
+     "pz": -11.612
+    },
+    "reaction_on_landing_global": {
+     "px": 0.0,
+     "py": 0.0,
+     "pz": 11.612
+    }
+   }
+  ],
+  "ULS_envelope": {
+   "724": {
+    "N_max": 6.9698,
+    "N_max_lc": 125,
+    "N_min": -8.8816,
+    "N_min_lc": 151,
+    "Vy_max": 0.0,
+    "Vy_max_lc": 101,
+    "Vy_min": 0.0,
+    "Vy_min_lc": 101,
+    "Vz_max": 0.0,
+    "Vz_max_lc": 101,
+    "Vz_min": 0.0,
+    "Vz_min_lc": 101,
+    "My_max": 0.0,
+    "My_max_lc": 101,
+    "My_min": 0.0,
+    "My_min_lc": 101,
+    "Mz_max": 0.0,
+    "Mz_max_lc": 101,
+    "Mz_min": 0.0,
+    "Mz_min_lc": 101,
+    "px_max": -0.0,
+    "px_max_lc": 101,
+    "px_min": -0.0,
+    "px_min_lc": 101,
+    "py_max": -0.0,
+    "py_max_lc": 101,
+    "py_min": -0.0,
+    "py_min_lc": 101,
+    "pz_max": 8.8816,
+    "pz_max_lc": 151,
+    "pz_min": -6.9698,
+    "pz_min_lc": 125
+   },
+   "725": {
+    "N_max": -1.5597,
+    "N_max_lc": 132,
+    "N_min": -17.0655,
+    "N_min_lc": 152,
+    "Vy_max": 0.0,
+    "Vy_max_lc": 101,
+    "Vy_min": 0.0,
+    "Vy_min_lc": 101,
+    "Vz_max": 0.0,
+    "Vz_max_lc": 101,
+    "Vz_min": 0.0,
+    "Vz_min_lc": 101,
+    "My_max": 0.0,
+    "My_max_lc": 101,
+    "My_min": 0.0,
+    "My_min_lc": 101,
+    "Mz_max": 0.0,
+    "Mz_max_lc": 101,
+    "Mz_min": 0.0,
+    "Mz_min_lc": 101,
+    "px_max": 0.0,
+    "px_max_lc": 101,
+    "px_min": 0.0,
+    "px_min_lc": 101,
+    "py_max": 0.0,
+    "py_max_lc": 101,
+    "py_min": 0.0,
+    "py_min_lc": 101,
+    "pz_max": 17.0655,
+    "pz_max_lc": 152,
+    "pz_min": 1.5597,
+    "pz_min_lc": 132
+   },
+   "769": {
+    "N_max": 5.8497,
+    "N_max_lc": 123,
+    "N_min": -8.597,
+    "N_min_lc": 151,
+    "Vy_max": 0.0,
+    "Vy_max_lc": 101,
+    "Vy_min": 0.0,
+    "Vy_min_lc": 101,
+    "Vz_max": 0.0,
+    "Vz_max_lc": 101,
+    "Vz_min": 0.0,
+    "Vz_min_lc": 101,
+    "My_max": 0.0,
+    "My_max_lc": 101,
+    "My_min": 0.0,
+    "My_min_lc": 101,
+    "Mz_max": 0.0,
+    "Mz_max_lc": 101,
+    "Mz_min": 0.0,
+    "Mz_min_lc": 101,
+    "px_max": -0.0,
+    "px_max_lc": 101,
+    "px_min": -0.0,
+    "px_min_lc": 101,
+    "py_max": -0.0,
+    "py_max_lc": 101,
+    "py_min": -0.0,
+    "py_min_lc": 101,
+    "pz_max": 8.597,
+    "pz_max_lc": 151,
+    "pz_min": -5.8497,
+    "pz_min_lc": 123
+   },
+   "770": {
+    "N_max": -1.4875,
+    "N_max_lc": 134,
+    "N_min": -17.4358,
+    "N_min_lc": 152,
+    "Vy_max": 0.0,
+    "Vy_max_lc": 101,
+    "Vy_min": 0.0,
+    "Vy_min_lc": 101,
+    "Vz_max": 0.0,
+    "Vz_max_lc": 101,
+    "Vz_min": 0.0,
+    "Vz_min_lc": 101,
+    "My_max": 0.0,
+    "My_max_lc": 101,
+    "My_min": 0.0,
+    "My_min_lc": 101,
+    "Mz_max": 0.0,
+    "Mz_max_lc": 101,
+    "Mz_min": 0.0,
+    "Mz_min_lc": 101,
+    "px_max": 0.0,
+    "px_max_lc": 101,
+    "px_min": 0.0,
+    "px_min_lc": 101,
+    "py_max": 0.0,
+    "py_max_lc": 101,
+    "py_min": 0.0,
+    "py_min_lc": 101,
+    "pz_max": 17.4358,
+    "pz_max_lc": 152,
+    "pz_min": 1.4875,
+    "pz_min_lc": 134
+   }
+  }
+ },
+ "deflection": {
+  "right flight 1": {
+   "slns": [
+    701,
+    702,
+    726,
+    727,
+    728,
+    729,
+    730,
+    731,
+    732,
+    733,
+    734,
+    735
+   ],
+   "nodes": 64,
+   "uz_min_lc201": {
+    "value": -0.8519,
+    "lc": 201,
+    "node": 5033,
+    "xyz": [
+     12.260916,
+     -1.540682,
+     1.386192
+    ],
+    "ux": 1.071,
+    "uy": 0.306,
+    "uz": -0.8519
+   },
+   "uz_min_SLS_envelope": {
+    "value": -1.3646,
+    "lc": 202,
+    "node": 5033,
+    "xyz": [
+     12.260916,
+     -1.540682,
+     1.386192
+    ],
+    "ux": 3.3956,
+    "uy": -0.0905,
+    "uz": -1.3646
+   },
+   "relative_uz_lc201": {
+    "value": -0.7495,
+    "node": 1801,
+    "xyz": [
+     11.850945,
+     -1.471013,
+     1.386317
+    ],
+    "sln": 701,
+    "span_m": 3.038,
+    "span_over": 4053
+   }
+  },
+  "right flight 2": {
+   "slns": [
+    713,
+    714,
+    736,
+    737,
+    738,
+    739,
+    740,
+    741,
+    742,
+    743,
+    744,
+    745
+   ],
+   "nodes": 64,
+   "uz_min_lc201": {
+    "value": -10.6008,
+    "lc": 201,
+    "node": 1785,
+    "xyz": [
+     11.453884,
+     3.097158,
+     4.43
+    ],
+    "ux": 4.4334,
+    "uy": 8.5638,
+    "uz": -10.6008
+   },
+   "uz_min_SLS_envelope": {
+    "value": -10.8225,
+    "lc": 221,
+    "node": 1785,
+    "xyz": [
+     11.453884,
+     3.097158,
+     4.43
+    ],
+    "ux": 4.2285,
+    "uy": 8.914,
+    "uz": -10.8225
+   },
+   "relative_uz_lc201": {
+    "value": -1.1449,
+    "node": 1825,
+    "xyz": [
+     11.648873,
+     2.210747,
+     3.778964
+    ],
+    "sln": 713,
+    "span_m": 3.071,
+    "span_over": 2682
+   }
+  },
+  "right landing 1": {
+   "slns": [
+    703,
+    704,
+    705,
+    706
+   ],
+   "nodes": 15,
+   "uz_min_lc201": {
+    "value": -0.1798,
+    "lc": 201,
+    "node": 1782,
+    "xyz": [
+     11.99,
+     0.66,
+     2.43
+    ],
+    "ux": 2.7662,
+    "uy": -0.0655,
+    "uz": -0.1798
+   },
+   "uz_min_SLS_envelope": {
+    "value": -0.1969,
+    "lc": 219,
+    "node": 1782,
+    "xyz": [
+     11.99,
+     0.66,
+     2.43
+    ],
+    "ux": -0.0448,
+    "uy": 0.2309,
+    "uz": -0.1969
+   },
+   "relative_uz_lc201": {
+    "value": 0.0,
+    "node": 1779,
+    "xyz": [
+     12.09,
+     -0.06,
+     2.43
+    ],
+    "sln": 703,
+    "span_m": 2.076,
+    "span_over": null
+   }
+  },
+  "right landing 2": {
+   "slns": [
+    715,
+    716,
+    717,
+    718,
+    719,
+    720,
+    721
+   ],
+   "nodes": 25,
+   "uz_min_lc201": {
+    "value": -11.113,
+    "lc": 201,
+    "node": 1789,
+    "xyz": [
+     10.742526,
+     5.028779,
+     4.43
+    ],
+    "ux": 12.6445,
+    "uy": 11.6062,
+    "uz": -11.113
+   },
+   "uz_min_SLS_envelope": {
+    "value": -11.2736,
+    "lc": 221,
+    "node": 1789,
+    "xyz": [
+     10.742526,
+     5.028779,
+     4.43
+    ],
+    "ux": 12.6654,
+    "uy": 12.044,
+    "uz": -11.2736
+   },
+   "relative_uz_lc201": {
+    "value": -0.28,
+    "node": 5008,
+    "xyz": [
+     11.578351,
+     5.159186,
+     4.43
+    ],
+    "sln": 718,
+    "span_m": 2.538,
+    "span_over": 9065
+   }
+  },
+  "left flight 1": {
+   "slns": [
+    746,
+    747,
+    771,
+    772,
+    773,
+    774,
+    775,
+    776,
+    777,
+    778,
+    779,
+    780
+   ],
+   "nodes": 64,
+   "uz_min_lc201": {
+    "value": -0.8439,
+    "lc": 201,
+    "node": 5143,
+    "xyz": [
+     10.396888,
+     -6.707147,
+     1.387218
+    ],
+    "ux": 0.6157,
+    "uy": -0.9064,
+    "uz": -0.8439
+   },
+   "uz_min_SLS_envelope": {
+    "value": -1.1436,
+    "lc": 204,
+    "node": 5143,
+    "xyz": [
+     10.396888,
+     -6.707147,
+     1.387218
+    ],
+    "ux": 1.3752,
+    "uy": -1.4387,
+    "uz": -1.1436
+   },
+   "relative_uz_lc201": {
+    "value": -0.7509,
+    "node": 1855,
+    "xyz": [
+     10.035904,
+     -6.500264,
+     1.388156
+    ],
+    "sln": 746,
+    "span_m": 3.042,
+    "span_over": 4051
+   }
+  },
+  "left flight 2": {
+   "slns": [
+    758,
+    759,
+    781,
+    782,
+    783,
+    784,
+    785,
+    786,
+    787,
+    788,
+    789,
+    790
+   ],
+   "nodes": 64,
+   "uz_min_lc201": {
+    "value": -10.2434,
+    "lc": 201,
+    "node": 1839,
+    "xyz": [
+     6.788563,
+     -9.730617,
+     4.43
+    ],
+    "ux": -1.8359,
+    "uy": -9.2398,
+    "uz": -10.2434
+   },
+   "uz_min_SLS_envelope": {
+    "value": -10.5164,
+    "lc": 220,
+    "node": 1839,
+    "xyz": [
+     6.788563,
+     -9.730617,
+     4.43
+    ],
+    "ux": -0.2818,
+    "uy": -11.0137,
+    "uz": -10.5164
+   },
+   "relative_uz_lc201": {
+    "value": -0.9383,
+    "node": 1879,
+    "xyz": [
+     7.519053,
+     -9.182918,
+     3.77668
+    ],
+    "sln": 758,
+    "span_m": 3.076,
+    "span_over": 3278
+   }
+  },
+  "left landing 1": {
+   "slns": [
+    748,
+    749,
+    750,
+    751
+   ],
+   "nodes": 15,
+   "uz_min_lc201": {
+    "value": -0.1975,
+    "lc": 201,
+    "node": 1836,
+    "xyz": [
+     8.79,
+     -8.23,
+     2.43
+    ],
+    "ux": 2.1271,
+    "uy": -1.6641,
+    "uz": -0.1975
+   },
+   "uz_min_SLS_envelope": {
+    "value": -0.2124,
+    "lc": 219,
+    "node": 1836,
+    "xyz": [
+     8.79,
+     -8.23,
+     2.43
+    ],
+    "ux": 0.1129,
+    "uy": -0.3808,
+    "uz": -0.2124
+   },
+   "relative_uz_lc201": {
+    "value": 0.0,
+    "node": 1833,
+    "xyz": [
+     9.32,
+     -7.74,
+     2.43
+    ],
+    "sln": 748,
+    "span_m": 2.07,
+    "span_over": null
+   }
+  },
+  "left landing 2": {
+   "slns": [
+    760,
+    761,
+    762,
+    763,
+    764,
+    765,
+    766
+   ],
+   "nodes": 25,
+   "uz_min_lc201": {
+    "value": -10.8343,
+    "lc": 201,
+    "node": 1843,
+    "xyz": [
+     5.016462,
+     -10.750279,
+     4.43
+    ],
+    "ux": 2.2568,
+    "uy": -16.4,
+    "uz": -10.8343
+   },
+   "uz_min_SLS_envelope": {
+    "value": -11.0572,
+    "lc": 220,
+    "node": 1843,
+    "xyz": [
+     5.016462,
+     -10.750279,
+     4.43
+    ],
+    "ux": 4.0823,
+    "uy": -18.651,
+    "uz": -11.0572
+   },
+   "relative_uz_lc201": {
+    "value": -0.3591,
+    "node": 5117,
+    "xyz": [
+     5.878231,
+     -11.740139,
+     4.43
+    ],
+    "sln": 763,
+    "span_m": 2.625,
+    "span_over": 7310
+   }
+  }
+ },
+ "landing_horizontal_movement": {
+  "right landing 1": {
+   "lc201": {
+    "value": 2.8325,
+    "lc": 201,
+    "node": 4995,
+    "xyz": [
+     12.809999,
+     0.804,
+     2.43
+    ],
+    "ux": 2.8121,
+    "uy": -0.3392,
+    "uz": -0.0655
+   },
+   "worst_wind_SLS": {
+    "value": 7.8707,
+    "lc": 202,
+    "node": 1781,
+    "xyz": [
+     14.04,
+     1.02,
+     2.43
+    ],
+    "ux": 7.7878,
+    "uy": -1.1396,
+    "uz": -0.0936
+   },
+   "worst_wind_lc_title": "202 SLS G+W +X+psiQ uplift",
+   "height_m": 2.43
+  },
+  "right landing 2": {
+   "lc201": {
+    "value": 17.1635,
+    "lc": 201,
+    "node": 1789,
+    "xyz": [
+     10.742526,
+     5.028779,
+     4.43
+    ],
+    "ux": 12.6445,
+    "uy": 11.6062,
+    "uz": -11.113
+   },
+   "worst_wind_SLS": {
+    "value": 20.7123,
+    "lc": 218,
+    "node": 1789,
+    "xyz": [
+     10.742526,
+     5.028779,
+     4.43
+    ],
+    "ux": 17.0861,
+    "uy": 11.7074,
+    "uz": -11.0863
+   },
+   "worst_wind_lc_title": "218 SLS G+Q+psiW +X down",
+   "height_m": 4.43
+  },
+  "left landing 1": {
+   "lc201": {
+    "value": 2.7652,
+    "lc": 201,
+    "node": 5105,
+    "xyz": [
+     9.33,
+     -8.865999,
+     2.43
+    ],
+    "ux": 2.3274,
+    "uy": -1.4932,
+    "uz": -0.0079
+   },
+   "worst_wind_SLS": {
+    "value": 7.0593,
+    "lc": 202,
+    "node": 1835,
+    "xyz": [
+     10.14,
+     -9.82,
+     2.43
+    ],
+    "ux": 6.057,
+    "uy": -3.6259,
+    "uz": -0.0889
+   },
+   "worst_wind_lc_title": "202 SLS G+W +X+psiQ uplift",
+   "height_m": 2.43
+  },
+  "left landing 2": {
+   "lc201": {
+    "value": 16.5546,
+    "lc": 201,
+    "node": 1843,
+    "xyz": [
+     5.016462,
+     -10.750279,
+     4.43
+    ],
+    "ux": 2.2568,
+    "uy": -16.4,
+    "uz": -10.8343
+   },
+   "worst_wind_SLS": {
+    "value": 19.1059,
+    "lc": 218,
+    "node": 1843,
+    "xyz": [
+     5.016462,
+     -10.750279,
+     4.43
+    ],
+    "ux": 5.1161,
+    "uy": -18.4082,
+    "uz": -10.6043
+   },
+   "worst_wind_lc_title": "218 SLS G+Q+psiW +X down",
+   "height_m": 4.43
+  }
+ }
+}
