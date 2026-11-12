@@ -27,7 +27,7 @@ BRK = [724, 725, 769, 770]
 for n in LEGS:
     txt, k = re.subn(r"(SLN +%d GRP 62 STYP 'N' SNO )8( )" % n, r"\g<1>9\2", txt); assert k == 1, n
 for n in BRK:
-    txt, k = re.subn(r"(SLN +%d GRP 62 .*?)FIXE 'MYMZ'" % n, r"\1FIXE 'PYPZMXMYMZ'", txt); assert k == 1, n
+    txt, k = re.subn(r"(SLN +%d GRP 62 .*?)FIXE 'MYMZ'" % n, r"\1FIXE 'VYVZMTMYMZ'", txt); assert k == 1, n
 # ---- 3. transverse beams
 lines, supports, lars, flights = ext_geom.build()
 leg = {}
@@ -75,7 +75,7 @@ anchor = re.search(r'MEMB SLN %d TYPE LTB ID %d[^\n]*\n' % (lm, lm), txt).group(
 assert txt.count(anchor) == 1
 txt = txt.replace(anchor, anchor + '\n'.join(memb) + '\n')
 hdr = ['$ 26016 member check v19 (12 Nov 2026) = v18 + external stair stability set-up (Wing): ring brackets 724/725/769/770 Z only',
-       "$   (FIXE 'PYPZMXMYMZ' at the ring), legs SHS 80x80x6.3 (SECT 9), transverse SHS 80x80x6.3 beams SLN %d-%d pinned both ends" % (NB[0], NB[-1]),
+       "$   (FIXE 'VYVZMTMYMZ' at the ring), legs SHS 80x80x6.3 (SECT 9), transverse SHS 80x80x6.3 beams SLN %d-%d pinned both ends" % (NB[0], NB[-1]),
        '$   (landing 1 legs at +1.235, landing 2 legs at +1.45 and +2.90), BDK legs Lcr = 2 L. Built by make_v19.py.']
 open(dst, 'w', newline='').write('\n'.join(hdr) + '\n' + txt)
 print(cnt, 'beams', NB)

@@ -1,5 +1,5 @@
 $ 26016 member check v19 (12 Nov 2026) = v18 + external stair stability set-up (Wing): ring brackets 724/725/769/770 Z only
-$   (FIXE 'PYPZMXMYMZ' at the ring), legs SHS 80x80x6.3 (SECT 9), transverse SHS 80x80x6.3 beams SLN 791-798 pinned both ends
+$   (FIXE 'VYVZMTMYMZ' at the ring), legs SHS 80x80x6.3 (SECT 9), transverse SHS 80x80x6.3 beams SLN 791-798 pinned both ends
 $   (landing 1 legs at +1.235, landing 2 legs at +1.45 and +2.90), BDK legs Lcr = 2 L. Built by make_v19.py.
 $ 26016 member check v17 (6 Nov 2026) = v16 + (a) stair B moved one bay: foot on the L1 radial at 20 deg, landing ~42 deg, top on
 $   the L2 radial at 60 deg, landing posts SLN 603/604 on the L1 radial at 40 deg (SLN 263); L2 opening 40-80 -> 20-60 deg: L2 radial
@@ -4250,9 +4250,9 @@ SLN     722 GRP 62 STYP 'N' SNO 9 DRX 1 0 0 TITL "right landing 2 leg outer-low"
 SLNB X1  13.59000000   3.53000000   4.43000000 X2  13.59000000   3.53000000   0.00000000
 SLN     723 GRP 62 STYP 'N' SNO 9 DRX 1 0 0 TITL "right landing 2 leg outer-high"
 SLNB X1  13.25000000   5.42000000   4.43000000 X2  13.25000000   5.42000000   0.00000000
-SLN     724 GRP 62 STYP 'N' SNO 8 DRX 1 0 0 FIXE 'PYPZMXMYMZ' TITL "right landing 2 support on L1 ring 0-20 (SLN 161)"
+SLN     724 GRP 62 STYP 'N' SNO 8 DRX 1 0 0 FIXE 'VYVZMTMYMZ' TITL "right landing 2 support on L1 ring 0-20 (SLN 161)"
 SLNB X1  11.45388386   3.09715829   4.43000000 X2  11.45388386   3.09715829   4.05400000
-SLN     725 GRP 62 STYP 'N' SNO 8 DRX 1 0 0 FIXE 'PYPZMXMYMZ' TITL "right landing 2 support on L1 ring 20-40 (SLN 170)"
+SLN     725 GRP 62 STYP 'N' SNO 8 DRX 1 0 0 FIXE 'VYVZMTMYMZ' TITL "right landing 2 support on L1 ring 20-40 (SLN 170)"
 SLNB X1  10.74252565   5.02877869   4.43000000 X2  10.74252565   5.02877869   4.05400000
 SLN     726 GRP 62 STYP 'N' SNO 7 DRX 0.00238869 -0.000410605 -0.999997 TITL "right flight 1 tread"
 SLNB X1  11.68699064  -2.43873819   0.67052010 X2  13.73814605  -2.79132238   0.67556447
@@ -4340,9 +4340,9 @@ SLN     767 GRP 62 STYP 'N' SNO 9 DRX 1 0 0 TITL "left landing 2 leg outer-low"
 SLNB X1   8.19000000 -11.46000000   4.43000000 X2   8.19000000 -11.46000000   0.00000000
 SLN     768 GRP 62 STYP 'N' SNO 9 DRX 1 0 0 TITL "left landing 2 leg outer-high"
 SLNB X1   6.74000000 -12.73000000   4.43000000 X2   6.74000000 -12.73000000   0.00000000
-SLN     769 GRP 62 STYP 'N' SNO 8 DRX 1 0 0 FIXE 'PYPZMXMYMZ' TITL "left landing 2 support on L1 ring 300-320 (SLN 164)"
+SLN     769 GRP 62 STYP 'N' SNO 8 DRX 1 0 0 FIXE 'VYVZMTMYMZ' TITL "left landing 2 support on L1 ring 300-320 (SLN 164)"
 SLNB X1   6.78856267  -9.73061690   4.43000000 X2   6.78856267  -9.73061690   4.05400000
-SLN     770 GRP 62 STYP 'N' SNO 8 DRX 1 0 0 FIXE 'PYPZMXMYMZ' TITL "left landing 2 support on L1 ring 280-300 (SLN 165)"
+SLN     770 GRP 62 STYP 'N' SNO 8 DRX 1 0 0 FIXE 'VYVZMTMYMZ' TITL "left landing 2 support on L1 ring 280-300 (SLN 165)"
 SLNB X1   5.01646197 -10.75027933   4.43000000 X2   5.01646197 -10.75027933   4.05400000
 SLN     771 GRP 62 STYP 'N' SNO 7 DRX -0.0011402 0.000652529 -0.999999 TITL "left flight 1 tread"
 SLNB X1  10.52708519  -5.64968175   0.67334757 X2  12.33862741  -6.68641890   0.67060556
