@@ -48,3 +48,7 @@ A later variant of the L2 set with M24 bolts (`v15\xml_L2haunch_flush_M24_asis\`
   holds the R12 connection data used as the haunch donor (json, not copied).
 - No IDEA models or results for stairs or a kingpost anywhere under `C:\Sofistik workflow\`.
 - `v15\xml_L2flush_fixed_asis\` has only partA results (incomplete run); not copied.
+
+## Overview sheets
+
+`26016_IDEA_L1_overview.png` and `26016_IDEA_L2_overview.png`: every current joint (top view) with plate strain / bolts / welds % and PASS/FAIL from `R8_current_design_asis.csv`; the L2 sheet adds L2-R12-E1_000 (v14, FAIL). Made 2026-11-13 from the files in this folder.
