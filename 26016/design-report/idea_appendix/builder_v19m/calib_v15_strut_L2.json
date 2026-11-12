@@ -1,0 +1,7004 @@
+{
+ "L2-R8-A_000.xml": {
+  "node": 1499,
+  "cp": [
+   8.49982762,
+   -0.000969154,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN73b",
+    "seg": null,
+    "beam": 140370,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 11073.8,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0088,
+     "Qy_rms": 1.7,
+     "Qy_max": 190.9,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 21164.0,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1197,
+     "Mx_rms": 35.3,
+     "Mx_max": 294.7,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 184054.9,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 341.6
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN73a",
+    "seg": null,
+    "beam": 140369,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.1,
+     "N_max": 17587.9,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0053,
+     "Qy_rms": 3.0,
+     "Qy_max": 570.6,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 38782.5,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0886,
+     "Mx_rms": 35.3,
+     "Mx_max": 398.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 184013.6,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1213.2
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN80",
+    "seg": null,
+    "beam": 140181,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 20237.6,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 408.9,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25580.8,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0021,
+     "Mx_rms": 0.0,
+     "Mx_max": 11.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.6739,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 524.0
+    },
+    "start_at_joint": true
+   },
+   "4": {
+    "name": "SLN126",
+    "seg": null,
+    "beam": 140295,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 19517.9,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 350.1,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25606.4,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0008,
+     "Mx_rms": 0.0,
+     "Mx_max": 34.6,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9258,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 427.3
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-A_020.xml": {
+  "node": 1500,
+  "cp": [
+   7.98755676,
+   2.90620155,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN78a",
+    "seg": null,
+    "beam": 140409,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 49255.8,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0486,
+     "Qy_rms": 8.7,
+     "Qy_max": 178.2,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 29367.4,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0996,
+     "Mx_rms": 34.3,
+     "Mx_max": 344.1,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 186228.7,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 629.8
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN78b",
+    "seg": null,
+    "beam": 140410,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.1,
+     "N_max": 43919.1,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0064,
+     "Qy_rms": 7.4,
+     "Qy_max": 1159.7,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 23983.5,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1033,
+     "Mx_rms": 34.3,
+     "Mx_max": 331.8,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 186246.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1796.8
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN80",
+    "seg": null,
+    "beam": 140187,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 20405.6,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 398.9,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25610.2,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0022,
+     "Mx_rms": 0.0,
+     "Mx_max": 11.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.6725,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 613.6
+    },
+    "start_at_joint": true
+   },
+   "4": {
+    "name": "SLN83",
+    "seg": null,
+    "beam": 140191,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 21606.6,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 396.0,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25597.7,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0035,
+     "Mx_rms": 0.0,
+     "Mx_max": 10.5,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9216,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 553.3
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-A_040.xml": {
+  "node": 1503,
+  "cp": [
+   6.51186867,
+   5.46284146,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN81b",
+    "seg": null,
+    "beam": 140428,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.1,
+     "N_max": 17653.9,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0104,
+     "Qy_rms": 3.2,
+     "Qy_max": 313.2,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 14013.7,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1191,
+     "Mx_rms": 28.2,
+     "Mx_max": 236.8,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 148225.3,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 761.1
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN81a",
+    "seg": null,
+    "beam": 140427,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.2,
+     "N_max": 24441.6,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0042,
+     "Qy_rms": 4.6,
+     "Qy_max": 1103.4,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 36678.3,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0937,
+     "Mx_rms": 28.2,
+     "Mx_max": 301.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 148205.2,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1880.3
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN83",
+    "seg": null,
+    "beam": 140197,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 21754.5,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 331.3,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25615.4,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0036,
+     "Mx_rms": 0.0,
+     "Mx_max": 10.2,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9011,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 520.1
+    },
+    "start_at_joint": true
+   },
+   "4": {
+    "name": "SLN84",
+    "seg": null,
+    "beam": 140198,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 23114.2,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 477.4,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 8893.4,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0032,
+     "Mx_rms": 0.0,
+     "Mx_max": 10.5,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9061,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 693.0
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-A_100.xml": {
+  "node": 1510,
+  "cp": [
+   -1.47502515,
+   8.37086443,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN92b",
+    "seg": null,
+    "beam": 140505,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 46962.9,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0362,
+     "Qy_rms": 10.0,
+     "Qy_max": 275.9,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 20519.3,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1253,
+     "Mx_rms": 53.1,
+     "Mx_max": 423.7,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 224601.4,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 866.0
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN92a",
+    "seg": null,
+    "beam": 140504,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.1,
+     "N_max": 57628.1,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.022,
+     "Qy_rms": 12.4,
+     "Qy_max": 560.9,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 41308.5,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0906,
+     "Mx_rms": 53.1,
+     "Mx_max": 585.5,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 224664.1,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 888.4
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN91",
+    "seg": null,
+    "beam": 140218,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 34535.4,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0,
+     "Qy_rms": 0.0,
+     "Qy_max": 1416.5,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25612.4,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.001,
+     "Mx_rms": 0.0,
+     "Mx_max": 29.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9309,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1176.9
+    },
+    "start_at_joint": true
+   },
+   "4": {
+    "name": "SLN94",
+    "seg": null,
+    "beam": 140219,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 34356.6,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 429.3,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25717.1,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0009,
+     "Mx_rms": 0.0,
+     "Mx_max": 35.2,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9526,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 665.3
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-A_120.xml": {
+  "node": 1512,
+  "cp": [
+   -4.2490745,
+   7.36155122,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN95b",
+    "seg": null,
+    "beam": 140534,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 17194.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0174,
+     "Qy_rms": 3.4,
+     "Qy_max": 196.2,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 20558.1,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1184,
+     "Mx_rms": 47.9,
+     "Mx_max": 404.9,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 185700.4,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 254.9
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN95a",
+    "seg": null,
+    "beam": 140533,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.1,
+     "N_max": 8246.8,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0018,
+     "Qy_rms": 0.9,
+     "Qy_max": 522.3,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 39981.4,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0939,
+     "Mx_rms": 47.9,
+     "Mx_max": 510.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 185661.2,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1249.9
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN94",
+    "seg": null,
+    "beam": 140225,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 34356.6,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 307.1,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25740.0,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0008,
+     "Mx_rms": 0.0,
+     "Mx_max": 35.2,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9473,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 421.6
+    },
+    "start_at_joint": true
+   },
+   "4": {
+    "name": "SLN97",
+    "seg": null,
+    "beam": 140226,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 34004.3,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 462.1,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25978.0,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0017,
+     "Mx_rms": 0.0,
+     "Mx_max": 9.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.5374,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 606.7
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-A_140.xml": {
+  "node": 1514,
+  "cp": [
+   -6.51062275,
+   5.46432629,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN108b",
+    "seg": null,
+    "beam": 140583,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 53652.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0762,
+     "Qy_rms": 13.7,
+     "Qy_max": 179.2,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 30933.6,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1081,
+     "Mx_rms": 51.1,
+     "Mx_max": 472.5,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 188823.3,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 305.0
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN108a",
+    "seg": null,
+    "beam": 140582,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.1,
+     "N_max": 65663.5,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0294,
+     "Qy_rms": 17.0,
+     "Qy_max": 577.0,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 23462.6,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0924,
+     "Mx_rms": 51.1,
+     "Mx_max": 553.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 188846.9,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1314.6
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN97",
+    "seg": null,
+    "beam": 140232,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 34004.3,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 361.6,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 26005.3,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0024,
+     "Mx_rms": 0.0,
+     "Mx_max": 9.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.5394,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 609.1
+    },
+    "start_at_joint": true
+   },
+   "4": {
+    "name": "SLN109",
+    "seg": null,
+    "beam": 140233,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 33718.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 279.5,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25580.1,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0013,
+     "Mx_rms": 0.0,
+     "Mx_max": 19.8,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.895,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 400.5
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-A_160.xml": {
+  "node": 1520,
+  "cp": [
+   -7.98689382,
+   2.90802297,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN110b",
+    "seg": null,
+    "beam": 140612,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 13496.5,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0261,
+     "Qy_rms": 3.5,
+     "Qy_max": 134.2,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 20246.4,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1188,
+     "Mx_rms": 57.2,
+     "Mx_max": 481.8,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.2,
+     "My_max": 188223.6,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 155.9
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN110a",
+    "seg": null,
+    "beam": 140611,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.1,
+     "N_max": 3768.2,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0014,
+     "Qy_rms": 0.6,
+     "Qy_max": 438.2,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 40046.0,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0934,
+     "Mx_rms": 57.2,
+     "Mx_max": 612.9,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.2,
+     "My_max": 188191.3,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1103.8
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN109",
+    "seg": null,
+    "beam": 140239,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 33718.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 214.8,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25610.9,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0011,
+     "Mx_rms": 0.0,
+     "Mx_max": 19.8,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9468,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 329.1
+    },
+    "start_at_joint": true
+   },
+   "4": {
+    "name": "SLN112",
+    "seg": null,
+    "beam": 140240,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 33605.7,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 441.4,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25541.9,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0018,
+     "Mx_rms": 0.0,
+     "Mx_max": 13.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9371,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 618.8
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-A_180.xml": {
+  "node": 1521,
+  "cp": [
+   -8.49982762,
+   0.000969154,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN111b",
+    "seg": null,
+    "beam": 140641,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.1,
+     "N_max": 50488.4,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0571,
+     "Qy_rms": 15.9,
+     "Qy_max": 278.8,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 21147.5,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1188,
+     "Mx_rms": 73.7,
+     "Mx_max": 620.2,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.2,
+     "My_max": 230037.7,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 250.1
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN111a",
+    "seg": null,
+    "beam": 140640,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.1,
+     "N_max": 62630.6,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0368,
+     "Qy_rms": 19.7,
+     "Qy_max": 536.6,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 40265.0,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0942,
+     "Mx_rms": 73.7,
+     "Mx_max": 782.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.2,
+     "My_max": 230096.9,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1202.8
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN112",
+    "seg": null,
+    "beam": 140246,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 33620.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 419.0,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25570.3,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0018,
+     "Mx_rms": 0.0,
+     "Mx_max": 13.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9389,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 651.2
+    },
+    "start_at_joint": true
+   },
+   "4": {
+    "name": "SLN113",
+    "seg": null,
+    "beam": 140247,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 33678.3,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 233.9,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25587.9,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0009,
+     "Mx_rms": 0.0,
+     "Mx_max": 48.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9441,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 375.8
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-A_200.xml": {
+  "node": 1522,
+  "cp": [
+   -7.98755676,
+   -2.90620155,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN114b",
+    "seg": null,
+    "beam": 140670,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 16992.8,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0444,
+     "Qy_rms": 5.3,
+     "Qy_max": 118.5,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 29662.3,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1139,
+     "Mx_rms": 46.1,
+     "Mx_max": 405.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.2,
+     "My_max": 137909.6,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0002,
+     "Mz_rms": 0.0,
+     "Mz_max": 170.6
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN114a",
+    "seg": null,
+    "beam": 140669,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 6781.4,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0125,
+     "Qy_rms": 1.6,
+     "Qy_max": 130.3,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 23273.8,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0993,
+     "Mx_rms": 46.1,
+     "Mx_max": 464.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 137834.1,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 498.7
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN113",
+    "seg": null,
+    "beam": 140253,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 33609.8,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 263.5,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25616.6,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0008,
+     "Mx_rms": 0.0,
+     "Mx_max": 48.1,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9671,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 358.2
+    },
+    "start_at_joint": true
+   },
+   "4": {
+    "name": "SLN116",
+    "seg": null,
+    "beam": 140254,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 33688.1,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 236.1,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25576.4,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.001,
+     "Mx_rms": 0.0,
+     "Mx_max": 28.9,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9734,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 368.6
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-A_220.xml": {
+  "node": 1523,
+  "cp": [
+   -6.51186867,
+   -5.46284146,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN115b",
+    "seg": null,
+    "beam": 140699,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.1,
+     "N_max": 40784.9,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0528,
+     "Qy_rms": 13.3,
+     "Qy_max": 252.6,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 21775.0,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1224,
+     "Mx_rms": 77.4,
+     "Mx_max": 631.8,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.2,
+     "My_max": 232162.5,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 272.1
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN115a",
+    "seg": null,
+    "beam": 140698,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.1,
+     "N_max": 53016.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0379,
+     "Qy_rms": 17.5,
+     "Qy_max": 460.9,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 39831.8,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0939,
+     "Mx_rms": 77.4,
+     "Mx_max": 824.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.3,
+     "My_max": 232232.7,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 778.5
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN116",
+    "seg": null,
+    "beam": 140260,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 33688.1,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 321.4,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25599.6,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0011,
+     "Mx_rms": 0.0,
+     "Mx_max": 28.9,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9687,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 454.2
+    },
+    "start_at_joint": true
+   },
+   "4": {
+    "name": "SLN117",
+    "seg": null,
+    "beam": 140267,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 33926.7,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 386.8,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25957.7,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0004,
+     "Mx_rms": 0.0,
+     "Mx_max": 43.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9655,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 475.7
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-A_240.xml": {
+  "node": 1524,
+  "cp": [
+   -4.25075312,
+   -7.36058207,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN118a",
+    "seg": null,
+    "beam": 140738,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.1,
+     "N_max": 25677.6,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0312,
+     "Qy_rms": 8.0,
+     "Qy_max": 256.3,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 21352.5,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1259,
+     "Mx_rms": 58.7,
+     "Mx_max": 465.9,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.2,
+     "My_max": 179342.8,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 848.2
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN118b",
+    "seg": null,
+    "beam": 140739,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.1,
+     "N_max": 16958.6,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0173,
+     "Qy_rms": 4.9,
+     "Qy_max": 282.3,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 38899.1,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0938,
+     "Mx_rms": 58.6,
+     "Mx_max": 625.2,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.2,
+     "My_max": 179294.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 571.4
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN117",
+    "seg": null,
+    "beam": 140261,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 33926.7,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 474.9,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25968.2,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0005,
+     "Mx_rms": 0.0,
+     "Mx_max": 43.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.97,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 730.6
+    },
+    "start_at_joint": true
+   },
+   "4": {
+    "name": "SLN120",
+    "seg": null,
+    "beam": 140274,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 34113.4,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0,
+     "Qy_rms": 0.0,
+     "Qy_max": 1808.2,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25698.3,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0034,
+     "Mx_rms": 0.0,
+     "Mx_max": 12.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.5617,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1605.9
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-A_300.xml": {
+  "node": 1526,
+  "cp": [
+   4.2490745,
+   -7.36155122,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN122a",
+    "seg": null,
+    "beam": 140795,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.1,
+     "N_max": 45691.3,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0294,
+     "Qy_rms": 9.9,
+     "Qy_max": 336.9,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 16297.3,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1319,
+     "Mx_rms": 41.0,
+     "Mx_max": 311.2,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 164227.1,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 755.5
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN122b",
+    "seg": null,
+    "beam": 140796,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.2,
+     "N_max": 40407.9,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0062,
+     "Qy_rms": 8.6,
+     "Qy_max": 1381.7,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 38405.3,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0826,
+     "Mx_rms": 41.0,
+     "Mx_max": 496.6,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 164272.7,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1572.2
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN124",
+    "seg": null,
+    "beam": 140281,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 18831.3,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 281.7,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25562.0,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0006,
+     "Mx_rms": 0.0,
+     "Mx_max": 41.3,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.8905,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 518.5
+    },
+    "start_at_joint": true
+   },
+   "4": {
+    "name": "SLN395",
+    "seg": null,
+    "beam": 140354,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 19604.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 327.1,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 8744.7,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0051,
+     "Mx_rms": 0.0,
+     "Mx_max": 5.6,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.859,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 504.3
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-A_320.xml": {
+  "node": 1525,
+  "cp": [
+   6.51062275,
+   -5.46432629,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN123b",
+    "seg": null,
+    "beam": 140814,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 10064.7,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0113,
+     "Qy_rms": 2.0,
+     "Qy_max": 179.5,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 30705.1,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0969,
+     "Mx_rms": 30.0,
+     "Mx_max": 309.8,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 128320.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 344.4
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN123a",
+    "seg": null,
+    "beam": 140813,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.1,
+     "N_max": 16270.3,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0092,
+     "Qy_rms": 3.5,
+     "Qy_max": 383.1,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 22698.5,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1102,
+     "Mx_rms": 30.0,
+     "Mx_max": 272.2,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 128242.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 620.3
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN124",
+    "seg": null,
+    "beam": 140275,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 19142.2,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 243.9,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25586.1,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0007,
+     "Mx_rms": 0.0,
+     "Mx_max": 41.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9386,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 288.4
+    },
+    "start_at_joint": true
+   },
+   "4": {
+    "name": "SLN125",
+    "seg": null,
+    "beam": 140288,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 19219.4,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 316.6,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25590.7,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0005,
+     "Mx_rms": 0.0,
+     "Mx_max": 38.6,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9354,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 411.1
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-A_340.xml": {
+  "node": 1527,
+  "cp": [
+   7.98689382,
+   -2.90802297,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN127a",
+    "seg": null,
+    "beam": 140853,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 50334.8,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.037,
+     "Qy_rms": 10.0,
+     "Qy_max": 269.9,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 22581.1,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1184,
+     "Mx_rms": 48.4,
+     "Mx_max": 408.8,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 228560.7,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 710.6
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN127b",
+    "seg": null,
+    "beam": 140854,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.2,
+     "N_max": 45552.2,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0054,
+     "Qy_rms": 8.8,
+     "Qy_max": 1636.3,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 38490.7,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0919,
+     "Mx_rms": 48.4,
+     "Mx_max": 526.7,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 228632.2,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1951.7
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN125",
+    "seg": null,
+    "beam": 140282,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 19219.4,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 418.4,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25622.6,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0007,
+     "Mx_rms": 0.0,
+     "Mx_max": 38.3,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9334,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 668.1
+    },
+    "start_at_joint": true
+   },
+   "4": {
+    "name": "SLN126",
+    "seg": null,
+    "beam": 140289,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 19517.9,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 327.6,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25577.8,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0008,
+     "Mx_rms": 0.0,
+     "Mx_max": 34.6,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9356,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 572.9
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-B_060.xml": {
+  "node": 1504,
+  "cp": [
+   4.25075312,
+   7.36058207,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN87",
+    "seg": null,
+    "beam": 140448,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 8323.2,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 320.0,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 49167.8,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0034,
+     "Mx_rms": 0.0,
+     "Mx_max": 7.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 10944.3,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 785.8
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "radial (ends 200 past the node) stub",
+    "seg": null,
+    "beam": 80181,
+    "dot": -0.0005,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 62045468175631.76,
+     "N_rms": 62045.5,
+     "N_max": 0.0,
+     "Qy": [
+      "Vz",
+      1
+     ],
+     "Qy_relerr": 99937702817.5275,
+     "Qy_rms": 99.9,
+     "Qy_max": 0.0,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 99937702817.5275,
+     "Qz_rms": 99.9,
+     "Qz_max": 0.0,
+     "Mx": [
+      "Mt",
+      1
+     ],
+     "Mx_relerr": 34189894543.4011,
+     "Mx_rms": 34.2,
+     "Mx_max": 0.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 4482930589.0976,
+     "My_rms": 4.5,
+     "My_max": 0.0,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 4482930589.0976,
+     "Mz_rms": 4.5,
+     "Mz_max": 0.0
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN121",
+    "seg": null,
+    "beam": 80181,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 1.5,
+     "N_max": 66864.5,
+     "Qy": [
+      "Vz",
+      -1
+     ],
+     "Qy_relerr": 0.2174,
+     "Qy_rms": 63.2,
+     "Qy_max": 290.9,
+     "Qz": [
+      "Vy",
+      -1
+     ],
+     "Qz_relerr": 0.0057,
+     "Qz_rms": 30.3,
+     "Qz_max": 5330.7,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1092,
+     "Mx_rms": 7.5,
+     "Mx_max": 68.3,
+     "My": [
+      "Mz",
+      -1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 10917.9,
+     "Mz": [
+      "My",
+      -1
+     ],
+     "Mz_relerr": 0.7644,
+     "Mz_rms": 3.7,
+     "Mz_max": 4.9
+    },
+    "start_at_joint": false
+   },
+   "4": {
+    "name": "SLN84",
+    "seg": null,
+    "beam": 140204,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 23152.4,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 439.3,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 8919.9,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0033,
+     "Mx_rms": 0.0,
+     "Mx_max": 10.5,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.8728,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 660.0
+    },
+    "start_at_joint": true
+   },
+   "5": {
+    "name": "SLN88",
+    "seg": null,
+    "beam": 140205,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 23212.2,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0,
+     "Qy_rms": 0.0,
+     "Qy_max": 1521.6,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 8776.8,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0011,
+     "Mx_rms": 0.0,
+     "Mx_max": 25.7,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9297,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1295.7
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-B_080.xml": {
+  "node": 1508,
+  "cp": [
+   1.47693401,
+   8.37052785,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN89b",
+    "seg": null,
+    "beam": 140476,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.3,
+     "N_max": 10603.3,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.001,
+     "Qy_rms": 1.4,
+     "Qy_max": 1399.2,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 61826.7,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.158,
+     "Mx_rms": 28.8,
+     "Mx_max": 182.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 129753.5,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 5341.0
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN89a",
+    "seg": null,
+    "beam": 140475,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0011,
+     "N_rms": 11.4,
+     "N_max": 10307.6,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0,
+     "Qy_rms": 1.2,
+     "Qy_max": 53523.2,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 102217.9,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.1596,
+     "Mx_rms": 30.4,
+     "Mx_max": 190.6,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 136673.6,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 12564.7
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN131",
+    "seg": null,
+    "beam": 80191,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.6,
+     "N_max": 197097.3,
+     "Qy": [
+      "Vz",
+      -1
+     ],
+     "Qy_relerr": 0.2588,
+     "Qy_rms": 109.3,
+     "Qy_max": 422.3,
+     "Qz": [
+      "Vy",
+      -1
+     ],
+     "Qz_relerr": 0.0084,
+     "Qz_rms": 43.3,
+     "Qz_max": 5134.5,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0044,
+     "Mx_rms": 4.2,
+     "Mx_max": 954.9,
+     "My": [
+      "Mz",
+      -1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.6,
+     "My_max": 11518.6,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 0.0118,
+     "Mz_rms": 2.2,
+     "Mz_max": 182.3
+    },
+    "start_at_joint": false
+   },
+   "4": {
+    "name": "SLN88",
+    "seg": null,
+    "beam": 140211,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 21714.3,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0,
+     "Qy_rms": 0.0,
+     "Qy_max": 1521.6,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 8790.8,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.001,
+     "Mx_rms": 0.0,
+     "Mx_max": 25.7,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9533,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 3202.3
+    },
+    "start_at_joint": true
+   },
+   "5": {
+    "name": "SLN91",
+    "seg": null,
+    "beam": 140212,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 34535.4,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0,
+     "Qy_rms": 0.0,
+     "Qy_max": 1416.5,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25553.9,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.001,
+     "Mx_rms": 0.0,
+     "Mx_max": 29.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9479,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 3066.6
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-B_260.xml": {
+  "node": 1513,
+  "cp": [
+   -1.47693401,
+   -8.37052785,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN119a",
+    "seg": null,
+    "beam": 140767,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.4,
+     "N_max": 32516.8,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0067,
+     "Qy_rms": 9.5,
+     "Qy_max": 1410.7,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 48408.2,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.2007,
+     "Mx_rms": 19.9,
+     "Mx_max": 99.2,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 64840.1,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 5792.0
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN119b",
+    "seg": null,
+    "beam": 140768,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0004,
+     "N_rms": 15.1,
+     "N_max": 34718.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0002,
+     "Qy_rms": 10.0,
+     "Qy_max": 50604.1,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 86664.5,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0732,
+     "Mx_rms": 20.7,
+     "Mx_max": 283.1,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 66920.3,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 14047.3
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN96",
+    "seg": null,
+    "beam": 120011,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.4,
+     "N_max": 168393.5,
+     "Qy": [
+      "Vz",
+      -1
+     ],
+     "Qy_relerr": 0.4755,
+     "Qy_rms": 65.0,
+     "Qy_max": 136.8,
+     "Qz": [
+      "Vy",
+      -1
+     ],
+     "Qz_relerr": 0.0084,
+     "Qz_rms": 36.9,
+     "Qz_max": 4369.9,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0012,
+     "Mx_rms": 1.2,
+     "Mx_max": 1053.9,
+     "My": [
+      "Mz",
+      -1
+     ],
+     "My_relerr": 0.0001,
+     "My_rms": 0.4,
+     "My_max": 6954.1,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 0.0029,
+     "Mz_rms": 0.1,
+     "Mz_max": 33.9
+    },
+    "start_at_joint": false
+   },
+   "4": {
+    "name": "SLN120",
+    "seg": null,
+    "beam": 140268,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 34168.4,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0,
+     "Qy_rms": 0.0,
+     "Qy_max": 1808.2,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25798.6,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0033,
+     "Mx_rms": 0.0,
+     "Mx_max": 12.1,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.5669,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 3731.7
+    },
+    "start_at_joint": true
+   },
+   "5": {
+    "name": "SLN394",
+    "seg": null,
+    "beam": 140353,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 19344.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0,
+     "Qy_rms": 0.0,
+     "Qy_max": 1621.9,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 9048.6,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0014,
+     "Mx_rms": 0.0,
+     "Mx_max": 15.9,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9396,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 3469.7
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L2-R8-B_280.xml": {
+  "node": 1505,
+  "cp": [
+   1.47502515,
+   -8.37086443,
+   8.055
+  ],
+  "els": {
+   "1": {
+    "name": "SLN105",
+    "seg": null,
+    "beam": 140573,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 2562.2,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 384.5,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 48687.3,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0067,
+     "Mx_rms": 0.0,
+     "Mx_max": 4.1,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 10626.9,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 974.9
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "radial (ends 200 past the node) stub",
+    "seg": null,
+    "beam": 120001,
+    "dot": 0.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 62681770994404.74,
+     "N_rms": 62681.8,
+     "N_max": 0.0,
+     "Qy": [
+      "Vz",
+      1
+     ],
+     "Qy_relerr": 297044976392.4648,
+     "Qy_rms": 297.0,
+     "Qy_max": 0.0,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 297044976392.4648,
+     "Qz_rms": 297.0,
+     "Qz_max": 0.0,
+     "Mx": [
+      "Mt",
+      1
+     ],
+     "Mx_relerr": 43824650597.5803,
+     "Mx_rms": 43.8,
+     "Mx_max": 0.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 5904489817.0799,
+     "My_rms": 5.9,
+     "My_max": 0.0,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 5904489817.0799,
+     "Mz_rms": 5.9,
+     "Mz_max": 0.0
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN85",
+    "seg": null,
+    "beam": 120001,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 66476.7,
+     "Qy": [
+      "Vz",
+      -1
+     ],
+     "Qy_relerr": 0.0003,
+     "Qy_rms": 0.2,
+     "Qy_max": 768.3,
+     "Qz": [
+      "Vy",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 5323.2,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0004,
+     "Mx_rms": 0.0,
+     "Mx_max": 76.9,
+     "My": [
+      "Mz",
+      -1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 10614.9,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 0.06,
+     "Mz_rms": 0.5,
+     "Mz_max": 7.7
+    },
+    "start_at_joint": false
+   },
+   "4": {
+    "name": "SLN394",
+    "seg": null,
+    "beam": 140347,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 19026.2,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0,
+     "Qy_rms": 0.0,
+     "Qy_max": 1563.1,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 9070.5,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0016,
+     "Mx_rms": 0.0,
+     "Mx_max": 15.9,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.9002,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1304.1
+    },
+    "start_at_joint": true
+   },
+   "5": {
+    "name": "SLN395",
+    "seg": null,
+    "beam": 140360,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 19288.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 342.5,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 8718.9,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0051,
+     "Mx_rms": 0.0,
+     "Mx_max": 5.7,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.8139,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 484.0
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L1-R8-S_020.xml": {
+  "node": 1469,
+  "cp": [
+   7.98639468,
+   2.9071954,
+   4.054
+  ],
+  "els": {
+   "1": {
+    "name": "SLN185",
+    "seg": null,
+    "beam": 100239,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0068,
+     "N_rms": 126.1,
+     "N_max": 18472.2,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 0.5015,
+     "Qy_rms": 1443.5,
+     "Qy_max": 2878.3,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25568.1,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0123,
+     "Mx_rms": 0.2,
+     "Mx_max": 14.9,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.7673,
+     "My_rms": 2.0,
+     "My_max": 2.6,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1024.5
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN264",
+    "seg": null,
+    "beam": 100774,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0177,
+     "N_rms": 277.9,
+     "N_max": 15677.7,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.3636,
+     "Qy_rms": 1466.6,
+     "Qy_max": 4033.1,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25549.3,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0107,
+     "Mx_rms": 0.1,
+     "Mx_max": 8.3,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.7557,
+     "My_rms": 1.1,
+     "My_max": 1.5,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1449.7
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN39",
+    "seg": null,
+    "beam": 80021,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.7,
+     "N_max": 126378.0,
+     "Qy": [
+      "Vz",
+      -1
+     ],
+     "Qy_relerr": 0.0023,
+     "Qy_rms": 16.0,
+     "Qy_max": 7040.3,
+     "Qz": [
+      "Vy",
+      -1
+     ],
+     "Qz_relerr": 0.0024,
+     "Qz_rms": 19.2,
+     "Qz_max": 7842.3,
+     "Mx": [
+      "Mt",
+      1
+     ],
+     "Mx_relerr": 0.4758,
+     "Mx_rms": 0.6,
+     "Mx_max": 1.3,
+     "My": [
+      "Mz",
+      -1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 8839.1,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 0.0003,
+     "Mz_rms": 0.6,
+     "Mz_max": 1897.4
+    },
+    "start_at_joint": false
+   },
+   "4": {
+    "name": "SLN184",
+    "seg": null,
+    "beam": 100224,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 18128.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0002,
+     "Qy_rms": 0.0,
+     "Qy_max": 161.3,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 43854.8,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0031,
+     "Mx_rms": 0.0,
+     "Mx_max": 8.6,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 63217.6,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 329.9
+    },
+    "start_at_joint": false
+   },
+   "5": {
+    "name": "SLN183",
+    "seg": null,
+    "beam": 100223,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 47628.6,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 271.0,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 47791.3,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0043,
+     "Mx_rms": 0.0,
+     "Mx_max": 6.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 60187.9,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 631.3
+    },
+    "start_at_joint": true
+   },
+   "6": {
+    "name": "SLN451",
+    "seg": null,
+    "beam": 70104,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 50391.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0011,
+     "Qy_rms": 0.3,
+     "Qy_max": 282.6,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0001,
+     "Qz_rms": 0.1,
+     "Qz_max": 1498.3,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0001,
+     "Mx_rms": 0.0,
+     "Mx_max": 488.5,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.3702,
+     "My_rms": 0.2,
+     "My_max": 0.6,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 2064.6
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L1-R8-S_100.xml": {
+  "node": 1473,
+  "cp": [
+   -1.47502515,
+   8.37086443,
+   4.054
+  ],
+  "els": {
+   "1": {
+    "name": "SLN192",
+    "seg": null,
+    "beam": 100307,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0081,
+     "N_rms": 312.0,
+     "N_max": 38565.5,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 0.5456,
+     "Qy_rms": 3554.9,
+     "Qy_max": 6515.6,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25591.3,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0073,
+     "Mx_rms": 0.1,
+     "Mx_max": 14.5,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.4662,
+     "My_rms": 1.2,
+     "My_max": 2.6,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1269.1
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN195",
+    "seg": null,
+    "beam": 100331,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0085,
+     "N_rms": 316.3,
+     "N_max": 37118.7,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 0.5927,
+     "Qy_rms": 3624.0,
+     "Qy_max": 6114.2,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25742.0,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0119,
+     "Mx_rms": 0.1,
+     "Mx_max": 11.7,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.7569,
+     "My_rms": 1.6,
+     "My_max": 2.1,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1264.5
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN43",
+    "seg": null,
+    "beam": 80061,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 1.0,
+     "N_max": 127615.9,
+     "Qy": [
+      "Vz",
+      -1
+     ],
+     "Qy_relerr": 0.0023,
+     "Qy_rms": 16.7,
+     "Qy_max": 7384.0,
+     "Qz": [
+      "Vy",
+      -1
+     ],
+     "Qz_relerr": 0.0023,
+     "Qz_rms": 19.3,
+     "Qz_max": 8280.1,
+     "Mx": [
+      "Mt",
+      1
+     ],
+     "Mx_relerr": 0.3991,
+     "Mx_rms": 0.6,
+     "Mx_max": 1.4,
+     "My": [
+      "Mz",
+      -1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.3,
+     "My_max": 8913.0,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 0.0006,
+     "Mz_rms": 1.3,
+     "Mz_max": 2033.6
+    },
+    "start_at_joint": false
+   },
+   "4": {
+    "name": "SLN193",
+    "seg": null,
+    "beam": 100316,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 14809.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 222.0,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 45576.4,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0034,
+     "Mx_rms": 0.0,
+     "Mx_max": 9.5,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 68739.7,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 384.7
+    },
+    "start_at_joint": false
+   },
+   "5": {
+    "name": "SLN191",
+    "seg": null,
+    "beam": 100287,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 47256.6,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 207.5,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 52965.6,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0052,
+     "Mx_rms": 0.0,
+     "Mx_max": 5.1,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 67270.4,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 453.3
+    },
+    "start_at_joint": true
+   },
+   "6": {
+    "name": "SLN446",
+    "seg": null,
+    "beam": 70039,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 48294.7,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0018,
+     "Qy_rms": 0.6,
+     "Qy_max": 360.0,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0001,
+     "Qz_rms": 0.1,
+     "Qz_max": 1521.3,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0,
+     "Mx_rms": 0.0,
+     "Mx_max": 504.8,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.4587,
+     "My_rms": 0.6,
+     "My_max": 1.3,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 2252.5
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L1-R8-S_140.xml": {
+  "node": 1475,
+  "cp": [
+   -6.51062275,
+   5.46432629,
+   4.054
+  ],
+  "els": {
+   "1": {
+    "name": "SLN198",
+    "seg": null,
+    "beam": 100367,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0092,
+     "N_rms": 295.0,
+     "N_max": 31937.5,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 0.6861,
+     "Qy_rms": 3364.7,
+     "Qy_max": 4903.8,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 26005.0,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0126,
+     "Mx_rms": 0.2,
+     "Mx_max": 13.3,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.8452,
+     "My_rms": 2.0,
+     "My_max": 2.3,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1345.3
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN210",
+    "seg": null,
+    "beam": 100517,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0087,
+     "N_rms": 296.7,
+     "N_max": 34182.6,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 0.6112,
+     "Qy_rms": 3398.5,
+     "Qy_max": 5560.1,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25591.7,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0137,
+     "Mx_rms": 0.2,
+     "Mx_max": 13.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.8592,
+     "My_rms": 2.0,
+     "My_max": 2.4,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1357.4
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN45",
+    "seg": null,
+    "beam": 80081,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.6,
+     "N_max": 118518.4,
+     "Qy": [
+      "Vz",
+      -1
+     ],
+     "Qy_relerr": 0.0041,
+     "Qy_rms": 23.7,
+     "Qy_max": 5751.1,
+     "Qz": [
+      "Vy",
+      -1
+     ],
+     "Qz_relerr": 0.0007,
+     "Qz_rms": 4.3,
+     "Qz_max": 6377.3,
+     "Mx": [
+      "Mt",
+      1
+     ],
+     "Mx_relerr": 0.4434,
+     "Mx_rms": 0.9,
+     "Mx_max": 2.1,
+     "My": [
+      "Mz",
+      -1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.3,
+     "My_max": 8746.3,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 0.0009,
+     "Mz_rms": 1.4,
+     "Mz_max": 1571.8
+    },
+    "start_at_joint": false
+   },
+   "4": {
+    "name": "SLN209",
+    "seg": null,
+    "beam": 100516,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 19888.4,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 221.5,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 43750.6,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0045,
+     "Mx_rms": 0.0,
+     "Mx_max": 7.2,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 62934.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 331.6
+    },
+    "start_at_joint": false
+   },
+   "5": {
+    "name": "SLN197",
+    "seg": null,
+    "beam": 100347,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 50701.9,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0002,
+     "Qy_rms": 0.0,
+     "Qy_max": 161.7,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 47395.5,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0049,
+     "Mx_rms": 0.0,
+     "Mx_max": 4.9,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 59942.5,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 426.2
+    },
+    "start_at_joint": true
+   },
+   "6": {
+    "name": "SLN445",
+    "seg": null,
+    "beam": 70026,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 38129.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 258.7,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 1409.8,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0001,
+     "Mx_rms": 0.0,
+     "Mx_max": 375.9,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.4775,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1731.8
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L1-R8-S_180.xml": {
+  "node": 1477,
+  "cp": [
+   -8.49982762,
+   0.000969154,
+   4.054
+  ],
+  "els": {
+   "1": {
+    "name": "SLN213",
+    "seg": null,
+    "beam": 100548,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0078,
+     "N_rms": 284.6,
+     "N_max": 36453.5,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 0.5473,
+     "Qy_rms": 3246.1,
+     "Qy_max": 5931.0,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25550.1,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0124,
+     "Mx_rms": 0.2,
+     "Mx_max": 12.2,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.723,
+     "My_rms": 1.6,
+     "My_max": 2.2,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1363.9
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN214",
+    "seg": null,
+    "beam": 100549,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0076,
+     "N_rms": 275.9,
+     "N_max": 36444.7,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 0.5148,
+     "Qy_rms": 3159.2,
+     "Qy_max": 6137.0,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25613.1,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0072,
+     "Mx_rms": 0.1,
+     "Mx_max": 11.5,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.5369,
+     "My_rms": 1.1,
+     "My_max": 2.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1436.9
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN47",
+    "seg": null,
+    "beam": 80101,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 1.7,
+     "N_max": 123884.6,
+     "Qy": [
+      "Vz",
+      -1
+     ],
+     "Qy_relerr": 0.0065,
+     "Qy_rms": 49.2,
+     "Qy_max": 7535.1,
+     "Qz": [
+      "Vy",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.2,
+     "Qz_max": 8401.5,
+     "Mx": [
+      "Mt",
+      1
+     ],
+     "Mx_relerr": 0.407,
+     "Mx_rms": 1.8,
+     "Mx_max": 4.3,
+     "My": [
+      "Mz",
+      -1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.1,
+     "My_max": 8998.7,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.2,
+     "Mz_max": 2075.1
+    },
+    "start_at_joint": false
+   },
+   "4": {
+    "name": "SLN212",
+    "seg": null,
+    "beam": 100541,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 19313.5,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0002,
+     "Qy_rms": 0.0,
+     "Qy_max": 211.7,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 43384.4,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0029,
+     "Mx_rms": 0.0,
+     "Mx_max": 9.9,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 70378.9,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 406.2
+    },
+    "start_at_joint": false
+   },
+   "5": {
+    "name": "SLN200",
+    "seg": null,
+    "beam": 100382,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 55208.8,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0002,
+     "Qy_rms": 0.0,
+     "Qy_max": 138.1,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 52679.5,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0045,
+     "Mx_rms": 0.0,
+     "Mx_max": 8.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 68862.5,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 281.4
+    },
+    "start_at_joint": true
+   },
+   "6": {
+    "name": "SLN434",
+    "seg": null,
+    "beam": 70013,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 52309.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0093,
+     "Qy_rms": 0.6,
+     "Qy_max": 69.3,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 1529.0,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0001,
+     "Mx_rms": 0.0,
+     "Mx_max": 540.7,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.4762,
+     "My_rms": 0.7,
+     "My_max": 1.4,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 2284.3
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L1-R8-S_220.xml": {
+  "node": 1479,
+  "cp": [
+   -6.51186867,
+   -5.46284146,
+   4.054
+  ],
+  "els": {
+   "1": {
+    "name": "SLN217",
+    "seg": null,
+    "beam": 100580,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.009,
+     "N_rms": 305.6,
+     "N_max": 33904.2,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 0.6438,
+     "Qy_rms": 3483.7,
+     "Qy_max": 5411.5,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25616.7,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0085,
+     "Mx_rms": 0.1,
+     "Mx_max": 10.8,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.4864,
+     "My_rms": 0.9,
+     "My_max": 1.9,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1226.4
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN218",
+    "seg": null,
+    "beam": 100587,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0091,
+     "N_rms": 303.4,
+     "N_max": 33255.0,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 0.6645,
+     "Qy_rms": 3480.1,
+     "Qy_max": 5237.1,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 26066.5,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0101,
+     "Mx_rms": 0.1,
+     "Mx_max": 10.5,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.6716,
+     "My_rms": 1.2,
+     "My_max": 1.8,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1232.5
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN49",
+    "seg": null,
+    "beam": 80121,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.7,
+     "N_max": 134751.5,
+     "Qy": [
+      "Vz",
+      -1
+     ],
+     "Qy_relerr": 0.0015,
+     "Qy_rms": 8.9,
+     "Qy_max": 5739.2,
+     "Qz": [
+      "Vy",
+      -1
+     ],
+     "Qz_relerr": 0.0037,
+     "Qz_rms": 23.9,
+     "Qz_max": 6416.9,
+     "Mx": [
+      "Mt",
+      1
+     ],
+     "Mx_relerr": 0.5343,
+     "Mx_rms": 0.4,
+     "Mx_max": 0.7,
+     "My": [
+      "Mz",
+      -1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.3,
+     "My_max": 8613.4,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 0.0009,
+     "Mz_rms": 1.5,
+     "Mz_max": 1565.1
+    },
+    "start_at_joint": false
+   },
+   "4": {
+    "name": "SLN216",
+    "seg": null,
+    "beam": 100573,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 16831.8,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 227.3,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 45223.1,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0043,
+     "Mx_rms": 0.0,
+     "Mx_max": 6.8,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 68060.8,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 276.8
+    },
+    "start_at_joint": false
+   },
+   "5": {
+    "name": "SLN201",
+    "seg": null,
+    "beam": 100396,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 48207.8,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 147.9,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 52658.8,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0063,
+     "Mx_rms": 0.0,
+     "Mx_max": 4.9,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 66890.9,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 224.3
+    },
+    "start_at_joint": true
+   },
+   "6": {
+    "name": "SLN447",
+    "seg": null,
+    "beam": 70052,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 38549.2,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0017,
+     "Qy_rms": 0.5,
+     "Qy_max": 321.1,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.1,
+     "Qz_max": 1409.4,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0001,
+     "Mx_rms": 0.0,
+     "Mx_max": 369.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.4812,
+     "My_rms": 0.4,
+     "My_max": 0.9,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1736.7
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L1-R8-S_300.xml": {
+  "node": 1483,
+  "cp": [
+   4.25027447,
+   -7.36141805,
+   4.054
+  ],
+  "els": {
+   "1": {
+    "name": "SLN425",
+    "seg": null,
+    "beam": 100833,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0132,
+     "N_rms": 481.7,
+     "N_max": 36495.4,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.739,
+     "Qy_rms": 5017.3,
+     "Qy_max": 6788.9,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25739.9,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0108,
+     "Mx_rms": 0.2,
+     "Mx_max": 14.6,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.7088,
+     "My_rms": 1.8,
+     "My_max": 2.6,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1269.9
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN225",
+    "seg": null,
+    "beam": 100637,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0095,
+     "N_rms": 149.6,
+     "N_max": 15717.5,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 1.0007,
+     "Qy_rms": 1707.9,
+     "Qy_max": 1706.7,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25568.7,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.011,
+     "Mx_rms": 0.1,
+     "Mx_max": 13.2,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.6193,
+     "My_rms": 1.4,
+     "My_max": 2.3,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 3810.2
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN53",
+    "seg": null,
+    "beam": 80161,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 1.0,
+     "N_max": 193877.5,
+     "Qy": [
+      "Vz",
+      -1
+     ],
+     "Qy_relerr": 0.0085,
+     "Qy_rms": 33.4,
+     "Qy_max": 3950.2,
+     "Qz": [
+      "Vy",
+      -1
+     ],
+     "Qz_relerr": 0.0026,
+     "Qz_rms": 19.0,
+     "Qz_max": 7200.6,
+     "Mx": [
+      "Mt",
+      1
+     ],
+     "Mx_relerr": 0.3962,
+     "Mx_rms": 0.9,
+     "Mx_max": 2.2,
+     "My": [
+      "Mz",
+      -1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 9865.1,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.1,
+     "Mz_max": 1982.2
+    },
+    "start_at_joint": false
+   },
+   "4": {
+    "name": "SLN223",
+    "seg": null,
+    "beam": 100847,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 61889.7,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0,
+     "Qy_rms": 0.0,
+     "Qy_max": 21734.1,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 75692.6,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0001,
+     "Mx_rms": 0.0,
+     "Mx_max": 357.6,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 74283.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 7682.4
+    },
+    "start_at_joint": false
+   },
+   "5": {
+    "name": "SLN205",
+    "seg": null,
+    "beam": 100465,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 57443.8,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 456.6,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 53693.9,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0046,
+     "Mx_rms": 0.0,
+     "Mx_max": 5.6,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 71178.2,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1556.1
+    },
+    "start_at_joint": true
+   },
+   "6": {
+    "name": "SLN449",
+    "seg": null,
+    "beam": 70078,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 58178.7,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0005,
+     "Qy_rms": 0.2,
+     "Qy_max": 418.2,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0001,
+     "Qz_rms": 0.1,
+     "Qz_max": 1460.3,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0,
+     "Mx_rms": 0.0,
+     "Mx_max": 639.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.6958,
+     "My_rms": 0.4,
+     "My_max": 0.6,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 2435.1
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L1-R8-S_340.xml": {
+  "node": 1467,
+  "cp": [
+   7.98689382,
+   -2.90802297,
+   4.054
+  ],
+  "els": {
+   "1": {
+    "name": "SLN226",
+    "seg": null,
+    "beam": 100638,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.007,
+     "N_rms": 110.9,
+     "N_max": 15926.7,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 0.5273,
+     "Qy_rms": 1266.1,
+     "Qy_max": 2401.2,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25614.6,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0079,
+     "Mx_rms": 0.1,
+     "Mx_max": 11.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.5076,
+     "My_rms": 1.0,
+     "My_max": 2.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1254.0
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN227",
+    "seg": null,
+    "beam": 100645,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0066,
+     "N_rms": 121.7,
+     "N_max": 18516.3,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 0.4742,
+     "Qy_rms": 1392.1,
+     "Qy_max": 2935.5,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25742.6,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0108,
+     "Mx_rms": 0.1,
+     "Mx_max": 11.6,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.7056,
+     "My_rms": 1.4,
+     "My_max": 2.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1239.4
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN37",
+    "seg": null,
+    "beam": 80001,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.7,
+     "N_max": 126939.4,
+     "Qy": [
+      "Vz",
+      -1
+     ],
+     "Qy_relerr": 0.0035,
+     "Qy_rms": 24.5,
+     "Qy_max": 7041.0,
+     "Qz": [
+      "Vy",
+      -1
+     ],
+     "Qz_relerr": 0.0006,
+     "Qz_rms": 4.7,
+     "Qz_max": 7897.0,
+     "Mx": [
+      "Mt",
+      1
+     ],
+     "Mx_relerr": 0.3745,
+     "Mx_rms": 0.8,
+     "Mx_max": 2.1,
+     "My": [
+      "Mz",
+      -1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.3,
+     "My_max": 8842.6,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 0.0007,
+     "Mz_rms": 1.3,
+     "Mz_max": 1963.4
+    },
+    "start_at_joint": false
+   },
+   "4": {
+    "name": "SLN228",
+    "seg": null,
+    "beam": 100652,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 20329.7,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 179.0,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 45458.7,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0038,
+     "Mx_rms": 0.0,
+     "Mx_max": 9.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 69226.1,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 282.6
+    },
+    "start_at_joint": false
+   },
+   "5": {
+    "name": "SLN207",
+    "seg": null,
+    "beam": 100493,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 50071.7,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0002,
+     "Qy_rms": 0.0,
+     "Qy_max": 172.6,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 53107.0,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0039,
+     "Mx_rms": 0.0,
+     "Mx_max": 7.6,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 67969.7,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 395.5
+    },
+    "start_at_joint": true
+   },
+   "6": {
+    "name": "SLN450",
+    "seg": null,
+    "beam": 70091,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 53432.5,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0002,
+     "Qy_rms": 0.1,
+     "Qy_max": 330.0,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0001,
+     "Qz_rms": 0.1,
+     "Qz_max": 1498.4,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0001,
+     "Mx_rms": 0.0,
+     "Mx_max": 470.3,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.4091,
+     "My_rms": 0.0,
+     "My_max": 0.0,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 2128.9
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L1-R8-T_060.xml": {
+  "node": 1471,
+  "cp": [
+   4.24637892,
+   7.36085084,
+   4.054
+  ],
+  "els": {
+   "1": {
+    "name": "SLN265",
+    "seg": null,
+    "beam": 100787,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0048,
+     "N_rms": 158.6,
+     "N_max": 32915.4,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 0.3951,
+     "Qy_rms": 1828.1,
+     "Qy_max": 4626.4,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25990.0,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0111,
+     "Mx_rms": 0.1,
+     "Mx_max": 5.5,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.7073,
+     "My_rms": 0.7,
+     "My_max": 1.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 2035.2
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN189",
+    "seg": null,
+    "beam": 100271,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0084,
+     "N_rms": 314.6,
+     "N_max": 37359.9,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 0.5794,
+     "Qy_rms": 3580.9,
+     "Qy_max": 6179.8,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25755.2,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0094,
+     "Mx_rms": 0.1,
+     "Mx_max": 11.2,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.5845,
+     "My_rms": 1.2,
+     "My_max": 2.0,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1373.9
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN41",
+    "seg": null,
+    "beam": 80041,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.8,
+     "N_max": 179578.2,
+     "Qy": [
+      "Vz",
+      -1
+     ],
+     "Qy_relerr": 0.0011,
+     "Qy_rms": 4.2,
+     "Qy_max": 3945.9,
+     "Qz": [
+      "Vy",
+      -1
+     ],
+     "Qz_relerr": 0.0047,
+     "Qz_rms": 34.6,
+     "Qz_max": 7282.0,
+     "Mx": [
+      "Mt",
+      1
+     ],
+     "Mx_relerr": 0.5051,
+     "Mx_rms": 0.2,
+     "Mx_max": 0.4,
+     "My": [
+      "Mz",
+      -1
+     ],
+     "My_relerr": 0.0001,
+     "My_rms": 1.1,
+     "My_max": 7651.9,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 0.0023,
+     "Mz_rms": 4.2,
+     "Mz_max": 1801.2
+    },
+    "start_at_joint": false
+   },
+   "4": {
+    "name": "SLN121",
+    "seg": null,
+    "beam": 80190,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 1.3,
+     "N_max": 69193.1,
+     "Qy": [
+      "Vz",
+      -1
+     ],
+     "Qy_relerr": 0.204,
+     "Qy_rms": 61.0,
+     "Qy_max": 299.2,
+     "Qz": [
+      "Vy",
+      -1
+     ],
+     "Qz_relerr": 0.0053,
+     "Qz_rms": 28.5,
+     "Qz_max": 5330.6,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0884,
+     "Mx_rms": 4.2,
+     "Mx_max": 47.6,
+     "My": [
+      "Mz",
+      -1
+     ],
+     "My_relerr": 0.0001,
+     "My_rms": 1.1,
+     "My_max": 10543.0,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 0.0058,
+     "Mz_rms": 7.3,
+     "Mz_max": 1255.0
+    },
+    "start_at_joint": true
+   },
+   "5": {
+    "name": "SLN266",
+    "seg": null,
+    "beam": 100796,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 14969.1,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0002,
+     "Qy_rms": 0.0,
+     "Qy_max": 124.6,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 44732.8,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.008,
+     "Mx_rms": 0.0,
+     "Mx_max": 3.2,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 67433.8,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 214.7
+    },
+    "start_at_joint": false
+   },
+   "6": {
+    "name": "SLN188",
+    "seg": null,
+    "beam": 100257,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 34592.9,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0002,
+     "Qy_rms": 0.0,
+     "Qy_max": 182.8,
+     "Qz": [
+      "Vz",
+      1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 52861.0,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0076,
+     "Mx_rms": 0.0,
+     "Mx_max": 3.8,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 67560.2,
+     "Mz": [
+      "Mz",
+      -1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 352.5
+    },
+    "start_at_joint": true
+   },
+   "7": {
+    "name": "SLN452",
+    "seg": null,
+    "beam": 70117,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 61136.2,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0011,
+     "Qy_rms": 0.8,
+     "Qy_max": 738.2,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0003,
+     "Qz_rms": 0.4,
+     "Qz_max": 1461.5,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0001,
+     "Mx_rms": 0.0,
+     "Mx_max": 214.9,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.6055,
+     "My_rms": 0.4,
+     "My_max": 0.7,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 863.7
+    },
+    "start_at_joint": true
+   }
+  }
+ },
+ "L1-R8-T_260.xml": {
+  "node": 1481,
+  "cp": [
+   -1.47550222,
+   -8.3717121,
+   4.054
+  ],
+  "els": {
+   "1": {
+    "name": "SLN221",
+    "seg": null,
+    "beam": 100606,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0083,
+     "N_rms": 306.1,
+     "N_max": 36963.7,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 0.5656,
+     "Qy_rms": 3504.4,
+     "Qy_max": 6195.6,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25706.9,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0129,
+     "Mx_rms": 0.2,
+     "Mx_max": 13.9,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.8003,
+     "My_rms": 2.0,
+     "My_max": 2.4,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1057.9
+    },
+    "start_at_joint": false
+   },
+   "2": {
+    "name": "SLN426",
+    "seg": null,
+    "beam": 100846,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0069,
+     "N_rms": 265.2,
+     "N_max": 38599.1,
+     "Qy": [
+      "Vy",
+      -1
+     ],
+     "Qy_relerr": 0.4831,
+     "Qy_rms": 3022.6,
+     "Qy_max": 6256.4,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 25563.0,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0132,
+     "Mx_rms": 0.2,
+     "Mx_max": 12.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.8709,
+     "My_rms": 1.9,
+     "My_max": 2.2,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 1813.1
+    },
+    "start_at_joint": true
+   },
+   "3": {
+    "name": "SLN51",
+    "seg": null,
+    "beam": 80141,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.7,
+     "N_max": 254019.4,
+     "Qy": [
+      "Vz",
+      -1
+     ],
+     "Qy_relerr": 0.0047,
+     "Qy_rms": 18.6,
+     "Qy_max": 3942.0,
+     "Qz": [
+      "Vy",
+      -1
+     ],
+     "Qz_relerr": 0.0061,
+     "Qz_rms": 50.0,
+     "Qz_max": 8248.8,
+     "Mx": [
+      "Mt",
+      1
+     ],
+     "Mx_relerr": 0.6107,
+     "Mx_rms": 0.4,
+     "Mx_max": 0.7,
+     "My": [
+      "Mz",
+      -1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.2,
+     "My_max": 7869.1,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 0.0004,
+     "Mz_rms": 0.9,
+     "Mz_max": 2097.9
+    },
+    "start_at_joint": false
+   },
+   "4": {
+    "name": "SLN96",
+    "seg": null,
+    "beam": 120020,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.4,
+     "N_max": 168702.6,
+     "Qy": [
+      "Vz",
+      -1
+     ],
+     "Qy_relerr": 0.1322,
+     "Qy_rms": 60.0,
+     "Qy_max": 454.0,
+     "Qz": [
+      "Vy",
+      -1
+     ],
+     "Qz_relerr": 0.0078,
+     "Qz_rms": 34.3,
+     "Qz_max": 4369.9,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0017,
+     "Mx_rms": 1.8,
+     "Mx_max": 1046.7,
+     "My": [
+      "Mz",
+      -1
+     ],
+     "My_relerr": 0.0001,
+     "My_rms": 0.6,
+     "My_max": 10636.1,
+     "Mz": [
+      "My",
+      1
+     ],
+     "Mz_relerr": 0.001,
+     "Mz_rms": 1.5,
+     "Mz_max": 1501.6
+    },
+    "start_at_joint": true
+   },
+   "5": {
+    "name": "SLN220",
+    "seg": null,
+    "beam": 100597,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 11411.3,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0002,
+     "Qy_rms": 0.0,
+     "Qy_max": 142.3,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 44474.7,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0104,
+     "Mx_rms": 0.0,
+     "Mx_max": 2.4,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 64936.7,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0003,
+     "Mz_rms": 0.0,
+     "Mz_max": 98.0
+    },
+    "start_at_joint": false
+   },
+   "6": {
+    "name": "SLN203",
+    "seg": null,
+    "beam": 100437,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 63590.1,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0001,
+     "Qy_rms": 0.0,
+     "Qy_max": 190.0,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0,
+     "Qz_rms": 0.0,
+     "Qz_max": 47378.4,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0149,
+     "Mx_rms": 0.0,
+     "Mx_max": 1.8,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.0,
+     "My_rms": 0.0,
+     "My_max": 58769.3,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0001,
+     "Mz_rms": 0.0,
+     "Mz_max": 322.0
+    },
+    "start_at_joint": true
+   },
+   "7": {
+    "name": "SLN448",
+    "seg": null,
+    "beam": 70065,
+    "dot": 1.0,
+    "map": {
+     "N": [
+      "N",
+      1
+     ],
+     "N_relerr": 0.0,
+     "N_rms": 0.0,
+     "N_max": 86455.0,
+     "Qy": [
+      "Vy",
+      1
+     ],
+     "Qy_relerr": 0.0028,
+     "Qy_rms": 0.4,
+     "Qy_max": 138.3,
+     "Qz": [
+      "Vz",
+      -1
+     ],
+     "Qz_relerr": 0.0001,
+     "Qz_rms": 0.1,
+     "Qz_max": 1521.0,
+     "Mx": [
+      "Mt",
+      -1
+     ],
+     "Mx_relerr": 0.0002,
+     "Mx_rms": 0.0,
+     "Mx_max": 112.0,
+     "My": [
+      "My",
+      1
+     ],
+     "My_relerr": 0.3761,
+     "My_rms": 0.1,
+     "My_max": 0.2,
+     "Mz": [
+      "Mz",
+      1
+     ],
+     "Mz_relerr": 0.0,
+     "Mz_rms": 0.0,
+     "Mz_max": 695.1
+    },
+    "start_at_joint": true
+   }
+  }
+ }
+}
