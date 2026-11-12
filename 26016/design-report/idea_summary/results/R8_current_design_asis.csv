@@ -1,0 +1,37 @@
+joint,group,detail,result,analysis %,plates % strain,bolts %,welds %,governing weld LC
+L1-R8-A_000,L1 A,end-plate flanges 12 mm,PASS,100.0,0.0,5.4,74.5,LC_120
+L1-R8-A_040,L1 A,end-plate flanges 12 mm,PASS,100.0,0.4,10.1,98.2,LC_120
+L1-R8-A_120,L1 A,end-plate flanges 12 mm,PASS,100.0,0.0,5.6,74.0,LC_121
+L1-R8-A_160,L1 A,end-plate flanges 12 mm,PASS,100.0,0.0,5.6,76.4,LC_119
+L1-R8-A_200,L1 A,end-plate flanges 12 mm,PASS,100.0,0.0,5.1,63.9,LC_119
+L1-R8-A_240,L1 A,end-plate flanges 12 mm,PASS,100.0,0.0,5.6,71.6,LC_122
+L1-R8-A_320,L1 A,end-plate flanges 12 mm,PASS,100.0,0.0,5.6,64.4,LC_135
+L1-R8-B_080,L1 B,"end-plate flanges, column welds a 5.6",PASS,100.0,0.6,10.2,98.1,LC_124
+L1-R8-B_280,L1 B,"end-plate flanges, column welds a 5.6",PASS,100.0,0.1,15.4,71.3,LC_122
+L1-R8-S_020,L1 S/T,"A-type, true 10° ring, double fin 2x12, 4 M20",PASS,100.0,0.1,26.7,98.2,LC_111
+L1-R8-T_060,L1 S/T,"A-type, true 10° ring, double fin 2x12, 4 M20",PASS,100.0,0.4,27.2,98.4,LC_122
+L1-R8-S_100,L1 S/T,"A-type, true 10° ring, double fin 2x12, 4 M20",PASS,100.0,0.1,27.0,98.1,LC_109
+L1-R8-S_140,L1 S/T,"A-type, true 10° ring, double fin 2x12, 4 M20",PASS,100.0,0.1,22.0,98.1,LC_120
+L1-R8-S_180,L1 S/T,"A-type, true 10° ring, double fin 2x12, 4 M20",PASS,100.0,0.1,28.6,98.1,LC_107
+L1-R8-S_220,L1 S/T,"A-type, true 10° ring, double fin 2x12, 4 M20",PASS,100.0,0.1,21.8,98.1,LC_121
+L1-R8-T_260,L1 S/T,"A-type, true 10° ring, double fin 2x12, 4 M20",PASS,100.0,1.7,25.9,99.3,LC_105
+L1-R8-S_300,L1 S/T,"A-type, true 10° ring, double fin 2x12, 4 M20",PASS,100.0,0.7,29.6,98.3,LC_135
+L1-R8-S_340,L1 S/T,"A-type, true 10° ring, double fin 2x12, 4 M20",PASS,100.0,0.1,25.4,98.2,LC_111
+L2-R8-A_000,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,0.9,19.1,LC_145
+L2-R8-A_020,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,0.9,18.9,LC_145
+L2-R8-A_040,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,0.7,18.9,LC_122
+L2-R8-A_100,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,2.1,29.4,LC_147
+L2-R8-A_120,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,1.2,29.8,LC_147
+L2-R8-A_140,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,1.2,29.2,LC_145
+L2-R8-A_160,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,1.1,28.3,LC_122
+L2-R8-A_180,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,1.1,28.2,LC_145
+L2-R8-A_200,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,1.2,23.7,LC_148
+L2-R8-A_220,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,1.2,23.9,LC_148
+L2-R8-A_240,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,2.3,28.5,LC_148
+L2-R8-A_300,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,0.6,19.2,LC_120
+L2-R8-A_320,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,1.0,18.8,LC_120
+L2-R8-A_340,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,0.9,18.7,LC_145
+L2-R8-B_060,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,6.0,31.2,LC_120
+L2-R8-B_080,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,8.6,86.2,LC_152
+L2-R8-B_260,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,7.7,65.4,LC_152
+L2-R8-B_280,L2,"r12 haunch, ring bottom flush",PASS,100.0,0.0,1.8,27.4,LC_120

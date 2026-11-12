@@ -1,0 +1,2 @@
+﻿joint,connection,load_effects,passed,max_utilisation_%,governing_check,governing_load_effect,Analysis max %,Analysis governing,Plates max %,Plates governing,Bolts max %,Bolts governing,Welds max %,Welds governing,error
+L2-R12-E1_000.xml,"SLN73 radial (ends, plain cut) - SLN55 ring - SLN56 ring",43,FAIL,100.6,Welds,C LC_119,100.0,,0.2,C LC_119,56.3,C LC_119,100.6,C LC_119,
