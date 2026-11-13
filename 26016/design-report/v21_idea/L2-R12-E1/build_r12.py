@@ -23,7 +23,7 @@ exec(src[src.index("def rotate_text"):src.index("def blk")])
 RH, RB, Rtw, Rtf = 0.2596, 0.1473, 0.0072, 0.0127
 BH, BB, Btw, Btf, Br = 0.4672, 0.1928, 0.0114, 0.0196, 0.0102
 PT = 0.020; ZP_TOP = 0.4276; ZP_BOT = 0.0327; ROWS = [ZP_TOP - 0.105, ZP_TOP - 0.230, ZP_TOP - 0.330]; GAUGE = 0.039
-A_FL, A_WB = 0.0070, 0.0042           # weld throats: 10 mm leg to flanges, 6 mm leg to webs
+A_FL, A_WB = 0.0070, float(os.environ.get("R12_A_WB", "0.0042"))   # weld throats: 10 mm leg to flanges, 6 mm leg to webs
 
 
 def setp(txt, name, val):

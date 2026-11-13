@@ -40,3 +40,24 @@ from the existing ring at its limit, not from the new plates or the bolts.
 1. The ring UB 254x146x43 at r 12 is at its limit near the radial joints in both the member check (BDK 1.06) and IDEA (6.6 % strain). A local reinforcement of the ring (for example the drawn 20 mm plates above the bottom flange made to work, or a heavier ring section) is needed before the welds can be sized; increasing only the weld sizes does not fix the flange strain.
 2. If the ring is reinforced, rerun this joint; the bolts (61 %) and the new plates (<= 1.3 % strain) have reserve.
 3. Please confirm the reading of the radial web at the ring (slot vs cope) and the role of the 20 x 295 plates.
+
+## Where it fails (added 13 Nov 2026, see the lower half of `L2-R12-E1_as_built_v21.png`)
+
+- 6.57 % plastic strain (LC 153) sits in the EXISTING ring bottom flange directly below the radial web / lower fin plates
+  (the 20 x 295 plates that the drawing shows above the ring bottom flange are not in the model there).
+- Welds above 100 %: ring stiffener at 315 (SLN 55 side) to ring top flange 109.1 % (a 7.0, LC 121) and to bottom flange 103.8 %;
+  fin lower plates to ring web 107.6 / 106.1 % (SLN 55 side) and 104.5 / 103.5 % (SLN 56 side) (a 4.2, LC 122 / 121);
+  inclined stiffener b (SLN 55 side) to ring top flange 107.4 % (a 7.0, LC 122); bracket web (SLN 56 side) 100.2 % (a 4.2, LC 153).
+
+## Governing forces at the joint (IDEA axes, kN / kNm)
+
+| LC | radial SLN 73 N / Vz / My | ring SLN 55 N / Vz / My | ring SLN 56 N / Vz / My |
+|---|---|---|---|
+| 121 | -8.5 / -89.8 / -47.2 | +24.9 / +36.9 / +135.9 | +24.8 / -52.9 / +136.0 |
+| 122 | -7.6 / -89.8 / -47.2 | +22.2 / +36.9 / +135.9 | +22.2 / -52.9 / +135.9 |
+| 153 | -9.2 / -89.4 / -47.2 | +27.0 / +36.6 / +135.9 | +27.0 / -52.8 / +135.9 |
+
+## Sensitivity to the web weld size (6 mm leg read from the drawing note)
+
+Rerun with 10 mm leg (a 7.0) to the webs: ring-web welds 107.6 -> 99.2 %, but the maximum weld stays 108.3 % (flange welds to the ring),
+plate-to-plate welds 108.7 -> 107.9 %, plastic strain 6.6 % unchanged, bolts 60.3 %. The result is not governed by reading the web welds as 6 mm.
