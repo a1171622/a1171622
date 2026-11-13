@@ -1,0 +1,65 @@
+[
+ {
+  "node": 1485,
+  "angle": 0.0,
+  "beam": 140361,
+  "sln": 1449,
+  "Vz_max": 89.8,
+  "My_max": 47.2,
+  "nbeams": 3
+ },
+ {
+  "node": 1486,
+  "angle": 320.0,
+  "beam": 140805,
+  "sln": 1518,
+  "Vz_max": 74.0,
+  "My_max": 39.9,
+  "nbeams": 3
+ },
+ {
+  "node": 1488,
+  "angle": 240.0,
+  "beam": 140747,
+  "sln": 1671,
+  "Vz_max": 91.1,
+  "My_max": 47.9,
+  "nbeams": 3
+ },
+ {
+  "node": 1490,
+  "angle": 80.0,
+  "beam": 140467,
+  "sln": 1468,
+  "Vz_max": 74.4,
+  "My_max": 40.1,
+  "nbeams": 3
+ },
+ {
+  "node": 1491,
+  "angle": 120.0,
+  "beam": 140525,
+  "sln": 1482,
+  "Vz_max": 92.3,
+  "My_max": 43.1,
+  "nbeams": 3
+ },
+ {
+  "node": 1492,
+  "angle": 160.0,
+  "beam": 140603,
+  "sln": 1500,
+  "Vz_max": 92.6,
+  "My_max": 44.0,
+  "nbeams": 3
+ },
+ {
+  "node": 1493,
+  "angle": 200.0,
+  "beam": 140661,
+  "sln": 1506,
+  "Vz_max": 75.5,
+  "My_max": 35.5,
+  "nbeams": 3
+ }
+]

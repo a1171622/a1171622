@@ -1,0 +1,162 @@
+{
+ "node": 1485,
+ "cp": [
+  11.999996185302734,
+  -1.3581463065293065e-07,
+  8.055000305175781
+ ],
+ "els": {
+  "1": {
+   "name": "SLN73",
+   "beam": 140361,
+   "sln": 1449,
+   "start_at_node": true,
+   "map": {
+    "N": [
+     "N",
+     1
+    ],
+    "N_relerr": 0.0,
+    "Qy": [
+     "Vy",
+     1
+    ],
+    "Qy_relerr": 0.0001,
+    "Qz": [
+     "Vz",
+     -1
+    ],
+    "Qz_relerr": 0.0,
+    "Mx": [
+     "Mt",
+     -1
+    ],
+    "Mx_relerr": 0.0007,
+    "My": [
+     "My",
+     1
+    ],
+    "My_relerr": 0.0,
+    "Mz": [
+     "Mz",
+     1
+    ],
+    "Mz_relerr": 0.0001
+   }
+  },
+  "2": {
+   "name": "radial stub (plain cut 85 past the node)",
+   "beam": 140010,
+   "sln": 55,
+   "start_at_node": false,
+   "map": {
+    "N": [
+     "N",
+     1
+    ],
+    "N_relerr": 34635275453321.305,
+    "Qy": [
+     "Vy",
+     1
+    ],
+    "Qy_relerr": 1399582265418.656,
+    "Qz": [
+     "Vy",
+     1
+    ],
+    "Qz_relerr": 1399582265418.656,
+    "Mx": [
+     "Mt",
+     1
+    ],
+    "Mx_relerr": 9214548658.3307,
+    "My": [
+     "Mz",
+     1
+    ],
+    "My_relerr": 1035518018102.0284,
+    "Mz": [
+     "Mz",
+     1
+    ],
+    "Mz_relerr": 1035518018102.0284
+   }
+  },
+  "3": {
+   "name": "SLN55",
+   "beam": 140010,
+   "sln": 55,
+   "start_at_node": false,
+   "map": {
+    "N": [
+     "N",
+     1
+    ],
+    "N_relerr": 0.0,
+    "Qy": [
+     "Vy",
+     1
+    ],
+    "Qy_relerr": 0.0,
+    "Qz": [
+     "Vz",
+     -1
+    ],
+    "Qz_relerr": 0.0,
+    "Mx": [
+     "Mt",
+     -1
+    ],
+    "Mx_relerr": 0.0015,
+    "My": [
+     "My",
+     1
+    ],
+    "My_relerr": 0.0,
+    "Mz": [
+     "Mz",
+     1
+    ],
+    "Mz_relerr": 0.0
+   }
+  },
+  "4": {
+   "name": "SLN56",
+   "beam": 140011,
+   "sln": 56,
+   "start_at_node": true,
+   "map": {
+    "N": [
+     "N",
+     1
+    ],
+    "N_relerr": 0.0,
+    "Qy": [
+     "Vy",
+     1
+    ],
+    "Qy_relerr": 0.0,
+    "Qz": [
+     "Vz",
+     1
+    ],
+    "Qz_relerr": 0.0,
+    "Mx": [
+     "Mt",
+     -1
+    ],
+    "Mx_relerr": 0.001,
+    "My": [
+     "My",
+     1
+    ],
+    "My_relerr": 0.0,
+    "Mz": [
+     "Mz",
+     -1
+    ],
+    "Mz_relerr": 0.0
+   }
+  }
+ }
+}
