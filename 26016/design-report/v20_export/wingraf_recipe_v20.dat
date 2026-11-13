@@ -1,0 +1,62 @@
+$ 26016 Concourse viewing platform - WinGRAF pictures of model v20 (v19m + qp 0.5 kPa + external stair stringer My hinges) for the design report (same views as v15 W1 to W4, plus W8 external stair)
+$ Reads 26016_v20_copy.cdb, a COPY of 26016_check_v20.cdb (run 13 Nov 2026). The original v20 database is not opened.
+$ Pictures go to this project's .plb; PLBCONVERTER then saves them as PNG files in the folder wing_img.
+
++PROG WING urs:1
+HEAD 26016 Concourse viewing platform - model v20
+DB 1 TITL '26016_v20_copy.cdb'
+SIZE TYPE URS SC 0
+VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ
+
+$ img_0 = W1: 3D model with rendered cross sections (external stair at the right front)
+STRU NUME SSTR NUMN BEAM FILL VARC REPR DSTR
+
+$ img_1 = W2: deformed shape, SLS characteristic G + Q (LC 201), magnified
+LC 201
+DEFO TYPE YES FAC 100 LC CURR
+STRU NUME FULL
+DEFO NO
+END
+
++PROG WING urs:2
+HEAD 26016 Level 2 framing (group 25) - bending moment My, ULS LC 119
+DB 1 TITL '26016_v20_copy.cdb'
+SIZE TYPE URS SC 0
+VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ
+GRP 25
+$ img_2 = W3: Level 2 beams, My under LC 119
+LC 119
+BEAM TYPE MY SCHH YES
+END
+
++PROG WING urs:3
+HEAD 26016 buckling mode 1 of PLC 102 - ground floor facade diagonals (group 11)
+DB 1 TITL '26016_v20_copy.cdb'
+SIZE TYPE URS SC 0
+VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ
+GRP 11
+$ img_3 = W4: buckling mode 1 (LC 9201), magnified
+LC 9201
+DEFO TYPE YES FAC 40 LC CURR
+STRU NUME FULL
+DEFO NO
+END
+
++PROG WING urs:4
+HEAD 26016 external stair ground to Level 1 (group 62) - cross sections to scale
+DB 1 TITL '26016_v20_copy.cdb'
+SIZE TYPE URS SC 0
+VIEW TYPE DIRE X -1 Y 0.35 Z -0.45 AXIS NEGZ
+GRP 62
+$ img_4 = W8: close view of the external stair, sections to scale, viewed from outside the platform
+STRU NUME SSTR NUMN BEAM FILL VARC REPR DSTR
+END
+
++PROG PLBCONVERTER urs:9
+HEAD export the WinGRAF pictures as PNG
+IMG FNR 'wing_img/img_%number%.%ext%' OVRT YES FMT PNG
+END
+
+
+
+

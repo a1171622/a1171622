@@ -1,0 +1,35 @@
+$ 26016 v20 - extra WinGRAF picture W5: lowest buckling mode of PLC 119 (LC 9221) in v20, Level 1 framing (group 15).
+$ Reads the COPY 26016_v20_copy.cdb. Pictures to wing_img2.
+
++PROG WING urs:11
+HEAD 26016 v20 buckling mode 1 of PLC 119 - Level 1 framing (group 15), plan
+DB 1 TITL '26016_v20_copy.cdb'
+SIZE TYPE URS SC 0
+VIEW TYPE DIRE X 0.001 Y 0 Z -1 AXIS NEGZ
+GRP 15
+$ img_0 = W5a: plan, mode LC 9221 magnified
+LC 9221
+DEFO TYPE YES FAC 40 LC CURR
+STRU NUME FULL
+DEFO NO
+END
+
++PROG WING urs:12
+HEAD 26016 v20 buckling mode 1 of PLC 119 - Level 1 framing (group 15)
+DB 1 TITL '26016_v20_copy.cdb'
+SIZE TYPE URS SC 0
+VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ
+GRP 15
+$ img_1 = W5b: same mode, same view direction as W4
+LC 9221
+DEFO TYPE YES FAC 40 LC CURR
+STRU NUME FULL
+DEFO NO
+END
+
++PROG PLBCONVERTER urs:19
+HEAD export the WinGRAF pictures as PNG
+IMG FNR 'wing_img2/img_%number%.%ext%' OVRT YES FMT PNG
+END
+
+

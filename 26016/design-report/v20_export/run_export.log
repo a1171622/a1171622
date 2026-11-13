@@ -1,0 +1,28 @@
+== erg.py
+385 bdk ids; 4759 aqb beams; blocks 2
+{'id': 722, 'lc': 122, 'n_y': 0.8, 'n_z': 0.8, 'm_y': 0.15, 'm_z': 0.02, 'nm_y': 0.975, 'nm_z': 0.926, 'util': 0.975, 'check': 'Passed', 'bdk_block': 2, 'erg_line': 395253} {'id': 56, 'lc': 120, 'n_y': 0.0, 'n_z': 0.0, 'm_y': 1.05, 'm_z': 0.03, 'nm_y': 0.426, 'nm_z': 1.06, 'util': 1.06, 'check': 'Not passed', 'bdk_block': 1, 'erg_line': 384458}
+[{'util': 0.209, 'x': 0.0, 'sno': 1, 'sig_v': 0.238, 'tot_lin': 0.239, 'tot_int': 0.209, 'lc': 148, 'line': 405868}, {'util': 0.208, 'x': 0.415, 'sno': 1, 'sig_v': 0.234, 'tot_lin': 0.237, 'tot_int': 0.208, 'lc': 148, 'line': 405871}]
+== make_model_json
+quad grp 1 (7.81, 12.2, 18274)
+quad grp 2 (7.61, 12.2, 6840)
+quad grp 6 (0.0, 12.2, 6200)
+quad grp 7 (0.0, 12.2, 6428)
+beam grp None (0.0, 12.06, 4437)
+== extract_v20
+group 62 SLN: 98 unmapped []
+wrote env_support_SLS.json
+wrote env_support_ULS.json
+wrote reactions_EQU.json
+wrote reactions_basic_sums.json
+wrote env_node_SLS_L1.json
+wrote env_node_SLS_L2.json
+wrote env_node_SLS_RF.json
+wrote stair_ext.json
+wrote ring_L2.json
+wrote summary_v20.json
+== l1_detail
+slns Counter({'radial': 54, 'ring12': 18, 'ring85': 18, 'ring3': 18, 'ring_other': 18}) ends 36 unmapped beams? 868
+== draw_reading
+ok
+== survey
+C:\Users\nlmnv\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'C:\\Sofistik workflow\\26016-design-report\\v20_export\\A_followup\\scripts\\survey.py': [Errno 2] No such file or directory
