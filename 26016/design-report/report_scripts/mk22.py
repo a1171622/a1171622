@@ -95,6 +95,7 @@ rep("moves horizontally by 18.8 mm, and by 21.0 mm with wind (combination 218), 
     "moves horizontally by 23.4 mm, and by 26.7 mm with wind (combination 218), while the Level 1 deck moves less than 2 mm. The first landing moves by 4.0 mm and 7.8 mm. The vertical deflection of the flights between their ends is 2.9 mm.")
 rep("427.8 kN compression (node 2, combination 146), 53.6 kN uplift (node 12, combination 133) and 113.5 kN horizontal (node 27, combination 105).", "428.3 kN compression (node 2, combination 146), 53.2 kN uplift (node 12, combination 133) and 112.7 kN horizontal (node 27, combination 105).")
 rep("The members of the internal stairs reach 0.70 and the members of the external staircase reach 0.98.'", "The members of the internal stairs reach 0.72 and the members of the external staircase reach 0.90.'")
+rep("'with a maximum weld utilisation of 87%.', 'with a maximum weld utilisation of 94%.'", "'with a maximum weld utilisation of 87%.', 'with a maximum weld utilisation of 99%.'")
 # Appendix B
 rep("The hogging moment at the 340 degree node centreline is 163.3 kNm", "The hogging moment at the 340 degree node centreline is 163.8 kNm")
 rep("' = 163.3 - 91 × 0.3 + 0.1 = 136 '", "' = 163.8 - 91 × 0.3 + 0.1 = 137 '")

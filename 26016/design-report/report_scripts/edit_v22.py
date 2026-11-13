@@ -367,7 +367,7 @@ trsA = ch[305].findall(qn('w:tr'))
 for tr_, tx in ((trsA[1], ['L1-R8-A (7), worst at 160 deg', '0.0', '13.7', '76.5', 'Pass']), (trsA[2], ['L1-R8-B_040', '0.2', '18.1', '73.9', 'Pass']), (trsA[3], ['L1-R8-B_280', '0.6', '17.8', '93.8', 'Pass'])):
     assert row_texts(tr_)[0].startswith('L1-R8-'), row_texts(tr_)
     for tc, t in zip(tr_.findall(qn('w:tc')), tx): setcell(tc, t)
-sub(ch[300], 'with a maximum weld utilisation of 87%.', 'with a maximum weld utilisation of 94%.')
+sub(ch[300], 'with a maximum weld utilisation of 87%.', 'with a maximum weld utilisation of 99%.')
 # --- conclusion
 sub(ch[297], 'at the two nodes at 140 and 220 degrees where the facade diagonals meet it: the direct check at the face of the stiffened ring to radial connection, 300 mm from the node, gives 0.88.',
     'at the nodes at 340 and 220 degrees: the direct check at the face of the stiffened ring to radial connection, 300 mm from the node, gives 0.89. The members of the internal stairs reach 0.72 and the members of the external staircase reach 0.90.')
