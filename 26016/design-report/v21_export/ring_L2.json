@@ -1,0 +1,502 @@
+{
+ "source": {
+  "model": "26016 member check v21 (v20 + drawings 970027-S01-ST sections: stair RHS 160x80x5, L2 radials UB 457x191x98, landing supports SHS 80x80x6.3; run 13 Nov 2026, NguyenPC, exit 0, 0 errors, 212 warnings)",
+  "cdb": "C:\\Sofistik workflow\\26016-member-check\\v21\\26016_check_v21.cdb",
+  "erg": "C:\\Sofistik workflow\\26016-member-check\\v21\\26016_check_v21.erg",
+  "extracted": "2026-11-13 18:28",
+  "reader": "SOFiSTiK MCP server read-only CDB reader (sof_cdb_w DLL), .erg tables parsed by erg.py",
+  "units": "forces kN, moments kNm, displacements mm, coordinates m"
+ },
+ "what": "Level 2 outer ring r 12 (group 25, SLN 55 to 72): BDK / AQB per SLN; for the three highest BDK members the forces at the node end for the governing LC",
+ "notes": [
+  "Node end = the end with the larger |My| in the governing LC. Local beam axes, SOFiSTiK signs (N > 0 tension; My as stored, the same sign the BDK / AQB checks use).",
+  "My at 300 mm from the node: face of the strengthening as Wing decided for 26016."
+ ],
+ "members": [
+  {
+   "sln": 55,
+   "title": "Line",
+   "bdk": {
+    "util": 0.883,
+    "lc": 120,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.87,
+    "m_z": 0.03,
+    "nm_y": 0.408,
+    "nm_z": 0.883
+   },
+   "aqb": {
+    "util": 0.873,
+    "lc": 121,
+    "beam": 140010,
+    "x": 0.417
+   }
+  },
+  {
+   "sln": 56,
+   "title": "Line",
+   "bdk": {
+    "util": 1.063,
+    "lc": 120,
+    "check": "Not passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 1.05,
+    "m_z": 0.02,
+    "nm_y": 0.427,
+    "nm_z": 1.063
+   },
+   "aqb": {
+    "util": 1.066,
+    "lc": 120,
+    "beam": 140020,
+    "x": 0.417
+   },
+   "governing_lc": 120,
+   "governing_lc_title": "120 ULS G+Q+psiW -X down",
+   "length_m": 4.168,
+   "node_end": {
+    "node": 1460,
+    "xyz": [
+     11.276307,
+     -4.104241,
+     8.055
+    ],
+    "N": 16.4848,
+    "Vz": -90.9288,
+    "My": -163.8246,
+    "Mz": 0.9682,
+    "Vy": -1.2618,
+    "Mt": 0.0308
+   },
+   "My_at_300mm_from_node": {
+    "value": -136.615,
+    "interpolation": "cubic Hermite between the stations -0.000 and 0.417 m (slopes from Vz)",
+    "linear_check": -136.668
+   },
+   "other_end": {
+    "node": 1485,
+    "xyz": [
+     11.999996,
+     -0.0,
+     8.055
+    ],
+    "N": 16.9099,
+    "Vz": -52.9103,
+    "My": 135.9075,
+    "Mz": 0.7325
+   }
+  },
+  {
+   "sln": 57,
+   "title": "Line",
+   "bdk": {
+    "util": 1.013,
+    "lc": 120,
+    "check": "Not passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 1.0,
+    "m_z": 0.02,
+    "nm_y": 0.407,
+    "nm_z": 1.013
+   },
+   "aqb": {
+    "util": 1.011,
+    "lc": 120,
+    "beam": 140021,
+    "x": 0.0
+   },
+   "governing_lc": 120,
+   "governing_lc_title": "120 ULS G+Q+psiW -X down",
+   "length_m": 4.168,
+   "node_end": {
+    "node": 1460,
+    "xyz": [
+     11.276307,
+     -4.104241,
+     8.055
+    ],
+    "N": 19.084,
+    "Vz": 84.1856,
+    "My": -156.4369,
+    "Mz": 0.7439,
+    "Vy": 0.9837,
+    "Mt": -0.0421
+   },
+   "My_at_300mm_from_node": {
+    "value": -131.263,
+    "interpolation": "cubic Hermite between the stations 0.000 and 0.417 m (slopes from Vz)",
+    "linear_check": -131.318
+   },
+   "other_end": {
+    "node": 1486,
+    "xyz": [
+     9.19253,
+     -7.713449,
+     8.055
+    ],
+    "N": 18.0002,
+    "Vz": 46.2107,
+    "My": 115.2295,
+    "Mz": 0.5559
+   }
+  },
+  {
+   "sln": 58,
+   "title": "Line",
+   "bdk": {
+    "util": 0.747,
+    "lc": 122,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.74,
+    "m_z": 0.02,
+    "nm_y": 0.369,
+    "nm_z": 0.747
+   },
+   "aqb": {
+    "util": 0.74,
+    "lc": 122,
+    "beam": 140031,
+    "x": 0.0
+   }
+  },
+  {
+   "sln": 59,
+   "title": "Line",
+   "bdk": {
+    "util": 0.086,
+    "lc": 110,
+    "check": "Passed",
+    "n_y": 0.01,
+    "n_z": 0.02,
+    "m_y": 0.04,
+    "m_z": 0.05,
+    "nm_y": 0.04,
+    "nm_z": 0.086
+   },
+   "aqb": {
+    "util": 0.073,
+    "lc": 130,
+    "beam": 140041,
+    "x": 0.0
+   }
+  },
+  {
+   "sln": 60,
+   "title": "Line",
+   "bdk": {
+    "util": 0.15,
+    "lc": 126,
+    "check": "Passed",
+    "n_y": 0.01,
+    "n_z": 0.02,
+    "m_y": 0.11,
+    "m_z": 0.05,
+    "nm_y": 0.076,
+    "nm_z": 0.15
+   },
+   "aqb": {
+    "util": 0.133,
+    "lc": 126,
+    "beam": 140060,
+    "x": 0.417
+   }
+  },
+  {
+   "sln": 61,
+   "title": "Line",
+   "bdk": {
+    "util": 0.904,
+    "lc": 122,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.89,
+    "m_z": 0.03,
+    "nm_y": 0.399,
+    "nm_z": 0.904
+   },
+   "aqb": {
+    "util": 0.886,
+    "lc": 120,
+    "beam": 140070,
+    "x": 0.417
+   }
+  },
+  {
+   "sln": 62,
+   "title": "Line",
+   "bdk": {
+    "util": 1.008,
+    "lc": 122,
+    "check": "Not passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 1.0,
+    "m_z": 0.02,
+    "nm_y": 0.405,
+    "nm_z": 1.008
+   },
+   "aqb": {
+    "util": 1.005,
+    "lc": 122,
+    "beam": 140080,
+    "x": 0.417
+   },
+   "governing_lc": 122,
+   "governing_lc_title": "122 ULS G+Q+psiW +Y down",
+   "length_m": 4.168,
+   "node_end": {
+    "node": 1466,
+    "xyz": [
+     -9.192532,
+     -7.713448,
+     8.055
+    ],
+    "N": 9.0561,
+    "Vz": -89.36,
+    "My": -155.8506,
+    "Mz": 0.4595,
+    "Vy": -0.6791,
+    "Mt": 0.03
+   },
+   "My_at_300mm_from_node": {
+    "value": -129.127,
+    "interpolation": "cubic Hermite between the stations -0.000 and 0.417 m (slopes from Vz)",
+    "linear_check": -129.184
+   },
+   "other_end": {
+    "node": 1488,
+    "xyz": [
+     -6.0,
+     -10.392301,
+     8.055
+    ],
+    "N": 10.2974,
+    "Vz": -51.6563,
+    "My": 137.9983,
+    "Mz": 0.7119
+   }
+  },
+  {
+   "sln": 63,
+   "title": "Line",
+   "bdk": {
+    "util": 0.097,
+    "lc": 124,
+    "check": "Passed",
+    "n_y": 0.01,
+    "n_z": 0.01,
+    "m_y": 0.07,
+    "m_z": 0.03,
+    "nm_y": 0.046,
+    "nm_z": 0.097
+   },
+   "aqb": {
+    "util": 0.092,
+    "lc": 116,
+    "beam": 140081,
+    "x": 0.0
+   }
+  },
+  {
+   "sln": 64,
+   "title": "Line",
+   "bdk": {
+    "util": 0.094,
+    "lc": 124,
+    "check": "Passed",
+    "n_y": 0.01,
+    "n_z": 0.02,
+    "m_y": 0.07,
+    "m_z": 0.03,
+    "nm_y": 0.044,
+    "nm_z": 0.094
+   },
+   "aqb": {
+    "util": 0.105,
+    "lc": 113,
+    "beam": 140100,
+    "x": 0.417
+   }
+  },
+  {
+   "sln": 65,
+   "title": "Line",
+   "bdk": {
+    "util": 0.761,
+    "lc": 121,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.74,
+    "m_z": 0.03,
+    "nm_y": 0.354,
+    "nm_z": 0.761
+   },
+   "aqb": {
+    "util": 0.742,
+    "lc": 121,
+    "beam": 140110,
+    "x": 0.417
+   }
+  },
+  {
+   "sln": 66,
+   "title": "Line",
+   "bdk": {
+    "util": 0.96,
+    "lc": 121,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.95,
+    "m_z": 0.02,
+    "nm_y": 0.386,
+    "nm_z": 0.96
+   },
+   "aqb": {
+    "util": 0.95,
+    "lc": 153,
+    "beam": 140120,
+    "x": 0.417
+   }
+  },
+  {
+   "sln": 67,
+   "title": "Line",
+   "bdk": {
+    "util": 0.943,
+    "lc": 121,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.93,
+    "m_z": 0.03,
+    "nm_y": 0.379,
+    "nm_z": 0.943
+   },
+   "aqb": {
+    "util": 0.933,
+    "lc": 153,
+    "beam": 140121,
+    "x": 0.0
+   }
+  },
+  {
+   "sln": 68,
+   "title": "Line",
+   "bdk": {
+    "util": 0.962,
+    "lc": 121,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.95,
+    "m_z": 0.01,
+    "nm_y": 0.387,
+    "nm_z": 0.962
+   },
+   "aqb": {
+    "util": 0.957,
+    "lc": 153,
+    "beam": 140140,
+    "x": 0.417
+   }
+  },
+  {
+   "sln": 69,
+   "title": "Line",
+   "bdk": {
+    "util": 0.978,
+    "lc": 119,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.01,
+    "m_y": 0.97,
+    "m_z": 0.02,
+    "nm_y": 0.395,
+    "nm_z": 0.978
+   },
+   "aqb": {
+    "util": 0.97,
+    "lc": 153,
+    "beam": 140141,
+    "x": 0.0
+   }
+  },
+  {
+   "sln": 70,
+   "title": "Line",
+   "bdk": {
+    "util": 0.909,
+    "lc": 119,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.9,
+    "m_z": 0.03,
+    "nm_y": 0.367,
+    "nm_z": 0.909
+   },
+   "aqb": {
+    "util": 0.896,
+    "lc": 121,
+    "beam": 140160,
+    "x": 0.417
+   }
+  },
+  {
+   "sln": 71,
+   "title": "Line",
+   "bdk": {
+    "util": 0.848,
+    "lc": 119,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.84,
+    "m_z": 0.02,
+    "nm_y": 0.342,
+    "nm_z": 0.848
+   },
+   "aqb": {
+    "util": 0.836,
+    "lc": 153,
+    "beam": 140161,
+    "x": 0.0
+   }
+  },
+  {
+   "sln": 72,
+   "title": "Line",
+   "bdk": {
+    "util": 0.894,
+    "lc": 119,
+    "check": "Passed",
+    "n_y": 0.0,
+    "n_z": 0.0,
+    "m_y": 0.88,
+    "m_z": 0.02,
+    "nm_y": 0.361,
+    "nm_z": 0.894
+   },
+   "aqb": {
+    "util": 0.887,
+    "lc": 153,
+    "beam": 140180,
+    "x": 0.417
+   }
+  }
+ ],
+ "top3": [
+  56,
+  57,
+  62
+ ]
+}

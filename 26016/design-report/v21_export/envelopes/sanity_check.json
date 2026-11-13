@@ -1,0 +1,205 @@
+{
+ "ULS_worst_station_diff": {
+  "N": 0.0,
+  "Vy": 4.390841130685885e-07,
+  "Vz": 7.3435187459836015e-06,
+  "Mt": 8.47738474618609e-06,
+  "My": 4.011363685663127e-09,
+  "Mz": 5.305015760015408e-09
+ },
+ "members": [
+  {
+   "label": "SLN 56 (named in the brief: group 25, L2 outer ring r 12)",
+   "beams": [
+    140011,
+    140012,
+    140013,
+    140014,
+    140015,
+    140016,
+    140017,
+    140018,
+    140019,
+    140020
+   ],
+   "group": 25,
+   "section": "UB 254 x 146 x 43 (BS 4-1)",
+   "My": {
+    "scan_max": 135.969,
+    "scan_max_lc": 121,
+    "scan_max_at": [
+     140011,
+     0.0
+    ],
+    "maxima_max": 135.969,
+    "scan_min": -164.267,
+    "scan_min_lc": 153,
+    "scan_min_at": [
+     140020,
+     0.4168
+    ],
+    "maxima_min": -164.267
+   },
+   "N": {
+    "scan_max": 37.116,
+    "scan_max_lc": 123,
+    "scan_max_at": [
+     140020,
+     0.4168
+    ],
+    "maxima_max": 37.116,
+    "scan_min": -9.523,
+    "scan_min_lc": 108,
+    "scan_min_at": [
+     140020,
+     0.4168
+    ],
+    "maxima_min": -9.523
+   }
+  },
+  {
+   "label": "SLN 227 (L1 ring r 8.5, 340-360 deg, group 15)",
+   "beams": [
+    100587,
+    100588,
+    100589,
+    100590,
+    100591,
+    100592,
+    100593
+   ],
+   "group": 15,
+   "section": "UB 254 x 146 x 43 (BS 4-1)",
+   "My": {
+    "scan_max": 22.492,
+    "scan_max_lc": 102,
+    "scan_max_at": [
+     100590,
+     0.4219
+    ],
+    "maxima_max": 22.492,
+    "scan_min": -0.0,
+    "scan_min_lc": 107,
+    "scan_min_at": [
+     100587,
+     0.0
+    ],
+    "maxima_min": -0.0
+   },
+   "N": {
+    "scan_max": 22.239,
+    "scan_max_lc": 124,
+    "scan_max_at": [
+     100593,
+     0.4219
+    ],
+    "maxima_max": 22.239,
+    "scan_min": -5.979,
+    "scan_min_lc": 109,
+    "scan_min_at": [
+     100587,
+     0.0
+    ],
+    "maxima_min": -5.979
+   }
+  },
+  {
+   "label": "column SLN 37",
+   "beams": [
+    80001,
+    80002,
+    80003,
+    80004,
+    80005,
+    80006,
+    80007,
+    80008,
+    80009,
+    80010
+   ],
+   "group": 13,
+   "section": "SHS 150 x 150 x 10 (EN 10210-2)",
+   "My": {
+    "scan_max": 3.719,
+    "scan_max_lc": 118,
+    "scan_max_at": [
+     80005,
+     0.4054
+    ],
+    "maxima_max": 3.719,
+    "scan_min": -1.358,
+    "scan_min_lc": 112,
+    "scan_min_at": [
+     80005,
+     0.4054
+    ],
+    "maxima_min": -1.358
+   },
+   "N": {
+    "scan_max": 9.693,
+    "scan_max_lc": 107,
+    "scan_max_at": [
+     80001,
+     0.0
+    ],
+    "maxima_max": 9.693,
+    "scan_min": -145.203,
+    "scan_min_lc": 120,
+    "scan_min_at": [
+     80010,
+     0.4054
+    ],
+    "maxima_min": -145.203
+   }
+  },
+  {
+   "label": "internal stair upper-flight stringer, z 6.28-8.05 m, y about -9.4 (analysis lines 1454-1463, group 60)",
+   "beams": [
+    170271,
+    170272,
+    170273,
+    170275,
+    170276,
+    170277,
+    170278,
+    170279,
+    170280,
+    170281
+   ],
+   "group": 60,
+   "section": "RHS 200 x 100 x 6 (EN 10210-2)",
+   "My": {
+    "scan_max": 4.938,
+    "scan_max_lc": 151,
+    "scan_max_at": [
+     170277,
+     0.3033
+    ],
+    "maxima_max": 4.938,
+    "scan_min": -7.41,
+    "scan_min_lc": 152,
+    "scan_min_at": [
+     170271,
+     0.0
+    ],
+    "maxima_min": -7.41
+   },
+   "N": {
+    "scan_max": 39.871,
+    "scan_max_lc": 152,
+    "scan_max_at": [
+     170281,
+     0.2066
+    ],
+    "maxima_max": 39.871,
+    "scan_min": -1.954,
+    "scan_min_lc": 110,
+    "scan_min_at": [
+     170281,
+     0.0
+    ],
+    "maxima_min": -1.954
+   }
+  }
+ ]
+}

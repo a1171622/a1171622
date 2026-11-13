@@ -1,0 +1,92 @@
+== erg.py
+385 bdk ids; 4759 aqb beams; blocks 2
+{'id': 722, 'lc': 122, 'n_y': 0.72, 'n_z': 0.72, 'm_y': 0.16, 'm_z': 0.02, 'nm_y': 0.897, 'nm_z': 0.841, 'util': 0.897, 'check': 'Passed', 'bdk_block': 2, 'erg_line': 395136} {'id': 56, 'lc': 120, 'n_y': 0.0, 'n_z': 0.0, 'm_y': 1.05, 'm_z': 0.02, 'nm_y': 0.427, 'nm_z': 1.063, 'util': 1.063, 'check': 'Not passed', 'bdk_block': 1, 'erg_line': 384344}
+[{'util': 0.21, 'x': 0.0, 'sno': 1, 'sig_v': 0.238, 'tot_lin': 0.24, 'tot_int': 0.21, 'lc': 148, 'line': 405751}, {'util': 0.209, 'x': 0.415, 'sno': 1, 'sig_v': 0.235, 'tot_lin': 0.238, 'tot_int': 0.209, 'lc': 148, 'line': 405754}]
+== make_model_json
+quad grp 1 (7.81, 12.2, 18303)
+quad grp 2 (7.61, 12.2, 6840)
+quad grp 6 (0.0, 12.2, 6244)
+quad grp 7 (0.0, 12.2, 6297)
+beam grp None (0.0, 12.06, 4437)
+== extract_v21
+group 62 SLN: 98 unmapped []
+wrote env_support_SLS.json
+wrote env_support_ULS.json
+wrote reactions_EQU.json
+wrote reactions_basic_sums.json
+wrote env_node_SLS_L1.json
+wrote env_node_SLS_L2.json
+wrote env_node_SLS_RF.json
+wrote stair_ext.json
+wrote ring_L2.json
+wrote summary_v21.json
+== l1_detail
+slns Counter({'radial': 54, 'ring12': 18, 'ring85': 18, 'ring3': 18, 'ring_other': 18}) ends 36 unmapped beams? 868
+== draw_reading
+ok
+== survey
+== partA
+== partA2
+== partA3
+== draw
+ok
+== buckling_g62
+== part_a_md
+# 26016 v21 - Part A follow-up numbers (read-only, 13 Nov 2026)
+Source: 26016_check_v21.cdb / .erg (v20 + drawing sections: stair RHS 160x80x5, L2 radials UB 457x191x98, landing supports SHS 80x80x6.3). Read only, no calculation started.
+Each line: v21 value, then [v20 value]. Same scripts as the v20 Part A (partA.py, partA2.py, partA3.py), paths moved to v21. Units kN, kNm, mm, m.
+
+## A1 BDK max per group - util | SLN | LC  [v20]
+11: 0.383 | 25 | 147   [0.383 | 36 | 147]
+12: 0.094 | 448 | 121   [0.096 | 448 | 121]
+13: 0.253 | 41 | 121   [0.254 | 41 | 121]
+14: 0.365 | 399 | 145   [0.36 | 399 | 145]
+15: 0.663 | 223 | 153   [0.672 | 223 | 153]
+21: 0.389 | 17 | 145   [0.398 | 17 | 145]
+23: 0.139 | 96 | 119   [0.141 | 96 | 119]
+24: 0.292 | 417 | 122   [0.29 | 417 | 122]
+25: 1.063 | 56 | 120 Not passed  [1.06 | 56 | 120]
+31: 0.237 | 380 | 147   [0.239 | 380 | 147]
+35: 0.377 | 318 | 107   [0.377 | 318 | 107]
+60: 0.428 | 490 | 122   [0.314 | 490 | 122]
+61: 0.110 | 602 | 120   [0.111 | 602 | 120]
+62: 0.900 | 767 | 121   [0.975 | 722 | 122]
+25/sno2: 1.063 | 56 | 120 Not passed  [1.06 | 56 | 120]
+25/sno4: 0.651 | 73 | 147   [0.725 | 73 | 147]
+
+## A2 AQB max per section - util | beam | group | SLN | LC  [v20]
+SNO 1: 0.389 | 110113 | 21 | 9 | 146  [0.387 | 110113 | 146]
+SNO 2: 1.066 | 140020 | 25 | 56 | 120  [1.061 | 140020 | 120]
+SNO 4: 0.610 | 140389 | 25 | 1662 | 145  [0.657 | 140389 | 145]
+SNO 5: 0.469 | 170305 | 60 | 1523 | 120  [0.408 | 170305 | 120]
+SNO 6: 0.223 | 170128 | 60 | 466 | 120  [0.208 | 170128 | 120]
+SNO 7: 0.720 | 170105 | 60 | 458 | None  [0.698 | 170105 | None]
+SNO 8: 0.101 | 180010 | 61 | 602 | 120  [0.101 | 180010 | 120]
+SNO 9: 0.290 | 190493 | 62 | 1659 | 152  [0.257 | 190493 | 152]
+SNO 10: 0.484 | 170403 | 60 | 1607 | 122  [None | None | None]
+
+## A3 Buckling (lowest eigenmodes)
+LC 9201 (Buckling  1 fact    6.95) [v20: Buckling  1 fact    6.95]: max node 2369 r 11.82 at 171.4 deg z 1.74 [v20 node 2369]; groups with > 10 % of the max: 11 1.0, 15 0.168, 21 0.228
+LC 9220 (Buckling 20 fact    9.50) [v20: Buckling 20 fact    9.51]: max node 2332 r 11.82 at 108.6 deg z 1.74 [v20 node 2332]; groups with > 10 % of the max: 11 1.0, 12 0.272, 15 0.111, 21 0.139, 62 0.117
+LC 9221 (Buckling  1 fact    7.15) [v20: Buckling  1 fact    7.32]: max node 3267 r 4.57 at 300.0 deg z 4.05 [v20 node 3267]; groups with > 10 % of the max: 12 0.409, 13 0.426, 14 0.832, 15 1.0, 23 0.404, 24 0.798, 60 0.186, 61 0.238
+LC 9240 (Buckling 20 fact   10.07) [v20: Buckling 20 fact   10.11]: max node 2343 r 11.82 at 131.4 deg z 1.74 [v20 node 2343]; groups with > 10 % of the max: 11 1.0, 12 0.342, 13 0.134, 14 0.31, 21 0.171
+
+## A4 SLS deflections ('rel' = relative to the straight line between span ends, 'abs' = global uz; down negative)  [v20]
+== make_results
+worse 621 better 252 missing 0
+== results_extra
+## Status changes v20 -> v21 (utilisation crossing 1.00, BDK per SLN and AQB per beam)
+
+| check | id | SLN | v20 (LC) | v21 (LC) | status |
+|---|---|---|---|---|---|
+| AQB | 140080 | 62 | 1.000 (153) | 1.005 (122) | PASS -> FAIL |
+
+Members above 1.00 in v21: AQB SLN 56 1.066 LC 120, BDK SLN 56 1.063 LC 120, BDK SLN 57 1.013 LC 120, AQB SLN 57 1.011 LC 120, BDK SLN 62 1.008 LC 122, AQB SLN 62 1.005 LC 122
+
+## Governing L2 ring check, SLN 56 (L2 outer ring r 12, UB 254, LC 120)
+
+| item | v20 | v21 |
+|---|---|---|
+...sliding min 2.49
+done
+EXIT 0
