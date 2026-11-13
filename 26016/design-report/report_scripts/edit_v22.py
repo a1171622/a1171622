@@ -456,6 +456,16 @@ _n = 0
 for _t in body.iter(qn('w:t')):
     if _t.text and '457x191x89' in _t.text: _t.text = _t.text.replace('457x191x89', '457x191x98'); _n += 1
 print('UB 457x191x98 replacements', _n)
+# --- Level 2 ring to radial connection at 12 m radius to drawing 1103 (6 M24 grade 10.9, 12 mm fillets at the ring stiffeners)
+import glob
+cellsub(274, 'Ring end plates with bottom flange half plates, M30 grade 8.8', 'Fin plates 395x145x20 either side of the radial web, 6 M24 grade 10.9, stiffened bracket above the ring, 20 mm ring stiffeners')
+sub(ch[300], 'The existing ring to radial connection at 12 m radius satisfies EN 1993-1-8 with a maximum weld utilisation of 80% (Appendix A).',
+    'The ring to radial connection at 12 m radius satisfies EN 1993-1-8 with a plastic strain of 3.6%, a bolt utilisation of 70% and a maximum weld utilisation of 99.8% (Appendix A).')
+settext(303, 'The IDEA StatiCa report of the Level 2 ring to radial connection at 12 m radius (L2-R12-E1) is given on the following pages. The connection is verified to drawing 970027-S01-ST-1103 with 6 No. M24 grade 10.9 bolts. The fillet welds between the 20 mm ring stiffeners and the ring flanges are 12 mm. The ring is modelled straight along the tangent at the node. The IDEA StatiCa reports of the new connections at 8.5 m radius, with the summary of the results, are given in Appendix D.')
+for _i in range(310, 385): remove(_i)
+_last = ch[303]
+for _jpg in sorted(glob.glob(FIG + 'r12/p-*.jpg')):
+    _ip = clone_after(_last, ch[426]); new_picture(_ip, _jpg, WDW); _last = _ip
 
 # ------------------------------------------------------------------ figure and table numbers in document order
 fig = tab = 0
