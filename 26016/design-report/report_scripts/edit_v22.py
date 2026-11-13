@@ -466,6 +466,44 @@ for _i in range(310, 385): remove(_i)
 _last = ch[303]
 for _jpg in sorted(glob.glob(FIG + 'r12/p-*.jpg')):
     _ip = clone_after(_last, ch[426]); new_picture(_ip, _jpg, WDW); _last = _ip
+# --- kingpost, von Mises check of the shell elements (v21_export/kingpost/KINGPOST.md)
+KP = FIG + 'kp/'
+_h = clone_after(p3, ch[263], 'Kingpost')
+_p = clone_after(_h, ch[270], 'The kingpost is a circular hollow section of 610 mm diameter and 20 mm wall thickness in S275, with 20 mm collar plates and 18 radial fin plates at Level 2 and at the roof. It is modelled with shell elements. The von Mises stress has been evaluated from the membrane forces and the bending moments of the shell elements at both surfaces for the 43 ULS combinations, and the maximum stress of each part is compared with the yield strength of 275 MPa as tabulated below.')
+_cap = clone_after(_p, ch[258], 'Table 0. Kingpost: maximum von Mises stress per part (ULS)')
+_tb = copy.deepcopy(ch[259]); _cap.addnext(_tb)
+_trs = _tb.findall(qn('w:tr'))
+for _tc, _t in zip(_trs[0].findall(qn('w:tc')), ['Part', 'von Mises stress (MPa)', 'Utilisation', 'Governing combination', 'Status']): setcell(_tc, _t)
+_rows = [
+ ['Tube wall, base', '34', '0.12', 'LC 145', 'OK'],
+ ['Tube wall, between the levels', '46', '0.17', 'LC 110', 'OK'],
+ ['Tube wall, Level 2 connection zone', '138', '0.50', 'LC 122', 'OK'],
+ ['Tube wall, roof connection zone', '83', '0.30', 'LC 110', 'OK'],
+ ['Collar plates, Level 2', '160', '0.58', 'LC 122', 'OK'],
+ ['Fin plates, Level 2', '135', '0.49', 'LC 122', 'OK'],
+ ['Collar plates, roof', '157', '0.57', 'LC 107', 'OK'],
+ ['Fin plates, roof', '112', '0.41', 'LC 110', 'OK'],
+]
+for _k, _tx in enumerate(_rows):
+    if _k + 1 < len(_trs): _r = _trs[_k + 1]
+    else: _r = copy.deepcopy(_trs[1]); _trs[-1].addnext(_r); _trs.append(_r)
+    for _tc, _t in zip(_r.findall(qn('w:tc')), _tx): setcell(_tc, _t)
+for _r in _trs[len(_rows) + 1:]: _tb.remove(_r)
+_grid = _tb.find(qn('w:tblGrid')).findall(qn('w:gridCol')); _tot = sum(int(g.get(qn('w:w'))) for g in _grid)
+_wd = [int(_tot * f) for f in (0.36, 0.19, 0.16, 0.19, 0.10)]
+for _g, _w in zip(_grid, _wd): _g.set(qn('w:w'), str(_w))
+for _r in _tb.findall(qn('w:tr')):
+    for _tc, _w in zip(_r.findall(qn('w:tc')), _wd):
+        _tcw = _tc.find(qn('w:tcPr')).find(qn('w:tcW')) if _tc.find(qn('w:tcPr')) is not None else None
+        if _tcw is not None: _tcw.set(qn('w:w'), str(_w)); _tcw.set(qn('w:type'), 'dxa')
+_sp = clone_after(_tb, ch[257], '')
+for _t in wts(_sp): _t.text = ''
+_q = clone_after(_sp, ch[270], 'In the analysis model each radial beam end is connected to four nodes of the collar plate, so that the beam end forces are introduced as point loads. This gives local stress peaks in the bottom collar plate of Level 2 next to these nodes (383 MPa in the figure below and 609 MPa in the element next to the node, combination 122) and at the tips of the fin plates (299 MPa). These peaks follow from the idealisation of the beam end, which in the structure is connected over its full depth, and they reduce to the tabulated values within 150 mm of the nodes. The values of the collar plates and of the fin plates in the table are therefore taken at 150 mm or more from the connection nodes. The stress plots of the roof zone, the base and the Level 2 collar plate are given in Appendix F.')
+_c1 = fig_after(_q, KP + 'K1_kingpost_vonMises_LC122_iso.jpg', 'Figure 0: Kingpost, von Mises stress (MPa), combination 122', ch[114], ch[115], 3000000)
+_c2 = fig_after(_c1, KP + 'K3_L2_zone_vonMises_LC122.jpg', 'Figure 0: Kingpost at Level 2, von Mises stress (MPa), combination 122', ch[114], ch[115])
+_pb = clone_after(last, ch[423]); _hh = clone_after(_pb, ch[424], 'Appendix F: Kingpost Stress Plots'); _l = clone_after(_hh, ch[425], 'The von Mises stress plots of the kingpost shell elements are given below for the governing ULS combination of each zone. The stresses are in MPa and are the maximum over the plate thickness.')
+for _f, _t in (('K2_kingpost_vonMises_LC122_opposite', 'Kingpost seen from the opposite side, combination 122'), ('K3b_L2_bottom_collar_from_below_LC122', 'Level 2 bottom collar plate seen from below, combination 122'), ('K6_L2_zone_deformed_vonMises_LC122', 'Level 2 zone, deformed shape (50 times) with von Mises stress, combination 122'), ('K4_roof_zone_vonMises_LC110', 'Roof connection zone, combination 110'), ('K5_base_zone_vonMises_LC145', 'Base zone, combination 145')):
+    _l = fig_after(_l, KP + _f + '.jpg', 'Figure 0: ' + _t, ch[426], ch[427], WDW)
 
 # ------------------------------------------------------------------ figure and table numbers in document order
 fig = tab = 0
