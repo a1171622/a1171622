@@ -101,3 +101,8 @@ A kinked continuous ring cannot be modelled in IDEA 26.0 (a continuous member is
 The large strain in v0 to v3 came mainly from the ring geometry error (point 3), not from the ring capacity.
 Corrected model V4: strain passes (3.0 % < 5 %), bolts 70 %, welds just over at 100.6 % (one 315 stiffener weld, a 7.0), many welds at 98-99 %.
 V4 report: `L2-R12-E1_000_V4.pdf` (author CaSE). The superseded statements above about the ring being at its limit apply to the faulty geometry.
+
+| V6 = V4 with the 315 stiffener to ring flange welds 12 mm leg (a 8.5), nothing else changed | 3.6 % (122) | 99.8 % (119); bracket inclined stiffeners / top plates to the bracket web / fin 99.4-99.5 % (a 7.0 / a 4.2) | 69.9 % (122) |
+
+V6 PASSES all checks (IDEA summary: analysis 100 %, plates 3.6 % < 5 %, bolts 69.9 %, welds 99.8 %). Report `L2-R12-E1_000_V6.pdf` (author CaSE, 13.11.2026).
+Note: the bracket welds are at 99.4-99.5 % in both V4 and V6, so they have no reserve. A small change in loads or geometry would take them over 100 %.

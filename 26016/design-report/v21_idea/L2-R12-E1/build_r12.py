@@ -202,8 +202,8 @@ for sig in ((+1, -1) if not os.environ.get("R12_ONLY_FINS") else ()):
     stf = None
     if not os.environ.get("R12_NO_BOTTOM"):
         stf = plate(f"20 ring stiffener at 315 ({side})", Q(lamS, 0, 0), n, up, [(-RB / 2, Rtf), (RB / 2, Rtf), (RB / 2, RH - Rtf), (-RB / 2, RH - Rtf)], PT)
-        weld(f"ring stiffener to top flange ({side})", f"P{stf}", "2", Q(lamS, -RB / 2, RH - Rtf), Q(lamS, RB / 2, RH - Rtf), A_FL)
-        weld(f"ring stiffener to bottom flange ({side})", f"P{stf}", "2", Q(lamS, -RB / 2, Rtf), Q(lamS, RB / 2, Rtf), A_FL)
+        weld(f"ring stiffener to top flange ({side})", f"P{stf}", "2", Q(lamS, -RB / 2, RH - Rtf), Q(lamS, RB / 2, RH - Rtf), float(os.environ.get("R12_A_STF", A_FL)))
+        weld(f"ring stiffener to bottom flange ({side})", f"P{stf}", "2", Q(lamS, -RB / 2, Rtf), Q(lamS, RB / 2, Rtf), float(os.environ.get("R12_A_STF", A_FL)))
     if os.environ.get("R12_V1") and stf:
         # variant 1: the drawing's 20 x 295 plates on the ring bottom flange, one plate 140 wide per side (overlaps the ring
         # web), from the radial web face to the 315 stiffener; long edges welded to the bottom flange face, end edge to the
