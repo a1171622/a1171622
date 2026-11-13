@@ -1,0 +1,62 @@
+$ 26016 v21 - kingpost (QUAD groups 1, 2, 6, 7) von Mises equivalent stress SV (max over the thickness, N/A +- M/W), WinGRAF.
+$ Reads 26016_env_v21.cdb = COPY of 26016_check_v21.cdb (run 13 Nov 2026). No analysis. WinGRAF has no envelope of SV over load cases,
+$ so the governing ULS combination of each zone is plotted: LC 122 (Level 2, G+Q+psiW +Y down), LC 110 (roof zone), LC 145 (base).
++PROG WING urs:1
+HEAD 26016 v21 kingpost von Mises
+DB 1 TITL '26016_env_v21.cdb'
+PAGE UNII 5
+$ ---- K1 whole kingpost, LC 122, isometric
+SIZE TYPE 9 W 25.5 H 30 FORM URS SC 0 MARG NO
+VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ
+GRP 1,2,6,7
+LC 122
+QUAD TYPE SV STYP ELEM REPR DISO FILL YES
+$ ---- K2 whole kingpost, LC 122, opposite side
+SIZE TYPE 9 W 25.5 H 30 FORM URS SC 0 MARG NO
+VIEW TYPE DIRE X -1 Y -1.4 Z -0.8 AXIS NEGZ
+GRP 1,2,6,7
+LC 122
+QUAD TYPE SV STYP ELEM REPR DISO FILL YES
+$ ---- K3 Level 2 connection zone, LC 122
+SIZE TYPE 9 W 25.5 H 20 FORM URS SC 0 MARG NO
+VIEW TYPE DIRE X 1 Y 1.4 Z -1.2 AXIS NEGZ
+BOX -1 -1 7.5 1 1 8.6 CROS
+GRP 1,2,6,7
+LC 122
+QUAD TYPE SV STYP ELEM REPR DISO FILL YES
+$ ---- K3b Level 2 bottom collar plate from below, LC 122
+SIZE TYPE 9 W 25.5 H 20 FORM URS SC 0 MARG NO
+VIEW TYPE DIRE X 0.001 Y 0 Z 1 AXIS NEGZ
+BOX -1 -1 7.7 1 1 7.9 WIND
+GRP 1,2,6,7
+LC 122
+QUAD TYPE SV STYP ELEM REPR DISO FILL YES
+$ ---- K4 roof connection zone, LC 110
+SIZE TYPE 9 W 25.5 H 20 FORM URS SC 0 MARG NO
+VIEW TYPE DIRE X 1 Y 1.4 Z -1.2 AXIS NEGZ
+BOX -1 -1 11.5 1 1 12.3 CROS
+GRP 1,2,6,7
+LC 110
+QUAD TYPE SV STYP ELEM REPR DISO FILL YES
+$ ---- K5 base zone, LC 145
+SIZE TYPE 9 W 25.5 H 20 FORM URS SC 0 MARG NO
+VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ
+BOX -1 -1 -0.1 1 1 1.0 CROS
+GRP 1,2,6,7
+LC 145
+QUAD TYPE SV STYP ELEM REPR DISO FILL YES
+$ ---- K6 governing LC 122, deformed shape with von Mises (Level 2 zone)
+SIZE TYPE 9 W 25.5 H 20 FORM URS SC 0 MARG NO
+VIEW TYPE DIRE X 1 Y 1.4 Z -1.2 AXIS NEGZ
+BOX -1 -1 7.0 1 1 9.0 CROS
+GRP 1,2,6,7
+LC 122
+DEFO TYPE YES FAC 50 LC CURR
+QUAD TYPE SV STYP ELEM REPR DISO FILL YES
+DEFO NO
+END
+
++PROG PLBCONVERTER urs:9
+HEAD export the WinGRAF pictures as PNG
+IMG FNR 'kp_img/img_%number%.%ext%' OVRT YES FMT PNG
+END

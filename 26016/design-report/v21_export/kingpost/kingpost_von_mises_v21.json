@@ -1,0 +1,1256 @@
+{
+ "what": "26016 v21 kingpost shells, von Mises equivalent stress from the ASE shell forces of the 43 ULS STR combinations (101-130, 135, 141-148, 151-154) and SLS 201; read only from 26016_env_v21.cdb (copy of 26016_check_v21.cdb).",
+ "method": "26016 v21 kingpost von Mises check (read only on the COPY 26016_env_v21.cdb; nothing re-analysed).\nShell groups 6 + 7 (tube wall, r 0.305, t 20), 1 (horizontal collar / cap plates), 2 (vertical radial fin plates), S275, t 20.\nFor each element and each load case: stresses from the ASE shell forces (key 210/LC, CQUAD_FOR):\n  membrane  s = n / t,  bending s = 6 m / t^2,  top / bottom = membrane +- bending, mid = membrane;\n  sigma_v = sqrt(sx^2 + sy^2 - sx sy + 3 txy^2)   (transverse shear vx, vy neglected: zero at the faces).\n'element' = forces at the element centre (averaged over the element); 'gauss' = largest of the 4 Gauss points (raw peak, m_sg).\nfy = 275 MPa (S275, t = 20 <= 40 mm, EN 10025-2), gamma_M0 = 1.0.\npy -3.11 kp_vonmises.py  -> ../kingpost_von_mises_v21.json / .csv",
+ "fy_MPa": 275.0,
+ "gamma_M0": 1.0,
+ "governing_ULS": {
+  "zone": "horizontal collar / cap plates, Level 2",
+  "check": "ULS",
+  "value": "element",
+  "sigma_v_MPa": 609.3,
+  "element": 23531,
+  "group": 1,
+  "t_mm": 20.0,
+  "surface": "bottom",
+  "z_m": 7.811,
+  "angle_deg": 334.8,
+  "r_m": 0.602,
+  "lc": 122,
+  "lc_title": "122 ULS G+Q+psiW +Y down",
+  "fy_MPa": 275.0,
+  "util": 2.216,
+  "surfaces_MPa": {
+   "top": 295.0,
+   "bottom": 609.3,
+   "mid": 188.0
+  }
+ },
+ "elements_above_fy_ULS": [
+  {
+   "element": 23531,
+   "sigma_v": 609.3,
+   "lc": 122,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 27106,
+   "sigma_v": 566.3,
+   "lc": 121,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26665,
+   "sigma_v": 543.1,
+   "lc": 121,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26281,
+   "sigma_v": 542.1,
+   "lc": 122,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 25304,
+   "sigma_v": 526.3,
+   "lc": 121,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 25493,
+   "sigma_v": 512.2,
+   "lc": 120,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 24077,
+   "sigma_v": 504.7,
+   "lc": 119,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26197,
+   "sigma_v": 487.5,
+   "lc": 120,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 23629,
+   "sigma_v": 449.7,
+   "lc": 121,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 24317,
+   "sigma_v": 449.6,
+   "lc": 119,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 25325,
+   "sigma_v": 448.0,
+   "lc": 145,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 25901,
+   "sigma_v": 441.2,
+   "lc": 119,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26611,
+   "sigma_v": 415.8,
+   "lc": 120,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26873,
+   "sigma_v": 400.0,
+   "lc": 120,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 27233,
+   "sigma_v": 393.8,
+   "lc": 122,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 27218,
+   "sigma_v": 387.3,
+   "lc": 119,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 25523,
+   "sigma_v": 387.2,
+   "lc": 135,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 24231,
+   "sigma_v": 384.5,
+   "lc": 121,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26289,
+   "sigma_v": 379.0,
+   "lc": 119,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26472,
+   "sigma_v": 371.3,
+   "lc": 147,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 24809,
+   "sigma_v": 367.0,
+   "lc": 148,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 25601,
+   "sigma_v": 365.2,
+   "lc": 119,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 25138,
+   "sigma_v": 364.4,
+   "lc": 147,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26711,
+   "sigma_v": 363.4,
+   "lc": 135,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26100,
+   "sigma_v": 362.7,
+   "lc": 148,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 24017,
+   "sigma_v": 361.4,
+   "lc": 148,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 25879,
+   "sigma_v": 360.2,
+   "lc": 122,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26215,
+   "sigma_v": 353.0,
+   "lc": 145,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 27182,
+   "sigma_v": 350.9,
+   "lc": 119,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26551,
+   "sigma_v": 346.8,
+   "lc": 121,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 27109,
+   "sigma_v": 346.7,
+   "lc": 120,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 24743,
+   "sigma_v": 346.5,
+   "lc": 146,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 23659,
+   "sigma_v": 334.6,
+   "lc": 146,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 23873,
+   "sigma_v": 333.4,
+   "lc": 120,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 24912,
+   "sigma_v": 332.0,
+   "lc": 148,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 24877,
+   "sigma_v": 331.8,
+   "lc": 119,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26584,
+   "sigma_v": 327.9,
+   "lc": 135,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26782,
+   "sigma_v": 325.0,
+   "lc": 148,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26423,
+   "sigma_v": 324.5,
+   "lc": 122,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 24216,
+   "sigma_v": 322.0,
+   "lc": 120,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26239,
+   "sigma_v": 320.1,
+   "lc": 119,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 27158,
+   "sigma_v": 319.3,
+   "lc": 119,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 25227,
+   "sigma_v": 317.5,
+   "lc": 122,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26347,
+   "sigma_v": 316.7,
+   "lc": 120,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 24481,
+   "sigma_v": 316.2,
+   "lc": 122,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 25556,
+   "sigma_v": 315.3,
+   "lc": 122,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 27086,
+   "sigma_v": 313.9,
+   "lc": 122,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26395,
+   "sigma_v": 310.7,
+   "lc": 146,
+   "surface": "top",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 26121,
+   "sigma_v": 309.0,
+   "lc": 121,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  },
+  {
+   "element": 25047,
+   "sigma_v": 308.2,
+   "lc": 121,
+   "surface": "bottom",
+   "z": 7.811,
+   "group": 1
+  }
+ ],
+ "n_elements": {
+  "1": 18055,
+  "2": 5328,
+  "6": 6032,
+  "7": 6085
+ },
+ "rows": [
+  {
+   "zone": "horizontal collar / cap plates, Level 2",
+   "check": "SLS",
+   "value": "element",
+   "sigma_v_MPa": 414.6,
+   "element": 23531,
+   "group": 1,
+   "t_mm": 20.0,
+   "surface": "bottom",
+   "z_m": 7.811,
+   "angle_deg": 334.8,
+   "r_m": 0.602,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 1.508,
+   "surfaces_MPa": {
+    "top": 202.3,
+    "bottom": 414.6,
+    "mid": 128.0
+   }
+  },
+  {
+   "zone": "horizontal collar / cap plates, Level 2",
+   "check": "SLS",
+   "value": "gauss",
+   "sigma_v_MPa": 616.4,
+   "element": 23531,
+   "group": 1,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 7.811,
+   "angle_deg": 334.8,
+   "r_m": 0.602,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 2.242,
+   "surfaces_MPa": null
+  },
+  {
+   "zone": "horizontal collar / cap plates, roof",
+   "check": "SLS",
+   "value": "element",
+   "sigma_v_MPa": 87.5,
+   "element": 18006,
+   "group": 1,
+   "t_mm": 20.0,
+   "surface": "top",
+   "z_m": 11.914,
+   "angle_deg": 39.8,
+   "r_m": 0.513,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 0.318,
+   "surfaces_MPa": {
+    "top": 87.5,
+    "bottom": 41.6,
+    "mid": 23.2
+   }
+  },
+  {
+   "zone": "horizontal collar / cap plates, roof",
+   "check": "SLS",
+   "value": "gauss",
+   "sigma_v_MPa": 116.0,
+   "element": 17671,
+   "group": 1,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 11.914,
+   "angle_deg": 179.6,
+   "r_m": 0.51,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 0.422,
+   "surfaces_MPa": null
+  },
+  {
+   "zone": "tube wall, Level 2 connection zone (z 7.4-8.7)",
+   "check": "SLS",
+   "value": "element",
+   "sigma_v_MPa": 93.9,
+   "element": 50812,
+   "group": 7,
+   "t_mm": 20.0,
+   "surface": "bottom",
+   "z_m": 7.615,
+   "angle_deg": 239.1,
+   "r_m": 0.305,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 0.341,
+   "surfaces_MPa": {
+    "top": 34.8,
+    "bottom": 93.9,
+    "mid": 30.0
+   }
+  },
+  {
+   "zone": "tube wall, Level 2 connection zone (z 7.4-8.7)",
+   "check": "SLS",
+   "value": "gauss",
+   "sigma_v_MPa": 114.0,
+   "element": 50812,
+   "group": 7,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 7.615,
+   "angle_deg": 239.1,
+   "r_m": 0.305,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 0.414,
+   "surfaces_MPa": null
+  },
+  {
+   "zone": "tube wall, base zone (z 0-0.5)",
+   "check": "SLS",
+   "value": "element",
+   "sigma_v_MPa": 23.3,
+   "element": 41481,
+   "group": 6,
+   "t_mm": 20.0,
+   "surface": "top",
+   "z_m": 0.028,
+   "angle_deg": 9.1,
+   "r_m": 0.301,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 0.085,
+   "surfaces_MPa": {
+    "top": 23.3,
+    "bottom": 14.7,
+    "mid": 18.8
+   }
+  },
+  {
+   "zone": "tube wall, base zone (z 0-0.5)",
+   "check": "SLS",
+   "value": "gauss",
+   "sigma_v_MPa": 30.7,
+   "element": 41481,
+   "group": 6,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 0.028,
+   "angle_deg": 9.1,
+   "r_m": 0.301,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 0.112,
+   "surfaces_MPa": null
+  },
+  {
+   "zone": "tube wall, between levels",
+   "check": "SLS",
+   "value": "element",
+   "sigma_v_MPa": 29.0,
+   "element": 51680,
+   "group": 7,
+   "t_mm": 20.0,
+   "surface": "top",
+   "z_m": 4.678,
+   "angle_deg": 254.0,
+   "r_m": 0.293,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 0.106,
+   "surfaces_MPa": {
+    "top": 29.0,
+    "bottom": 15.2,
+    "mid": 18.3
+   }
+  },
+  {
+   "zone": "tube wall, between levels",
+   "check": "SLS",
+   "value": "gauss",
+   "sigma_v_MPa": 39.6,
+   "element": 51680,
+   "group": 7,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 4.678,
+   "angle_deg": 254.0,
+   "r_m": 0.293,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 0.144,
+   "surfaces_MPa": null
+  },
+  {
+   "zone": "tube wall, roof connection zone (z > 11.5)",
+   "check": "SLS",
+   "value": "element",
+   "sigma_v_MPa": 24.8,
+   "element": 43519,
+   "group": 6,
+   "t_mm": 20.0,
+   "surface": "bottom",
+   "z_m": 11.718,
+   "angle_deg": 19.0,
+   "r_m": 0.305,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 0.09,
+   "surfaces_MPa": {
+    "top": 6.7,
+    "bottom": 24.8,
+    "mid": 10.5
+   }
+  },
+  {
+   "zone": "tube wall, roof connection zone (z > 11.5)",
+   "check": "SLS",
+   "value": "gauss",
+   "sigma_v_MPa": 30.1,
+   "element": 43249,
+   "group": 6,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 11.706,
+   "angle_deg": 79.2,
+   "r_m": 0.304,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 0.109,
+   "surfaces_MPa": null
+  },
+  {
+   "zone": "vertical radial fin plates, Level 2",
+   "check": "SLS",
+   "value": "element",
+   "sigma_v_MPa": 202.1,
+   "element": 34073,
+   "group": 2,
+   "t_mm": 20.0,
+   "surface": "top",
+   "z_m": 7.803,
+   "angle_deg": 240.1,
+   "r_m": 0.498,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 0.735,
+   "surfaces_MPa": {
+    "top": 202.1,
+    "bottom": 181.0,
+    "mid": 191.6
+   }
+  },
+  {
+   "zone": "vertical radial fin plates, Level 2",
+   "check": "SLS",
+   "value": "gauss",
+   "sigma_v_MPa": 256.3,
+   "element": 34073,
+   "group": 2,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 7.803,
+   "angle_deg": 240.1,
+   "r_m": 0.498,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 0.932,
+   "surfaces_MPa": null
+  },
+  {
+   "zone": "vertical radial fin plates, roof",
+   "check": "SLS",
+   "value": "element",
+   "sigma_v_MPa": 62.3,
+   "element": 31335,
+   "group": 2,
+   "t_mm": 20.0,
+   "surface": "top",
+   "z_m": 11.906,
+   "angle_deg": 220.0,
+   "r_m": 0.497,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 0.226,
+   "surfaces_MPa": {
+    "top": 62.3,
+    "bottom": 59.1,
+    "mid": 60.7
+   }
+  },
+  {
+   "zone": "vertical radial fin plates, roof",
+   "check": "SLS",
+   "value": "gauss",
+   "sigma_v_MPa": 79.7,
+   "element": 31335,
+   "group": 2,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 11.906,
+   "angle_deg": 220.0,
+   "r_m": 0.497,
+   "lc": 201,
+   "lc_title": "201 SLS G+Q",
+   "fy_MPa": 275.0,
+   "util": 0.29,
+   "surfaces_MPa": null
+  },
+  {
+   "zone": "horizontal collar / cap plates, Level 2",
+   "check": "ULS",
+   "value": "element",
+   "sigma_v_MPa": 609.3,
+   "element": 23531,
+   "group": 1,
+   "t_mm": 20.0,
+   "surface": "bottom",
+   "z_m": 7.811,
+   "angle_deg": 334.8,
+   "r_m": 0.602,
+   "lc": 122,
+   "lc_title": "122 ULS G+Q+psiW +Y down",
+   "fy_MPa": 275.0,
+   "util": 2.216,
+   "surfaces_MPa": {
+    "top": 295.0,
+    "bottom": 609.3,
+    "mid": 188.0
+   }
+  },
+  {
+   "zone": "horizontal collar / cap plates, Level 2",
+   "check": "ULS",
+   "value": "gauss",
+   "sigma_v_MPa": 905.0,
+   "element": 23531,
+   "group": 1,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 7.811,
+   "angle_deg": 334.8,
+   "r_m": 0.602,
+   "lc": 122,
+   "lc_title": "122 ULS G+Q+psiW +Y down",
+   "fy_MPa": 275.0,
+   "util": 3.291,
+   "surfaces_MPa": null
+  },
+  {
+   "zone": "horizontal collar / cap plates, roof",
+   "check": "ULS",
+   "value": "element",
+   "sigma_v_MPa": 156.6,
+   "element": 17671,
+   "group": 1,
+   "t_mm": 20.0,
+   "surface": "top",
+   "z_m": 11.914,
+   "angle_deg": 179.6,
+   "r_m": 0.51,
+   "lc": 107,
+   "lc_title": "107 ULS 1.0G+W +X uplift",
+   "fy_MPa": 275.0,
+   "util": 0.57,
+   "surfaces_MPa": {
+    "top": 156.6,
+    "bottom": 83.5,
+    "mid": 40.3
+   }
+  },
+  {
+   "zone": "horizontal collar / cap plates, roof",
+   "check": "ULS",
+   "value": "gauss",
+   "sigma_v_MPa": 210.1,
+   "element": 17671,
+   "group": 1,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 11.914,
+   "angle_deg": 179.6,
+   "r_m": 0.51,
+   "lc": 107,
+   "lc_title": "107 ULS 1.0G+W +X uplift",
+   "fy_MPa": 275.0,
+   "util": 0.764,
+   "surfaces_MPa": null
+  },
+  {
+   "zone": "tube wall, Level 2 connection zone (z 7.4-8.7)",
+   "check": "ULS",
+   "value": "element",
+   "sigma_v_MPa": 137.5,
+   "element": 50812,
+   "group": 7,
+   "t_mm": 20.0,
+   "surface": "bottom",
+   "z_m": 7.615,
+   "angle_deg": 239.1,
+   "r_m": 0.305,
+   "lc": 122,
+   "lc_title": "122 ULS G+Q+psiW +Y down",
+   "fy_MPa": 275.0,
+   "util": 0.5,
+   "surfaces_MPa": {
+    "top": 51.7,
+    "bottom": 137.5,
+    "mid": 44.0
+   }
+  },
+  {
+   "zone": "tube wall, Level 2 connection zone (z 7.4-8.7)",
+   "check": "ULS",
+   "value": "gauss",
+   "sigma_v_MPa": 167.3,
+   "element": 50812,
+   "group": 7,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 7.615,
+   "angle_deg": 239.1,
+   "r_m": 0.305,
+   "lc": 122,
+   "lc_title": "122 ULS G+Q+psiW +Y down",
+   "fy_MPa": 275.0,
+   "util": 0.608,
+   "surfaces_MPa": null
+  },
+  {
+   "zone": "tube wall, base zone (z 0-0.5)",
+   "check": "ULS",
+   "value": "element",
+   "sigma_v_MPa": 34.3,
+   "element": 41481,
+   "group": 6,
+   "t_mm": 20.0,
+   "surface": "top",
+   "z_m": 0.028,
+   "angle_deg": 9.1,
+   "r_m": 0.301,
+   "lc": 145,
+   "lc_title": "145 ULS 1.35G+1.5Q + EHF +X",
+   "fy_MPa": 275.0,
+   "util": 0.125,
+   "surfaces_MPa": {
+    "top": 34.3,
+    "bottom": 21.6,
+    "mid": 27.6
+   }
+  },
+  {
+   "zone": "tube wall, base zone (z 0-0.5)",
+   "check": "ULS",
+   "value": "gauss",
+   "sigma_v_MPa": 45.1,
+   "element": 41481,
+   "group": 6,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 0.028,
+   "angle_deg": 9.1,
+   "r_m": 0.301,
+   "lc": 145,
+   "lc_title": "145 ULS 1.35G+1.5Q + EHF +X",
+   "fy_MPa": 275.0,
+   "util": 0.164,
+   "surfaces_MPa": null
+  },
+  {
+   "zone": "tube wall, between levels",
+   "check": "ULS",
+   "value": "element",
+   "sigma_v_MPa": 45.9,
+   "element": 42798,
+   "group": 6,
+   "t_mm": 20.0,
+   "surface": "bottom",
+   "z_m": 11.418,
+   "angle_deg": 275.1,
+   "r_m": 0.305,
+   "lc": 110,
+   "lc_title": "110 ULS 1.0G+W +Y uplift",
+   "fy_MPa": 275.0,
+   "util": 0.167,
+   "surfaces_MPa": {
+    "top": 38.7,
+    "bottom": 45.9,
+    "mid": 42.2
+   }
+  },
+  {
+   "zone": "tube wall, between levels",
+   "check": "ULS",
+   "value": "gauss",
+   "sigma_v_MPa": 57.4,
+   "element": 51680,
+   "group": 7,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 4.678,
+   "angle_deg": 254.0,
+   "r_m": 0.293,
+   "lc": 148,
+   "lc_title": "148 ULS 1.35G+1.5Q + EHF +Y",
+   "fy_MPa": 275.0,
+   "util": 0.209,
+   "surfaces_MPa": null
+  },
+  {
+   "zone": "tube wall, roof connection zone (z > 11.5)",
+   "check": "ULS",
+   "value": "element",
+   "sigma_v_MPa": 83.1,
+   "element": 54454,
+   "group": 7,
+   "t_mm": 20.0,
+   "surface": "bottom",
+   "z_m": 11.708,
+   "angle_deg": 259.4,
+   "r_m": 0.305,
+   "lc": 110,
+   "lc_title": "110 ULS 1.0G+W +Y uplift",
+   "fy_MPa": 275.0,
+   "util": 0.302,
+   "surfaces_MPa": {
+    "top": 25.8,
+    "bottom": 83.1,
+    "mid": 47.7
+   }
+  },
+  {
+   "zone": "tube wall, roof connection zone (z > 11.5)",
+   "check": "ULS",
+   "value": "gauss",
+   "sigma_v_MPa": 107.4,
+   "element": 43249,
+   "group": 6,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 11.706,
+   "angle_deg": 79.2,
+   "r_m": 0.304,
+   "lc": 109,
+   "lc_title": "109 ULS 1.0G+W -Y uplift",
+   "fy_MPa": 275.0,
+   "util": 0.39,
+   "surfaces_MPa": null
+  },
+  {
+   "zone": "vertical radial fin plates, Level 2",
+   "check": "ULS",
+   "value": "element",
+   "sigma_v_MPa": 298.8,
+   "element": 34073,
+   "group": 2,
+   "t_mm": 20.0,
+   "surface": "top",
+   "z_m": 7.803,
+   "angle_deg": 240.1,
+   "r_m": 0.498,
+   "lc": 122,
+   "lc_title": "122 ULS G+Q+psiW +Y down",
+   "fy_MPa": 275.0,
+   "util": 1.087,
+   "surfaces_MPa": {
+    "top": 298.8,
+    "bottom": 268.8,
+    "mid": 283.8
+   }
+  },
+  {
+   "zone": "vertical radial fin plates, Level 2",
+   "check": "ULS",
+   "value": "gauss",
+   "sigma_v_MPa": 379.0,
+   "element": 34073,
+   "group": 2,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 7.803,
+   "angle_deg": 240.1,
+   "r_m": 0.498,
+   "lc": 122,
+   "lc_title": "122 ULS G+Q+psiW +Y down",
+   "fy_MPa": 275.0,
+   "util": 1.378,
+   "surfaces_MPa": null
+  },
+  {
+   "zone": "vertical radial fin plates, roof",
+   "check": "ULS",
+   "value": "element",
+   "sigma_v_MPa": 111.6,
+   "element": 31557,
+   "group": 2,
+   "t_mm": 20.0,
+   "surface": "top",
+   "z_m": 11.906,
+   "angle_deg": 280.0,
+   "r_m": 0.498,
+   "lc": 110,
+   "lc_title": "110 ULS 1.0G+W +Y uplift",
+   "fy_MPa": 275.0,
+   "util": 0.406,
+   "surfaces_MPa": {
+    "top": 111.6,
+    "bottom": 101.2,
+    "mid": 106.4
+   }
+  },
+  {
+   "zone": "vertical radial fin plates, roof",
+   "check": "ULS",
+   "value": "gauss",
+   "sigma_v_MPa": 142.4,
+   "element": 31557,
+   "group": 2,
+   "t_mm": 20.0,
+   "surface": "max of top/bottom/mid at a Gauss point",
+   "z_m": 11.906,
+   "angle_deg": 280.0,
+   "r_m": 0.498,
+   "lc": 110,
+   "lc_title": "110 ULS 1.0G+W +Y uplift",
+   "fy_MPa": 275.0,
+   "util": 0.518,
+   "surfaces_MPa": null
+  }
+ ],
+ "lc_max": {
+  "101": {
+   "max_element_sigma_v": 153.1,
+   "element": 23531
+  },
+  "102": {
+   "max_element_sigma_v": 604.9,
+   "element": 23531
+  },
+  "103": {
+   "max_element_sigma_v": 588.8,
+   "element": 23531
+  },
+  "104": {
+   "max_element_sigma_v": 586.9,
+   "element": 23531
+  },
+  "105": {
+   "max_element_sigma_v": 586.2,
+   "element": 23531
+  },
+  "106": {
+   "max_element_sigma_v": 589.2,
+   "element": 23531
+  },
+  "107": {
+   "max_element_sigma_v": 156.6,
+   "element": 17671
+  },
+  "108": {
+   "max_element_sigma_v": 136.5,
+   "element": 17571
+  },
+  "109": {
+   "max_element_sigma_v": 151.8,
+   "element": 17627
+  },
+  "110": {
+   "max_element_sigma_v": 143.5,
+   "element": 17599
+  },
+  "111": {
+   "max_element_sigma_v": 431.9,
+   "element": 23531
+  },
+  "112": {
+   "max_element_sigma_v": 428.1,
+   "element": 23531
+  },
+  "113": {
+   "max_element_sigma_v": 426.9,
+   "element": 23531
+  },
+  "114": {
+   "max_element_sigma_v": 432.3,
+   "element": 23531
+  },
+  "115": {
+   "max_element_sigma_v": 144.4,
+   "element": 17671
+  },
+  "116": {
+   "max_element_sigma_v": 125.5,
+   "element": 17571
+  },
+  "117": {
+   "max_element_sigma_v": 139.9,
+   "element": 17627
+  },
+  "118": {
+   "max_element_sigma_v": 132.1,
+   "element": 17599
+  },
+  "119": {
+   "max_element_sigma_v": 608.3,
+   "element": 23531
+  },
+  "120": {
+   "max_element_sigma_v": 608.7,
+   "element": 23531
+  },
+  "121": {
+   "max_element_sigma_v": 607.9,
+   "element": 23531
+  },
+  "122": {
+   "max_element_sigma_v": 609.3,
+   "element": 23531
+  },
+  "123": {
+   "max_element_sigma_v": 470.8,
+   "element": 23531
+  },
+  "124": {
+   "max_element_sigma_v": 471.7,
+   "element": 23531
+  },
+  "125": {
+   "max_element_sigma_v": 470.2,
+   "element": 23531
+  },
+  "126": {
+   "max_element_sigma_v": 472.5,
+   "element": 23531
+  },
+  "127": {
+   "max_element_sigma_v": 151.7,
+   "element": 23531
+  },
+  "128": {
+   "max_element_sigma_v": 152.6,
+   "element": 23531
+  },
+  "129": {
+   "max_element_sigma_v": 151.2,
+   "element": 23531
+  },
+  "130": {
+   "max_element_sigma_v": 153.3,
+   "element": 23531
+  },
+  "135": {
+   "max_element_sigma_v": 604.9,
+   "element": 23531
+  },
+  "141": {
+   "max_element_sigma_v": 153.1,
+   "element": 23531
+  },
+  "142": {
+   "max_element_sigma_v": 153.2,
+   "element": 23531
+  },
+  "143": {
+   "max_element_sigma_v": 153.1,
+   "element": 23531
+  },
+  "144": {
+   "max_element_sigma_v": 153.2,
+   "element": 23531
+  },
+  "145": {
+   "max_element_sigma_v": 604.9,
+   "element": 23531
+  },
+  "146": {
+   "max_element_sigma_v": 604.9,
+   "element": 23531
+  },
+  "147": {
+   "max_element_sigma_v": 604.7,
+   "element": 23531
+  },
+  "148": {
+   "max_element_sigma_v": 605.1,
+   "element": 23531
+  },
+  "151": {
+   "max_element_sigma_v": 443.2,
+   "element": 23531
+  },
+  "152": {
+   "max_element_sigma_v": 310.1,
+   "element": 23531
+  },
+  "153": {
+   "max_element_sigma_v": 568.4,
+   "element": 23531
+  },
+  "154": {
+   "max_element_sigma_v": 479.6,
+   "element": 23531
+  },
+  "201": {
+   "max_element_sigma_v": 414.6,
+   "element": 23531
+  }
+ }
+}
