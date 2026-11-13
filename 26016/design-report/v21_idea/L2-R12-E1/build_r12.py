@@ -22,7 +22,7 @@ exec(src[src.index("def rotate_text"):src.index("def blk")])
 # ---------------- sections / geometry constants (m)
 RH, RB, Rtw, Rtf = 0.2596, 0.1473, 0.0072, 0.0127
 BH, BB, Btw, Btf, Br = 0.4672, 0.1928, 0.0114, 0.0196, 0.0102
-PT = 0.020; ZP_TOP = 0.4276; ZP_BOT = 0.0327; ROWS = [ZP_TOP - 0.105, ZP_TOP - 0.230, ZP_TOP - 0.330]; GAUGE = 0.039
+PT = 0.020; ZP_TOP = 0.4276; ZP_BOT = 0.0127 if os.environ.get('R12_FIN_TO_BF') else 0.0327; ROWS = [ZP_TOP - 0.105, ZP_TOP - 0.230, ZP_TOP - 0.330]; GAUGE = 0.039
 A_FL, A_WB = 0.0070, float(os.environ.get("R12_A_WB", "0.0042"))   # weld throats: 10 mm leg to flanges, 6 mm leg to webs
 
 
@@ -36,6 +36,7 @@ for k, v in (("B", BB), ("H", BH), ("s", Btw), ("t", Btf), ("r2", Br)):
     cs = setp(cs, k, v)
 t = t[:a] + cs + t[b:]
 pts = {int(m[1]): [float(m[3]), float(m[4]), float(m[5])] for m in re.finditer(r"<Point3D><Id>(\d+)</Id><Name>([^<]*)</Name><X>([^<]*)</X><Y>([^<]*)</Y><Z>([^<]*)</Z>", t)}
+pts0 = {k: list(v) for k, v in pts.items()}   # original geometry (for matching the cdb beams)
 N0 = pts[1]; zb = N0[2] - BH / 2                        # bottom of steel (radial centroid on the node, ring flush)
 er = [pts[1][i] - pts[2][i] for i in range(3)]; l = math.hypot(*er); er = [x / l for x in er]
 et = [-er[1], er[0], 0.0]                                # tangent (towards P4 / SLN55)
@@ -62,6 +63,23 @@ def rev(m):
 
 
 t = re.sub(r"<LineSegment3D><Id>3</Id>.*?</LineSegment3D>", rev, t, count=1)
+if not os.environ.get("R12_CHORDS"):
+    # IDEA 26.0 draws a continuous member as ONE straight line (it took the SLN 55 chord direction and ran it on through the
+    # node, 20 deg off the SLN 56 chord). So the ring is modelled straight along the tangent at the node (the bisector of the
+    # two chords, each 10 deg off), and every bracket / stiffener part is placed on that straight ring.
+    for pid_, sg in ((4, +1), (5, -1)):
+        Lr = math.dist(pts[pid_][:2], N0[:2]); newp = [N0[0] + sg * Lr * et[0], N0[1] + sg * Lr * et[1], pts[pid_][2]]
+        t = re.sub(rf"(<Point3D><Id>{pid_}</Id><Name>P{pid_}</Name><X>)[^<]*(</X><Y>)[^<]*(</Y><Z>)[^<]*(</Z>)",
+                   lambda m: f"{m[1]}{newp[0]!r}{m[2]}{newp[1]!r}{m[3]}{newp[2]!r}{m[4]}", t, count=1)
+        pts[pid_] = newp
+    vx, vy = [-et[0], -et[1], 0.0], [er[0], er[1], 0.0]          # both ring elements run P4 -> P1 -> P5 (along -et)
+    for sid in (3, 4):
+        def fixv(m, vx=vx, vy=vy):
+            s = m.group(0)
+            s = re.sub(r"<VecX><X>[^<]*</X><Y>[^<]*</Y><Z>[^<]*</Z></VecX>", f"<VecX><X>{vx[0]!r}</X><Y>{vx[1]!r}</Y><Z>0.0</Z></VecX>", s)
+            s = re.sub(r"<VecY><X>[^<]*</X><Y>[^<]*</Y><Z>[^<]*</Z></VecY>", f"<VecY><X>{vy[0]!r}</X><Y>{vy[1]!r}</Y><Z>0.0</Z></VecY>", s)
+            return s
+        t = re.sub(rf"<LineSegment3D><Id>{sid}</Id>.*?</LineSegment3D>", fixv, t, count=1)
 ecc = -(BH - RH) / 2
 m2 = re.search(r"<Member1D><Id>2</Id>.*?</Member1D>", t).group(0)
 m2n = m2.replace("<Name>SLN55 ring</Name>", "<Name>ring SLN55 + SLN56 (continuous)</Name>").replace(
@@ -157,6 +175,8 @@ for sig in (+1, -1):
         weld(f"fin lower to ring top flange ({side})", f"P{Lp}", "2", P(s1, tm, RH - Rtf), P(s2, tm, RH - Rtf), A_FL)
         sx = sw - Rtw / 2 if Lp == L1 else sw + Rtw / 2
         weld(f"fin lower to ring web ({side})", f"P{Lp}", "2", P(sx, tm, ZP_BOT), P(sx, tm, RH - Rtf), A_WB)
+        if os.environ.get("R12_FIN_TO_BF"):
+            weld(f"fin lower to ring bottom flange ({side})", f"P{Lp}", "2", P(s1, tm, ZP_BOT), P(s2, tm, ZP_BOT), A_FL)
 L_grip = 2 * PT + Btw
 
 
@@ -200,6 +220,13 @@ for sig in ((+1, -1) if not os.environ.get("R12_ONLY_FINS") else ()):
         for key, s1, s2 in (("L1", -0.0725, -Rtw / 2), ("L2", Rtw / 2, 0.0725)):
             sw, tm = fin[sig]["s0"], fin[sig]["tm"]
             weld(f"fin lower {key} to 295 plate ({side})", f"P{fin[sig][key]}", f"P{v1}", P(sw + s1, tm, ZP_BOT), P(sw + s2, tm, ZP_BOT), A_WB)
+        if os.environ.get("R12_V3"):
+            # variant 3: cover plate under the ring bottom flange, 140 x 15, 400 per side from the node (800 overall, in two
+            # pieces because the ring chords kink 20 deg at the node), welded all round to the flange underside, 8 mm leg (a 5.6)
+            TC, LC, A8 = 0.015, float(os.environ.get("R12_V3_L", "0.400")), 0.0056
+            L0 = 0.12; cv = plate(f"cover plate 140x15 under ring bottom flange ({side})", Q(0, 0, -TC / 2), d, n, [(L0, -WB), (LC, -WB), (LC, WB), (L0, WB)], TC)
+            for (l1, w1_), (l2, w2_) in (((L0, -WB), (LC, -WB)), ((L0, WB), (LC, WB)), ((LC, -WB), (LC, WB)), ((L0, -WB), (L0, WB))):
+                weld(f"cover plate to ring bottom flange ({side})", f"P{cv}", "2", Q(l1, w1_, -TC / 2), Q(l2, w2_, -TC / 2), A8)
     for half, ws in ((("a", +1), ("b", -1)) if not os.environ.get("R12_NO_BOTTOM") else ()):
         w1, w2 = ws * Rtw / 2, ws * RB / 2
         bp = None if not os.environ.get("R12_WITH_BOTPL") else plate(f"20 bottom plate {half} ({side})", Q(0, 0, Rtf + PT / 2), d, n, [fin_pt(sig, w1, d, n), (lamS - PT / 2, w1), (lamS - PT / 2, w2), fin_pt(sig, w2, d, n)], PT)
@@ -263,7 +290,7 @@ def far_dir(b):
     return unit([m.xyz[o][i] - m.xyz[node][i] for i in range(3)])
 
 
-want = {1: [pts[2][i] - N0[i] for i in range(3)], 3: [pts[4][i] - N0[i] for i in range(3)], 4: [pts[5][i] - N0[i] for i in range(3)]}
+want = {1: [pts0[2][i] - N0[i] for i in range(3)], 3: [pts0[4][i] - N0[i] for i in range(3)], 4: [pts0[5][i] - N0[i] for i in range(3)]}
 pick = {}
 for e, w in want.items():
     w = unit(w); bb = max(bl, key=lambda b: sum(far_dir(b)[i] * w[i] for i in range(3)))

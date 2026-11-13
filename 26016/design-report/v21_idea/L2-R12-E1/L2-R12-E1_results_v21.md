@@ -73,3 +73,31 @@ plate-to-plate welds 108.7 -> 107.9 %, plastic strain 6.6 % unchanged, bolts 60.
 The earlier mechanism with the 20 x 295 plates came from modelling them as two halves either side of the ring web; as one plate welded to the flange face along its long edges they connect.
 Both variants move the peak to the end of the new plate / weld on the existing ring bottom flange and raise it; neither brings it under 5 %. The 205x70x20 stiffener (top of section E) is away from the peak and was not tried.
 Two variants were enough to show the trend (not the 4 allowed). Reading: the ring flange is near yield over the joint, so the peak is a local concentration at every attachment end; the IDEA result does not support "add the drawn plates" as the fix on its own.
+
+## Wing's three comments (13 Nov 2026) and the corrected model (variant 4)
+
+Findings in variant 0:
+1. "Missing weld between end plate and bottom flange": TRUE. The lower 395x145x20 fin plates stopped 20 mm above the ring bottom flange
+   (a gap left for the 20 mm plates that were not modelled). They were welded only to the ring web (a 4.2) and to the underside of the ring top flange (a 7.0).
+   The upper fin piece was welded to the top of the ring top flange (a 7.0). The drawing (section E) shows the plates going down to the bottom flange zone, welded.
+2. "Missing stiffener": the SLN 56 side 315 stiffener WAS in the model (one full-width plate, both faces of the web). But it sat off the IDEA ring, see 3.
+3. "UB straight but haunch not": IDEA 26.0 builds a continuous member (ring SLN 55 + 56) as ONE straight line. It took the SLN 55 chord and ran it on
+   through the node, 20 deg off the real SLN 56 chord. My bracket and stiffener parts followed the real chords (+-10 deg from the tangent), so on the
+   SLN 56 side they were up to about 110 mm off the IDEA ring. The ring forces on that side were also applied along the wrong line.
+
+Correction (variant 4, `var_V4s`): the ring is modelled straight along the tangent at the node (the bisector of the two chords). Every bracket and stiffener
+part sits on it: 10 web plate in the ring web plane, top plates and inclined stiffeners centred on the ring top flange, both sides. Both 315 stiffeners are
+full width (both faces), welded to both flanges. The lower fin plates go down to the ring bottom flange and are welded to it (a 7.0).
+Limitation: the 10 deg kink of each chord is not modelled; at the 315 stiffeners the real ring web is about 55 mm inward of the model's.
+A kinked continuous ring cannot be modelled in IDEA 26.0 (a continuous member is straight).
+
+| model | strain (where, LC) | max weld (which, LC) | bolts |
+|---|---|---|---|
+| v0 (chords, as first reported) | 6.6 % ring bottom flange (153) | 109.1 % | 60.7 % |
+| v0s = v0 on the straight ring | 3.5 % (122) | 101.4 % (153) | 70.2 % |
+| **V4 = v0s + fin feet welded to the bottom flange (corrected model)** | **3.0 % ring top flange (122)** | **100.6 % 315 stiffener SLN 55 side to ring flange, a 7.0, L 146 (153)**; bracket top plates / inclined stiffeners 98-99.5 % | **69.8 % (122)** |
+| V5 = V4 with the 20 x 295 plates (fins stand on them) | 7.1 % ring bottom flange at the plate end (119) | 99.2 % 295 plates to flange (153 / 122) | 67.0 % |
+
+The large strain in v0 to v3 came mainly from the ring geometry error (point 3), not from the ring capacity.
+Corrected model V4: strain passes (3.0 % < 5 %), bolts 70 %, welds just over at 100.6 % (one 315 stiffener weld, a 7.0), many welds at 98-99 %.
+V4 report: `L2-R12-E1_000_V4.pdf` (author CaSE). The superseded statements above about the ring being at its limit apply to the faulty geometry.
