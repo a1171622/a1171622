@@ -61,3 +61,15 @@ from the existing ring at its limit, not from the new plates or the bolts.
 
 Rerun with 10 mm leg (a 7.0) to the webs: ring-web welds 107.6 -> 99.2 %, but the maximum weld stays 108.3 % (flange welds to the ring),
 plate-to-plate welds 108.7 -> 107.9 %, plastic strain 6.6 % unchanged, bolts 60.3 %. The result is not governed by reading the web welds as 6 mm.
+
+## Variants with the drawing's extra bottom plates (13 Nov 2026, picture `L2-R12-E1_variants_v21.png`)
+
+| variant | what is added | connects | max plate strain (where, LC) | max weld (which, LC) | bolts |
+|---|---|---|---|---|---|
+| 0 | none (current model) | yes | 6.6 % ring bottom flange below the radial web / lower fins (LC 153) | 109.1 % 315 stiffener to ring top flange, a 7.0 (LC 121) | 60.7 % |
+| 1 | 20 x 295 plates on the ring bottom flange, 140 wide (2 x 70 + web), from the radial web face to the 315 stiffener; long edges welded to the flange face (a 7.0), end to the stiffener, lower fins welded onto them | yes | 7.1 % ring bottom flange at the end of the new plate (LC 120) | 102.8 % 295 plate to ring bottom flange, SLN 55 side (LC 119) | 59.1 % |
+| 2 | section E 185x70x20 plates under the fins (2 x 70 + web, 185 along the ring), edges welded to the flange face; radial web cut to sit on it | yes | 8.0 % ring bottom flange at the plate ends (LC 119) | 105.3 % ring top flange welds; 185 plate to flange 104.9 % (LC 120) | 60.4 % |
+
+The earlier mechanism with the 20 x 295 plates came from modelling them as two halves either side of the ring web; as one plate welded to the flange face along its long edges they connect.
+Both variants move the peak to the end of the new plate / weld on the existing ring bottom flange and raise it; neither brings it under 5 %. The 205x70x20 stiffener (top of section E) is away from the peak and was not tried.
+Two variants were enough to show the trend (not the 4 allowed). Reading: the ring flange is near yield over the joint, so the peak is a local concentration at every attachment end; the IDEA result does not support "add the drawn plates" as the fix on its own.

@@ -184,6 +184,22 @@ for sig in ((+1, -1) if not os.environ.get("R12_ONLY_FINS") else ()):
         stf = plate(f"20 ring stiffener at 315 ({side})", Q(lamS, 0, 0), n, up, [(-RB / 2, Rtf), (RB / 2, Rtf), (RB / 2, RH - Rtf), (-RB / 2, RH - Rtf)], PT)
         weld(f"ring stiffener to top flange ({side})", f"P{stf}", "2", Q(lamS, -RB / 2, RH - Rtf), Q(lamS, RB / 2, RH - Rtf), A_FL)
         weld(f"ring stiffener to bottom flange ({side})", f"P{stf}", "2", Q(lamS, -RB / 2, Rtf), Q(lamS, RB / 2, Rtf), A_FL)
+    if os.environ.get("R12_V1") and stf:
+        # variant 1: the drawing's 20 x 295 plates on the ring bottom flange, one plate 140 wide per side (overlaps the ring
+        # web), from the radial web face to the 315 stiffener; long edges welded to the bottom flange face, end edge to the
+        # stiffener, the lower fin plates stand on it (their bottom edges welded to it)
+        def ept(tt, w, d=d, n=n):
+            det = d[0] * et[0] + d[1] * et[1]; return ((tt - w * (n[0] * et[0] + n[1] * et[1])) / det, w)
+        WB = 0.070; t_in = sig * Btw / 2
+        v1 = plate(f"20 x 295 plate on ring bottom flange ({side})", Q(0, 0, Rtf + PT / 2), d, n,
+                   [ept(t_in, -WB), (lamS - PT / 2, -WB), (lamS - PT / 2, WB), ept(t_in, WB)], PT)
+        for wv in (-WB, WB):
+            a_ = ept(t_in, wv)
+            weld(f"295 plate to ring bottom flange ({side})", f"P{v1}", "2", Q(a_[0], wv, Rtf), Q(lamS - PT / 2, wv, Rtf), A_FL, "Fillet")
+        weld(f"295 plate to ring stiffener ({side})", f"P{v1}", f"P{stf}", Q(lamS - PT / 2, -WB, Rtf + PT / 2), Q(lamS - PT / 2, WB, Rtf + PT / 2), A_WB)
+        for key, s1, s2 in (("L1", -0.0725, -Rtw / 2), ("L2", Rtw / 2, 0.0725)):
+            sw, tm = fin[sig]["s0"], fin[sig]["tm"]
+            weld(f"fin lower {key} to 295 plate ({side})", f"P{fin[sig][key]}", f"P{v1}", P(sw + s1, tm, ZP_BOT), P(sw + s2, tm, ZP_BOT), A_WB)
     for half, ws in ((("a", +1), ("b", -1)) if not os.environ.get("R12_NO_BOTTOM") else ()):
         w1, w2 = ws * Rtw / 2, ws * RB / 2
         bp = None if not os.environ.get("R12_WITH_BOTPL") else plate(f"20 bottom plate {half} ({side})", Q(0, 0, Rtf + PT / 2), d, n, [fin_pt(sig, w1, d, n), (lamS - PT / 2, w1), (lamS - PT / 2, w2), fin_pt(sig, w2, d, n)], PT)
@@ -211,7 +227,20 @@ for sig in ((+1, -1) if not os.environ.get("R12_ONLY_FINS") else ()):
         weld(f"inclined stiffener to ring top flange ({side} {half})", f"P{ip}", "2", Q(lamS, w1, hR), Q(lamS, w2, hR), A_FL)
         weld(f"inclined stiffener to top plate ({side} {half})", f"P{ip}", f"P{tp}", Q(lt, w1, hT), Q(lt, w2, hT), A_FL)
 smin = -0.105   # ring inner flange tip under the radial flange width (+-96) incl. the 10 deg chord, + 5 mm
-neg = plate("cut radial bottom flange over the ring", P(0, 0, Btf / 2), er, et, [(smin, -0.12), (0.09, -0.12), (0.09, 0.12), (smin, 0.12)], Btf + 0.004, neg=True)
+if os.environ.get("R12_V2"):
+    # variant 2: section E 185x70x20 plate under the fins: one plate 140 wide (2 x 70 + ring web, overlaps the web) x 185
+    # along the ring, on the ring bottom flange; radial web cut to sit on it; edges along the ring welded to the flange face
+    s0m = 0.5 * (fin[+1]["s0"] + fin[-1]["s0"])
+    v2 = plate("185x70x20 plates under the fins (section E, 2 x 70 + web)", P(s0m, 0, Rtf + PT / 2), er, et,
+               [(-0.070, -0.0925), (0.070, -0.0925), (0.070, 0.0925), (-0.070, 0.0925)], PT)
+    for sv in (-0.070, 0.070):
+        weld("185 plate to ring bottom flange", f"P{v2}", "2", P(s0m + sv, -0.0925, Rtf), P(s0m + sv, 0.0925, Rtf), A_FL, "Fillet")
+    for sig in (+1, -1):
+        for key, s1, s2 in (("L1", -0.0725, -Rtw / 2), ("L2", Rtw / 2, 0.0725)):
+            sw, tm = fin[sig]["s0"], fin[sig]["tm"]
+            weld(f"fin lower {key} to 185 plate", f"P{fin[sig][key]}", f"P{v2}", P(sw + s1, tm, ZP_BOT), P(sw + s2, tm, ZP_BOT), A_WB)
+H_CUT = (Rtf + PT + 0.001) if os.environ.get("R12_V2") else Btf + 0.004
+neg = plate("cut radial bottom flange over the ring", P(0, 0, H_CUT / 2 - 0.002), er, et, [(smin, -0.12), (0.09, -0.12), (0.09, 0.12), (smin, 0.12)], H_CUT, neg=True)
 cuts.append(f"<CutBeamByBeamData><Name>Radial bottom flange cut over the ring</Name><ModifiedObject><TypeName>BeamData</TypeName><Id>1</Id></ModifiedObject><CuttingObject><TypeName>PlateData</TypeName><Id>{neg}</Id></CuttingObject>"
             "<IsWeld>false</IsWeld><Offset>0</Offset><Method>Surface</Method><Orientation>Default</Orientation><PlaneOnCuttingObject>Closer</PlaneOnCuttingObject><CutPart>Begin</CutPart><ExtendBeforeCut>false</ExtendBeforeCut></CutBeamByBeamData>")
 BD = ("<Plates /><OriginalModelId>{o}</OriginalModelId><Cuts /><IsAdded>false</IsAdded><AddedMemberLength>0</AddedMemberLength><IsNegativeObject>false</IsNegativeObject><MirrorY>false</MirrorY>"
