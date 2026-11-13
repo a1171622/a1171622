@@ -1,0 +1,10 @@
+﻿joint,connection,load_effects,passed,max_utilisation_%,governing_check,governing_load_effect,Analysis max %,Analysis governing,Plates max %,Plates governing,Loc. deformation max %,Loc. deformation governing,Bolts max %,Bolts governing,Welds max %,Welds governing,error
+L1-R8-A_000.xml,SLN180+SLN169 radial (continuous) - SLN38 column below - SLN185 ring - SLN227 ring,43,PASS,100.0,Analysis,,100.0,,0.0,C LC_120,0.0,,13.6,C LC_108,73.3,C LC_120,
+L1-R8-A_080.xml,SLN187+SLN190 radial (continuous) - SLN42 column below - SLN189 ring - SLN192 ring,43,PASS,100.0,Analysis,,100.0,,0.0,C LC_121,0.0,,13.4,C LC_109,62.5,C LC_121,
+L1-R8-A_120.xml,SLN194+SLN196 radial (continuous) - SLN44 column below - SLN195 ring - SLN198 ring,43,PASS,100.0,Analysis,,100.0,,0.0,C LC_121,0.0,,13.0,C LC_109,74.7,C LC_121,
+L1-R8-A_160.xml,SLN199+SLN211 radial (continuous) - SLN46 column below - SLN210 ring - SLN213 ring,43,PASS,100.0,Analysis,,100.0,,0.0,C LC_119,0.0,,13.7,C LC_107,76.5,C LC_119,
+L1-R8-A_200.xml,SLN202+SLN215 radial (continuous) - SLN48 column below - SLN214 ring - SLN217 ring,43,PASS,100.0,Analysis,,100.0,,0.0,C LC_119,0.0,,13.3,C LC_107,64.2,C LC_119,
+L1-R8-A_240.xml,SLN204+SLN219 radial (continuous) - SLN50 column below - SLN218 ring - SLN221 ring,43,PASS,100.0,Analysis,,100.0,,0.0,C LC_122,0.0,,13.1,C LC_110,72.0,C LC_122,
+L1-R8-A_320.xml,SLN208+SLN224 radial (continuous) - SLN54 column below - SLN225 ring - SLN226 ring,43,PASS,100.0,Analysis,,100.0,,0.0,C LC_120,0.0,,11.7,C LC_108,63.8,C LC_120,
+L1-R8-B_040.xml,SLN262+SLN263 radial (continuous) - SLN40 column below - SLN121 column above - SLN264 ring - SLN265 ring,43,PASS,100.0,Analysis,,100.0,,0.2,C LC_124,0.0,,18.1,C LC_152,73.9,C LC_124,
+L1-R8-B_280.xml,SLN206+SLN222 radial (continuous) - SLN52 column below - SLN85 column above - SLN425 ring - SLN426 ring,43,PASS,100.0,Analysis,,100.0,,0.6,C LC_124,0.0,,17.8,C LC_152,93.8,C LC_124,

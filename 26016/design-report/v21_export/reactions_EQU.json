@@ -1,0 +1,2931 @@
+{
+ "source": {
+  "model": "26016 member check v21 (v20 + drawings 970027-S01-ST sections: stair RHS 160x80x5, L2 radials UB 457x191x98, landing supports SHS 80x80x6.3; run 13 Nov 2026, NguyenPC, exit 0, 0 errors, 212 warnings)",
+  "cdb": "C:\\Sofistik workflow\\26016-member-check\\v21\\26016_check_v21.cdb",
+  "erg": "C:\\Sofistik workflow\\26016-member-check\\v21\\26016_check_v21.erg",
+  "extracted": "2026-11-13 18:28",
+  "reader": "SOFiSTiK MCP server read-only CDB reader (sof_cdb_w DLL), .erg tables parsed by erg.py",
+  "units": "forces kN, moments kNm, displacements mm, coordinates m"
+ },
+ "sign": "Support forces as stored by SOFiSTiK = force of the support on the structure in global axes: pz > 0 = support pushes the structure up (bearing / compression on the foundation), pz < 0 = uplift (tension in the anchors).",
+ "what": "Support forces at every support node (columns, kingpost base line 5807 to 5824, external stair bases 901 to 916) for EQU 0.9G + 1.5W, combinations 131 to 134",
+ "combinations": [
+  {
+   "lc": 131,
+   "title": "131 EQU 0.9G+W +X uplift",
+   "sum_Fx": -307.255,
+   "sum_Fy": -0.202,
+   "sum_Fz": 761.169,
+   "sofistik_stored_sum_kN": [
+    -307.255,
+    -0.202,
+    761.17
+   ],
+   "supports": 69,
+   "max_uplift": {
+    "node": 2,
+    "pz": -47.9397
+   },
+   "uplift_nodes": [
+    2,
+    4,
+    3,
+    901,
+    20,
+    17,
+    5811,
+    909,
+    5812,
+    5810,
+    5813,
+    912,
+    31,
+    5809,
+    906,
+    5814,
+    914,
+    904,
+    5808,
+    915
+   ],
+   "reactions": [
+    {
+     "node": 2,
+     "x": -11.999,
+     "y": -0.002216,
+     "z": 0.0,
+     "location": "column base (SPT 2)",
+     "px": -27.0149,
+     "py": -0.2805,
+     "pz": -47.9397
+    },
+    {
+     "node": 3,
+     "x": -9.19319,
+     "y": 7.71111,
+     "z": 0.0,
+     "location": "column base (SPT 3)",
+     "px": -21.9523,
+     "py": 1.5142,
+     "pz": -26.6598
+    },
+    {
+     "node": 4,
+     "x": -9.19034,
+     "y": -7.71451,
+     "z": 0.0,
+     "location": "column base (SPT 4)",
+     "px": -23.5296,
+     "py": -0.1132,
+     "pz": -28.103
+    },
+    {
+     "node": 5,
+     "x": -6.51137,
+     "y": -5.462,
+     "z": 0.0,
+     "location": "column base (SPT 5)",
+     "px": -3.9208,
+     "py": 0.2675,
+     "pz": 26.5761
+    },
+    {
+     "node": 6,
+     "x": -7.98689,
+     "y": -2.90536,
+     "z": 0.0,
+     "location": "column base (SPT 6)",
+     "px": -3.76,
+     "py": 0.2899,
+     "pz": 7.2593
+    },
+    {
+     "node": 7,
+     "x": -8.49983,
+     "y": -0.000986,
+     "z": 0.0,
+     "location": "column base (SPT 7)",
+     "px": -3.6729,
+     "py": 0.0184,
+     "pz": 33.7596
+    },
+    {
+     "node": 8,
+     "x": -7.9864,
+     "y": 2.90887,
+     "z": 0.0,
+     "location": "column base (SPT 8)",
+     "px": -3.7164,
+     "py": -0.3091,
+     "pz": 8.233
+    },
+    {
+     "node": 9,
+     "x": -6.51013,
+     "y": 5.46517,
+     "z": 0.0,
+     "location": "column base (SPT 9)",
+     "px": -3.9536,
+     "py": -0.2404,
+     "pz": 25.5957
+    },
+    {
+     "node": 10,
+     "x": -4.24858,
+     "y": 7.3624,
+     "z": 0.0,
+     "location": "column base (SPT 10)",
+     "px": -4.3054,
+     "py": -0.4445,
+     "pz": 8.7638
+    },
+    {
+     "node": 11,
+     "x": -1.47453,
+     "y": 8.37171,
+     "z": 0.0,
+     "location": "column base (SPT 11)",
+     "px": -4.2268,
+     "py": -0.0466,
+     "pz": 9.0766
+    },
+    {
+     "node": 12,
+     "x": -2.08579,
+     "y": 11.8163,
+     "z": 0.0,
+     "location": "column base (SPT 12)",
+     "px": -18.5107,
+     "py": -7.1937,
+     "pz": 22.3644
+    },
+    {
+     "node": 13,
+     "x": 1.47501,
+     "y": 8.37087,
+     "z": 0.0,
+     "location": "column base (SPT 13)",
+     "px": -0.0054,
+     "py": -0.0129,
+     "pz": 8.5656
+    },
+    {
+     "node": 14,
+     "x": 5.99758,
+     "y": 10.3925,
+     "z": 0.0,
+     "location": "column base (SPT 14)",
+     "px": -27.1629,
+     "py": -9.0828,
+     "pz": 66.8313
+    },
+    {
+     "node": 15,
+     "x": 4.24687,
+     "y": 7.36169,
+     "z": 0.0,
+     "location": "column base (SPT 15)",
+     "px": 0.0349,
+     "py": 0.0392,
+     "pz": 13.971
+    },
+    {
+     "node": 16,
+     "x": 6.51061,
+     "y": 5.46434,
+     "z": 0.0,
+     "location": "column base (SPT 16)",
+     "px": -0.0092,
+     "py": -0.0747,
+     "pz": 16.0869
+    },
+    {
+     "node": 17,
+     "x": 7.98689,
+     "y": 2.90804,
+     "z": 0.0,
+     "location": "column base (SPT 17)",
+     "px": 0.1919,
+     "py": 0.0736,
+     "pz": -9.4926
+    },
+    {
+     "node": 18,
+     "x": 8.49983,
+     "y": 0.000986,
+     "z": 0.0,
+     "location": "column base (SPT 18)",
+     "px": -0.0715,
+     "py": -0.0015,
+     "pz": 9.4488
+    },
+    {
+     "node": 19,
+     "x": 11.2746,
+     "y": 4.10598,
+     "z": 0.0,
+     "location": "column base (SPT 19)",
+     "px": -33.3923,
+     "py": -4.576,
+     "pz": 100.1056
+    },
+    {
+     "node": 20,
+     "x": 7.98739,
+     "y": -2.90718,
+     "z": 0.0,
+     "location": "column base (SPT 20)",
+     "px": 0.0359,
+     "py": -0.0363,
+     "pz": -10.1216
+    },
+    {
+     "node": 21,
+     "x": 2.81907,
+     "y": 1.02864,
+     "z": 0.0,
+     "location": "column base (SPT 21)",
+     "px": -0.0872,
+     "py": -0.1201,
+     "pz": 26.9959
+    },
+    {
+     "node": 22,
+     "x": 0.51943,
+     "y": 2.95526,
+     "z": 0.0,
+     "location": "column base (SPT 22)",
+     "px": 0.0086,
+     "py": -0.0566,
+     "pz": 33.2466
+    },
+    {
+     "node": 23,
+     "x": -2.29864,
+     "y": 1.92747,
+     "z": 0.0,
+     "location": "column base (SPT 23)",
+     "px": 0.1513,
+     "py": 0.0055,
+     "pz": 36.2077
+    },
+    {
+     "node": 24,
+     "x": -2.81758,
+     "y": -1.02695,
+     "z": 0.0,
+     "location": "column base (SPT 24)",
+     "px": 0.002,
+     "py": 0.1223,
+     "pz": 36.7062
+    },
+    {
+     "node": 25,
+     "x": -0.51845,
+     "y": -2.95358,
+     "z": 0.0,
+     "location": "column base (SPT 25)",
+     "px": -0.1042,
+     "py": 0.0528,
+     "pz": 25.1408
+    },
+    {
+     "node": 26,
+     "x": -4.24906,
+     "y": -7.36156,
+     "z": 0.0,
+     "location": "column base (SPT 26)",
+     "px": -4.3168,
+     "py": 0.4213,
+     "pz": 8.585
+    },
+    {
+     "node": 27,
+     "x": -2.08142,
+     "y": -11.8171,
+     "z": 0.0,
+     "location": "column base (SPT 27)",
+     "px": -20.6258,
+     "py": 8.1335,
+     "pz": 21.7946
+    },
+    {
+     "node": 28,
+     "x": -1.47501,
+     "y": -8.37087,
+     "z": 0.0,
+     "location": "column base (SPT 28)",
+     "px": -3.9981,
+     "py": -0.0108,
+     "pz": 21.1241
+    },
+    {
+     "node": 29,
+     "x": 1.47695,
+     "y": -8.37053,
+     "z": 0.0,
+     "location": "column base (SPT 29)",
+     "px": -0.1169,
+     "py": 0.0427,
+     "pz": 15.5293
+    },
+    {
+     "node": 30,
+     "x": 2.29963,
+     "y": -1.92578,
+     "z": 0.0,
+     "location": "column base (SPT 30)",
+     "px": -0.1791,
+     "py": -0.0743,
+     "pz": 33.0803
+    },
+    {
+     "node": 31,
+     "x": 4.25077,
+     "y": -7.36057,
+     "z": 0.0,
+     "location": "column base (SPT 31)",
+     "px": 0.0212,
+     "py": -0.1056,
+     "pz": -3.5896
+    },
+    {
+     "node": 32,
+     "x": 6.00142,
+     "y": -10.3903,
+     "z": 0.0,
+     "location": "column base (SPT 32)",
+     "px": -27.1552,
+     "py": 10.0143,
+     "pz": 70.103
+    },
+    {
+     "node": 33,
+     "x": 6.51188,
+     "y": -5.46283,
+     "z": 0.0,
+     "location": "column base (SPT 33)",
+     "px": -0.0371,
+     "py": 0.0261,
+     "pz": 8.7439
+    },
+    {
+     "node": 34,
+     "x": 11.2761,
+     "y": -4.10182,
+     "z": 0.0,
+     "location": "column base (SPT 34)",
+     "px": -32.9854,
+     "py": 4.3455,
+     "pz": 100.5878
+    },
+    {
+     "node": 901,
+     "x": 11.68,
+     "y": -2.48,
+     "z": 0.64,
+     "location": "external stair base (SPT 901): right flight 1 inner foot",
+     "px": -10.8599,
+     "py": -19.9281,
+     "pz": -12.7472
+    },
+    {
+     "node": 902,
+     "x": 13.73,
+     "y": -2.84,
+     "z": 0.64,
+     "location": "external stair base (SPT 902): right flight 1 outer foot",
+     "px": -0.7499,
+     "py": 20.4927,
+     "pz": 16.5289
+    },
+    {
+     "node": 903,
+     "x": 12.09,
+     "y": -0.06,
+     "z": 0.0,
+     "location": "external stair base (SPT 903): right landing 1 leg inner-low base",
+     "px": -0.3754,
+     "py": 0.0794,
+     "pz": 7.9906
+    },
+    {
+     "node": 904,
+     "x": 14.14,
+     "y": -0.39,
+     "z": 0.0,
+     "location": "external stair base (SPT 904): right landing 1 leg outer-low base",
+     "px": -0.3847,
+     "py": 0.0213,
+     "pz": -0.8949
+    },
+    {
+     "node": 905,
+     "x": 14.04,
+     "y": 1.02,
+     "z": 0.0,
+     "location": "external stair base (SPT 905): right landing 1 leg outer-high base",
+     "px": -0.5627,
+     "py": 0.1081,
+     "pz": 6.9359
+    },
+    {
+     "node": 906,
+     "x": 11.99,
+     "y": 0.66,
+     "z": 0.0,
+     "location": "external stair base (SPT 906): right landing 1 leg inner-high base",
+     "px": -0.5813,
+     "py": 0.0329,
+     "pz": -2.1961
+    },
+    {
+     "node": 907,
+     "x": 13.59,
+     "y": 3.53,
+     "z": 0.0,
+     "location": "external stair base (SPT 907): right landing 2 leg outer-low base",
+     "px": -0.3466,
+     "py": 0.0093,
+     "pz": 2.1941
+    },
+    {
+     "node": 908,
+     "x": 13.25,
+     "y": 5.42,
+     "z": 0.0,
+     "location": "external stair base (SPT 908): right landing 2 leg outer-high base",
+     "px": -0.4505,
+     "py": -0.0169,
+     "pz": 2.3731
+    },
+    {
+     "node": 909,
+     "x": 10.55,
+     "y": -5.61,
+     "z": 0.64,
+     "location": "external stair base (SPT 909): left flight 1 inner foot",
+     "px": 2.5925,
+     "py": 11.9917,
+     "pz": -8.158
+    },
+    {
+     "node": 910,
+     "x": 12.36,
+     "y": -6.65,
+     "z": 0.64,
+     "location": "external stair base (SPT 910): left flight 1 outer foot",
+     "px": -16.7227,
+     "py": -15.7735,
+     "pz": 15.5551
+    },
+    {
+     "node": 911,
+     "x": 9.32,
+     "y": -7.74,
+     "z": 0.0,
+     "location": "external stair base (SPT 911): left landing 1 leg inner-low base",
+     "px": -0.3277,
+     "py": 0.1126,
+     "pz": 2.4591
+    },
+    {
+     "node": 912,
+     "x": 11.11,
+     "y": -8.78,
+     "z": 0.0,
+     "location": "external stair base (SPT 912): left landing 1 leg outer-low base",
+     "px": -0.3038,
+     "py": 0.1553,
+     "pz": -3.9985
+    },
+    {
+     "node": 913,
+     "x": 10.14,
+     "y": -9.82,
+     "z": 0.0,
+     "location": "external stair base (SPT 913): left landing 1 leg outer-high base",
+     "px": -0.4735,
+     "py": 0.1674,
+     "pz": 5.791
+    },
+    {
+     "node": 914,
+     "x": 8.79,
+     "y": -8.23,
+     "z": 0.0,
+     "location": "external stair base (SPT 914): left landing 1 leg inner-high base",
+     "px": -0.4523,
+     "py": 0.2327,
+     "pz": -1.4855
+    },
+    {
+     "node": 915,
+     "x": 8.19,
+     "y": -11.46,
+     "z": 0.0,
+     "location": "external stair base (SPT 915): left landing 2 leg outer-low base",
+     "px": -0.3031,
+     "py": 0.0583,
+     "pz": -0.1921
+    },
+    {
+     "node": 916,
+     "x": 6.74,
+     "y": -12.73,
+     "z": 0.0,
+     "location": "external stair base (SPT 916): left landing 2 leg outer-high base",
+     "px": -0.348,
+     "py": 0.1209,
+     "pz": 2.5851
+    },
+    {
+     "node": 1001,
+     "x": 0.000427,
+     "y": -0.30574,
+     "z": 0.0,
+     "location": "SPT 1001",
+     "px": -0.3911,
+     "py": 0.0816,
+     "pz": 1.8387
+    },
+    {
+     "node": 1002,
+     "x": 0.000427,
+     "y": 0.30426,
+     "z": 0.0,
+     "location": "SPT 1002",
+     "px": -0.3121,
+     "py": -0.0952,
+     "pz": 3.0896
+    },
+    {
+     "node": 5807,
+     "x": -0.07139,
+     "y": 0.295685,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.2983,
+     "py": -0.1204,
+     "pz": 1.1852
+    },
+    {
+     "node": 5808,
+     "x": -0.139168,
+     "y": 0.27044,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.3048,
+     "py": -0.1837,
+     "pz": -0.7678
+    },
+    {
+     "node": 5809,
+     "x": -0.216423,
+     "y": 0.213739,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.2323,
+     "py": -0.1411,
+     "pz": -3.2207
+    },
+    {
+     "node": 5810,
+     "x": -0.272272,
+     "y": 0.135865,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.1748,
+     "py": 0.0146,
+     "pz": -6.0254
+    },
+    {
+     "node": 5811,
+     "x": -0.304216,
+     "y": 0.014023,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.2795,
+     "py": 0.1617,
+     "pz": -8.1612
+    },
+    {
+     "node": 5812,
+     "x": -0.284202,
+     "y": -0.110336,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.3184,
+     "py": 0.1006,
+     "pz": -7.1016
+    },
+    {
+     "node": 5813,
+     "x": -0.230503,
+     "y": -0.19998,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.3948,
+     "py": 0.2193,
+     "pz": -4.7986
+    },
+    {
+     "node": 5814,
+     "x": -0.149696,
+     "y": -0.266236,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.5522,
+     "py": 0.2704,
+     "pz": -2.1911
+    },
+    {
+     "node": 5815,
+     "x": -0.07719,
+     "y": -0.295698,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.5448,
+     "py": 0.1539,
+     "pz": 0.0195
+    },
+    {
+     "node": 5816,
+     "x": 0.072243,
+     "y": -0.297164,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.4412,
+     "py": 0.0731,
+     "pz": 3.4708
+    },
+    {
+     "node": 5817,
+     "x": 0.140021,
+     "y": -0.271919,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.4493,
+     "py": -0.0697,
+     "pz": 5.0754
+    },
+    {
+     "node": 5818,
+     "x": 0.202296,
+     "y": -0.229374,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.527,
+     "py": 0.2318,
+     "pz": 8.6997
+    },
+    {
+     "node": 5819,
+     "x": 0.273125,
+     "y": -0.137343,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.8868,
+     "py": 0.0783,
+     "pz": 14.8918
+    },
+    {
+     "node": 5820,
+     "x": 0.305396,
+     "y": 0.00357,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.9983,
+     "py": -0.4404,
+     "pz": 15.6718
+    },
+    {
+     "node": 5821,
+     "x": 0.285056,
+     "y": 0.108857,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.4623,
+     "py": -0.2185,
+     "pz": 12.9978
+    },
+    {
+     "node": 5822,
+     "x": 0.231356,
+     "y": 0.1985,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.2192,
+     "py": -0.4695,
+     "pz": 11.6011
+    },
+    {
+     "node": 5823,
+     "x": 0.150549,
+     "y": 0.264757,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.1609,
+     "py": -0.1911,
+     "pz": 8.3731
+    },
+    {
+     "node": 5824,
+     "x": 0.078043,
+     "y": 0.294219,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.2924,
+     "py": -0.1091,
+     "pz": 5.2038
+    }
+   ]
+  },
+  {
+   "lc": 132,
+   "title": "132 EQU 0.9G+W -X uplift",
+   "sum_Fx": 299.831,
+   "sum_Fy": 1.426,
+   "sum_Fz": 825.91,
+   "sofistik_stored_sum_kN": [
+    299.831,
+    1.426,
+    825.91
+   ],
+   "supports": 69,
+   "max_uplift": {
+    "node": 34,
+    "pz": -44.7629
+   },
+   "uplift_nodes": [
+    34,
+    19,
+    902,
+    910,
+    7,
+    9,
+    5,
+    5820,
+    5819,
+    5821,
+    903,
+    5822,
+    5818,
+    905,
+    913,
+    5823,
+    5817
+   ],
+   "reactions": [
+    {
+     "node": 2,
+     "x": -11.999,
+     "y": -0.002216,
+     "z": 0.0,
+     "location": "column base (SPT 2)",
+     "px": 33.6614,
+     "py": 0.6102,
+     "pz": 105.1998
+    },
+    {
+     "node": 3,
+     "x": -9.19319,
+     "y": 7.71111,
+     "z": 0.0,
+     "location": "column base (SPT 3)",
+     "px": 29.8205,
+     "py": -7.4604,
+     "pz": 87.9442
+    },
+    {
+     "node": 4,
+     "x": -9.19034,
+     "y": -7.71451,
+     "z": 0.0,
+     "location": "column base (SPT 4)",
+     "px": 28.4449,
+     "py": 8.6011,
+     "pz": 87.1915
+    },
+    {
+     "node": 5,
+     "x": -6.51137,
+     "y": -5.462,
+     "z": 0.0,
+     "location": "column base (SPT 5)",
+     "px": -0.031,
+     "py": -0.0696,
+     "pz": -6.3482
+    },
+    {
+     "node": 6,
+     "x": -7.98689,
+     "y": -2.90536,
+     "z": 0.0,
+     "location": "column base (SPT 6)",
+     "px": 0.0493,
+     "py": 0.0151,
+     "pz": 8.8264
+    },
+    {
+     "node": 7,
+     "x": -8.49983,
+     "y": -0.000986,
+     "z": 0.0,
+     "location": "column base (SPT 7)",
+     "px": -0.0711,
+     "py": -0.001,
+     "pz": -10.4535
+    },
+    {
+     "node": 8,
+     "x": -7.9864,
+     "y": 2.90887,
+     "z": 0.0,
+     "location": "column base (SPT 8)",
+     "px": 0.0666,
+     "py": -0.026,
+     "pz": 9.277
+    },
+    {
+     "node": 9,
+     "x": -6.51013,
+     "y": 5.46517,
+     "z": 0.0,
+     "location": "column base (SPT 9)",
+     "px": -0.0409,
+     "py": 0.0939,
+     "pz": -6.9938
+    },
+    {
+     "node": 10,
+     "x": -4.24858,
+     "y": 7.3624,
+     "z": 0.0,
+     "location": "column base (SPT 10)",
+     "px": 0.0312,
+     "py": -0.0536,
+     "pz": 9.1812
+    },
+    {
+     "node": 11,
+     "x": -1.47453,
+     "y": 8.37171,
+     "z": 0.0,
+     "location": "column base (SPT 11)",
+     "px": 0.0543,
+     "py": 0.0671,
+     "pz": 2.4143
+    },
+    {
+     "node": 12,
+     "x": -2.08579,
+     "y": 11.8163,
+     "z": 0.0,
+     "location": "column base (SPT 12)",
+     "px": 17.9879,
+     "py": -10.3273,
+     "pz": 46.2999
+    },
+    {
+     "node": 13,
+     "x": 1.47501,
+     "y": 8.37087,
+     "z": 0.0,
+     "location": "column base (SPT 13)",
+     "px": 4.5301,
+     "py": -0.1652,
+     "pz": 8.2626
+    },
+    {
+     "node": 14,
+     "x": 5.99758,
+     "y": 10.3925,
+     "z": 0.0,
+     "location": "column base (SPT 14)",
+     "px": 20.3235,
+     "py": -7.6584,
+     "pz": 5.3833
+    },
+    {
+     "node": 15,
+     "x": 4.24687,
+     "y": 7.36169,
+     "z": 0.0,
+     "location": "column base (SPT 15)",
+     "px": 3.8861,
+     "py": -0.1105,
+     "pz": 29.2937
+    },
+    {
+     "node": 16,
+     "x": 6.51061,
+     "y": 5.46434,
+     "z": 0.0,
+     "location": "column base (SPT 16)",
+     "px": 3.9249,
+     "py": -0.1052,
+     "pz": 24.684
+    },
+    {
+     "node": 17,
+     "x": 7.98689,
+     "y": 2.90804,
+     "z": 0.0,
+     "location": "column base (SPT 17)",
+     "px": 3.9149,
+     "py": -0.1872,
+     "pz": 39.5901
+    },
+    {
+     "node": 18,
+     "x": 8.49983,
+     "y": 0.000986,
+     "z": 0.0,
+     "location": "column base (SPT 18)",
+     "px": 3.6109,
+     "py": -0.0011,
+     "pz": 8.301
+    },
+    {
+     "node": 19,
+     "x": 11.2746,
+     "y": 4.10598,
+     "z": 0.0,
+     "location": "column base (SPT 19)",
+     "px": 28.28,
+     "py": 4.5991,
+     "pz": -43.4113
+    },
+    {
+     "node": 20,
+     "x": 7.98739,
+     "y": -2.90718,
+     "z": 0.0,
+     "location": "column base (SPT 20)",
+     "px": 3.7053,
+     "py": 0.1806,
+     "pz": 32.4305
+    },
+    {
+     "node": 21,
+     "x": 2.81907,
+     "y": 1.02864,
+     "z": 0.0,
+     "location": "column base (SPT 21)",
+     "px": -0.0814,
+     "py": -0.157,
+     "pz": 30.8346
+    },
+    {
+     "node": 22,
+     "x": 0.51943,
+     "y": 2.95526,
+     "z": 0.0,
+     "location": "column base (SPT 22)",
+     "px": 0.077,
+     "py": -0.0695,
+     "pz": 33.8237
+    },
+    {
+     "node": 23,
+     "x": -2.29864,
+     "y": 1.92747,
+     "z": 0.0,
+     "location": "column base (SPT 23)",
+     "px": 0.1631,
+     "py": 0.0571,
+     "pz": 33.0115
+    },
+    {
+     "node": 24,
+     "x": -2.81758,
+     "y": -1.02695,
+     "z": 0.0,
+     "location": "column base (SPT 24)",
+     "px": 0.0591,
+     "py": 0.0884,
+     "pz": 33.6265
+    },
+    {
+     "node": 25,
+     "x": -0.51845,
+     "y": -2.95358,
+     "z": 0.0,
+     "location": "column base (SPT 25)",
+     "px": -0.014,
+     "py": 0.0294,
+     "pz": 22.654
+    },
+    {
+     "node": 26,
+     "x": -4.24906,
+     "y": -7.36156,
+     "z": 0.0,
+     "location": "column base (SPT 26)",
+     "px": 0.0276,
+     "py": 0.0432,
+     "pz": 9.1761
+    },
+    {
+     "node": 27,
+     "x": -2.08142,
+     "y": -11.8171,
+     "z": 0.0,
+     "location": "column base (SPT 27)",
+     "px": 25.7816,
+     "py": 13.372,
+     "pz": 57.0415
+    },
+    {
+     "node": 28,
+     "x": -1.47501,
+     "y": -8.37087,
+     "z": 0.0,
+     "location": "column base (SPT 28)",
+     "px": 0.0391,
+     "py": -0.0861,
+     "pz": 14.557
+    },
+    {
+     "node": 29,
+     "x": 1.47695,
+     "y": -8.37053,
+     "z": 0.0,
+     "location": "column base (SPT 29)",
+     "px": 4.037,
+     "py": -0.1092,
+     "pz": 26.0653
+    },
+    {
+     "node": 30,
+     "x": 2.29963,
+     "y": -1.92578,
+     "z": 0.0,
+     "location": "column base (SPT 30)",
+     "px": -0.0882,
+     "py": -0.0271,
+     "pz": 35.2983
+    },
+    {
+     "node": 31,
+     "x": 4.25077,
+     "y": -7.36057,
+     "z": 0.0,
+     "location": "column base (SPT 31)",
+     "px": 4.2096,
+     "py": 0.0681,
+     "pz": 23.4617
+    },
+    {
+     "node": 32,
+     "x": 6.00142,
+     "y": -10.3903,
+     "z": 0.0,
+     "location": "column base (SPT 32)",
+     "px": 18.5777,
+     "py": 1.6491,
+     "pz": 0.466
+    },
+    {
+     "node": 33,
+     "x": 6.51188,
+     "y": -5.46283,
+     "z": 0.0,
+     "location": "column base (SPT 33)",
+     "px": 4.0321,
+     "py": 0.4403,
+     "pz": 7.681
+    },
+    {
+     "node": 34,
+     "x": 11.2761,
+     "y": -4.10182,
+     "z": 0.0,
+     "location": "column base (SPT 34)",
+     "px": 25.8981,
+     "py": -3.4106,
+     "pz": -44.7629
+    },
+    {
+     "node": 901,
+     "x": 11.68,
+     "y": -2.48,
+     "z": 0.64,
+     "location": "external stair base (SPT 901): right flight 1 inner foot",
+     "px": 11.7751,
+     "py": 21.0199,
+     "pz": 16.8005
+    },
+    {
+     "node": 902,
+     "x": 13.73,
+     "y": -2.84,
+     "z": 0.64,
+     "location": "external stair base (SPT 902): right flight 1 outer foot",
+     "px": 0.0235,
+     "py": -19.7833,
+     "pz": -12.95
+    },
+    {
+     "node": 903,
+     "x": 12.09,
+     "y": -0.06,
+     "z": 0.0,
+     "location": "external stair base (SPT 903): right landing 1 leg inner-low base",
+     "px": 0.3854,
+     "py": -0.0821,
+     "pz": -3.7569
+    },
+    {
+     "node": 904,
+     "x": 14.14,
+     "y": -0.39,
+     "z": 0.0,
+     "location": "external stair base (SPT 904): right landing 1 leg outer-low base",
+     "px": 0.3715,
+     "py": -0.0337,
+     "pz": 5.9216
+    },
+    {
+     "node": 905,
+     "x": 14.04,
+     "y": 1.02,
+     "z": 0.0,
+     "location": "external stair base (SPT 905): right landing 1 leg outer-high base",
+     "px": 0.5432,
+     "py": -0.0983,
+     "pz": -1.8855
+    },
+    {
+     "node": 906,
+     "x": 11.99,
+     "y": 0.66,
+     "z": 0.0,
+     "location": "external stair base (SPT 906): right landing 1 leg inner-high base",
+     "px": 0.5789,
+     "py": -0.0278,
+     "pz": 7.5697
+    },
+    {
+     "node": 907,
+     "x": 13.59,
+     "y": 3.53,
+     "z": 0.0,
+     "location": "external stair base (SPT 907): right landing 2 leg outer-low base",
+     "px": 0.2867,
+     "py": -0.0142,
+     "pz": 5.201
+    },
+    {
+     "node": 908,
+     "x": 13.25,
+     "y": 5.42,
+     "z": 0.0,
+     "location": "external stair base (SPT 908): right landing 2 leg outer-high base",
+     "px": 0.3102,
+     "py": -0.0169,
+     "pz": 2.2834
+    },
+    {
+     "node": 909,
+     "x": 10.55,
+     "y": -5.61,
+     "z": 0.64,
+     "location": "external stair base (SPT 909): left flight 1 inner foot",
+     "px": -2.7131,
+     "py": -13.5292,
+     "pz": 12.1456
+    },
+    {
+     "node": 910,
+     "x": 12.36,
+     "y": -6.65,
+     "z": 0.64,
+     "location": "external stair base (SPT 910): left flight 1 outer foot",
+     "px": 15.0882,
+     "py": 15.0146,
+     "pz": -11.5306
+    },
+    {
+     "node": 911,
+     "x": 9.32,
+     "y": -7.74,
+     "z": 0.0,
+     "location": "external stair base (SPT 911): left landing 1 leg inner-low base",
+     "px": 0.3318,
+     "py": -0.1131,
+     "pz": 1.474
+    },
+    {
+     "node": 912,
+     "x": 11.11,
+     "y": -8.78,
+     "z": 0.0,
+     "location": "external stair base (SPT 912): left landing 1 leg outer-low base",
+     "px": 0.2966,
+     "py": -0.132,
+     "pz": 8.6101
+    },
+    {
+     "node": 913,
+     "x": 10.14,
+     "y": -9.82,
+     "z": 0.0,
+     "location": "external stair base (SPT 913): left landing 1 leg outer-high base",
+     "px": 0.4413,
+     "py": -0.1586,
+     "pz": -0.8772
+    },
+    {
+     "node": 914,
+     "x": 8.79,
+     "y": -8.23,
+     "z": 0.0,
+     "location": "external stair base (SPT 914): left landing 1 leg inner-high base",
+     "px": 0.4393,
+     "py": -0.2323,
+     "pz": 6.5831
+    },
+    {
+     "node": 915,
+     "x": 8.19,
+     "y": -11.46,
+     "z": 0.0,
+     "location": "external stair base (SPT 915): left landing 2 leg outer-low base",
+     "px": 0.2588,
+     "py": -0.0183,
+     "pz": 7.1784
+    },
+    {
+     "node": 916,
+     "x": 6.74,
+     "y": -12.73,
+     "z": 0.0,
+     "location": "external stair base (SPT 916): left landing 2 leg outer-high base",
+     "px": 0.2604,
+     "py": -0.0094,
+     "pz": 2.1148
+    },
+    {
+     "node": 1001,
+     "x": 0.000427,
+     "y": -0.30574,
+     "z": 0.0,
+     "location": "SPT 1001",
+     "px": -0.0152,
+     "py": 0.0707,
+     "pz": 2.1446
+    },
+    {
+     "node": 1002,
+     "x": 0.000427,
+     "y": 0.30426,
+     "z": 0.0,
+     "location": "SPT 1002",
+     "px": 0.576,
+     "py": -0.0972,
+     "pz": 2.4385
+    },
+    {
+     "node": 5807,
+     "x": -0.07139,
+     "y": 0.295685,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.5826,
+     "py": 0.0207,
+     "pz": 3.7309
+    },
+    {
+     "node": 5808,
+     "x": -0.139168,
+     "y": 0.27044,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.6271,
+     "py": 0.1499,
+     "pz": 5.9372
+    },
+    {
+     "node": 5809,
+     "x": -0.216423,
+     "y": 0.213739,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.6085,
+     "py": 0.2453,
+     "pz": 8.4612
+    },
+    {
+     "node": 5810,
+     "x": -0.272272,
+     "y": 0.135865,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.5046,
+     "py": 0.2319,
+     "pz": 11.4847
+    },
+    {
+     "node": 5811,
+     "x": -0.304216,
+     "y": 0.014023,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.5025,
+     "py": 0.2638,
+     "pz": 13.8664
+    },
+    {
+     "node": 5812,
+     "x": -0.284202,
+     "y": -0.110336,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.3216,
+     "py": 0.4351,
+     "pz": 12.1744
+    },
+    {
+     "node": 5813,
+     "x": -0.230503,
+     "y": -0.19998,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.1927,
+     "py": 0.265,
+     "pz": 9.4448
+    },
+    {
+     "node": 5814,
+     "x": -0.149696,
+     "y": -0.266236,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.1879,
+     "py": 0.0998,
+     "pz": 6.4093
+    },
+    {
+     "node": 5815,
+     "x": -0.07719,
+     "y": -0.295698,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.1617,
+     "py": 0.0914,
+     "pz": 3.8074
+    },
+    {
+     "node": 5816,
+     "x": 0.072243,
+     "y": -0.297164,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.0086,
+     "py": 0.0048,
+     "pz": 0.7267
+    },
+    {
+     "node": 5817,
+     "x": 0.140021,
+     "y": -0.271919,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.0011,
+     "py": -0.0074,
+     "pz": -0.502
+    },
+    {
+     "node": 5818,
+     "x": 0.202296,
+     "y": -0.229374,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.0053,
+     "py": -0.1794,
+     "pz": -2.2902
+    },
+    {
+     "node": 5819,
+     "x": 0.273125,
+     "y": -0.137343,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.107,
+     "py": -0.4331,
+     "pz": -5.1302
+    },
+    {
+     "node": 5820,
+     "x": 0.305396,
+     "y": 0.00357,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.3362,
+     "py": -0.3366,
+     "pz": -5.5082
+    },
+    {
+     "node": 5821,
+     "x": 0.285056,
+     "y": 0.108857,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.2946,
+     "py": -0.3641,
+     "pz": -4.0065
+    },
+    {
+     "node": 5822,
+     "x": 0.231356,
+     "y": 0.1985,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.3421,
+     "py": -0.2571,
+     "pz": -2.5904
+    },
+    {
+     "node": 5823,
+     "x": 0.150549,
+     "y": 0.264757,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.4443,
+     "py": -0.2748,
+     "pz": -0.6192
+    },
+    {
+     "node": 5824,
+     "x": 0.078043,
+     "y": 0.294219,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.5247,
+     "py": -0.1773,
+     "pz": 1.042
+    }
+   ]
+  },
+  {
+   "lc": 133,
+   "title": "133 EQU 0.9G+W -Y uplift",
+   "sum_Fx": -2.787,
+   "sum_Fy": 316.976,
+   "sum_Fz": 782.465,
+   "sofistik_stored_sum_kN": [
+    -2.787,
+    316.975,
+    782.465
+   ],
+   "supports": 69,
+   "max_uplift": {
+    "node": 12,
+    "pz": -53.1957
+   },
+   "uplift_nodes": [
+    12,
+    14,
+    3,
+    909,
+    31,
+    5,
+    1002,
+    5824,
+    5808,
+    5807,
+    5823,
+    903,
+    5809,
+    5822,
+    904,
+    5810,
+    20,
+    907
+   ],
+   "reactions": [
+    {
+     "node": 2,
+     "x": -11.999,
+     "y": -0.002216,
+     "z": 0.0,
+     "location": "column base (SPT 2)",
+     "px": 9.6949,
+     "py": 20.8815,
+     "pz": 37.2854
+    },
+    {
+     "node": 3,
+     "x": -9.19319,
+     "y": 7.71111,
+     "z": 0.0,
+     "location": "column base (SPT 3)",
+     "px": -0.8661,
+     "py": 20.459,
+     "pz": -17.4533
+    },
+    {
+     "node": 4,
+     "x": -9.19034,
+     "y": -7.71451,
+     "z": 0.0,
+     "location": "column base (SPT 4)",
+     "px": 8.6611,
+     "py": 29.168,
+     "pz": 81.2198
+    },
+    {
+     "node": 5,
+     "x": -6.51137,
+     "y": -5.462,
+     "z": 0.0,
+     "location": "column base (SPT 5)",
+     "px": -0.085,
+     "py": -0.0099,
+     "pz": -5.3267
+    },
+    {
+     "node": 6,
+     "x": -7.98689,
+     "y": -2.90536,
+     "z": 0.0,
+     "location": "column base (SPT 6)",
+     "px": 0.0267,
+     "py": 0.0105,
+     "pz": 8.5695
+    },
+    {
+     "node": 7,
+     "x": -8.49983,
+     "y": -0.000986,
+     "z": 0.0,
+     "location": "column base (SPT 7)",
+     "px": -0.0634,
+     "py": 4.2382,
+     "pz": 4.8665
+    },
+    {
+     "node": 8,
+     "x": -7.9864,
+     "y": 2.90887,
+     "z": 0.0,
+     "location": "column base (SPT 8)",
+     "px": 0.3421,
+     "py": 4.4322,
+     "pz": 8.903
+    },
+    {
+     "node": 9,
+     "x": -6.51013,
+     "y": 5.46517,
+     "z": 0.0,
+     "location": "column base (SPT 9)",
+     "px": 0.2226,
+     "py": 4.0427,
+     "pz": 22.5426
+    },
+    {
+     "node": 10,
+     "x": -4.24858,
+     "y": 7.3624,
+     "z": 0.0,
+     "location": "column base (SPT 10)",
+     "px": 0.4123,
+     "py": 3.841,
+     "pz": 8.2698
+    },
+    {
+     "node": 11,
+     "x": -1.47453,
+     "y": 8.37171,
+     "z": 0.0,
+     "location": "column base (SPT 11)",
+     "px": 0.0919,
+     "py": 3.6834,
+     "pz": 35.135
+    },
+    {
+     "node": 12,
+     "x": -2.08579,
+     "y": 11.8163,
+     "z": 0.0,
+     "location": "column base (SPT 12)",
+     "px": -5.4842,
+     "py": 28.3367,
+     "pz": -53.1957
+    },
+    {
+     "node": 13,
+     "x": 1.47501,
+     "y": 8.37087,
+     "z": 0.0,
+     "location": "column base (SPT 13)",
+     "px": -0.1539,
+     "py": 3.6926,
+     "pz": 7.2715
+    },
+    {
+     "node": 14,
+     "x": 5.99758,
+     "y": 10.3925,
+     "z": 0.0,
+     "location": "column base (SPT 14)",
+     "px": 0.2758,
+     "py": 24.0728,
+     "pz": -35.3918
+    },
+    {
+     "node": 15,
+     "x": 4.24687,
+     "y": 7.36169,
+     "z": 0.0,
+     "location": "column base (SPT 15)",
+     "px": -0.2177,
+     "py": 3.7627,
+     "pz": 41.0695
+    },
+    {
+     "node": 16,
+     "x": 6.51061,
+     "y": 5.46434,
+     "z": 0.0,
+     "location": "column base (SPT 16)",
+     "px": -0.2928,
+     "py": 3.9432,
+     "pz": 16.0687
+    },
+    {
+     "node": 17,
+     "x": 7.98689,
+     "y": 2.90804,
+     "z": 0.0,
+     "location": "column base (SPT 17)",
+     "px": -0.0966,
+     "py": 4.144,
+     "pz": 14.3755
+    },
+    {
+     "node": 18,
+     "x": 8.49983,
+     "y": 0.000986,
+     "z": 0.0,
+     "location": "column base (SPT 18)",
+     "px": -0.0523,
+     "py": 4.5585,
+     "pz": 9.1014
+    },
+    {
+     "node": 19,
+     "x": 11.2746,
+     "y": 4.10598,
+     "z": 0.0,
+     "location": "column base (SPT 19)",
+     "px": -5.6688,
+     "py": 22.5814,
+     "pz": 9.4856
+    },
+    {
+     "node": 20,
+     "x": 7.98739,
+     "y": -2.90718,
+     "z": 0.0,
+     "location": "column base (SPT 20)",
+     "px": 0.0489,
+     "py": 0.0468,
+     "pz": -0.8915
+    },
+    {
+     "node": 21,
+     "x": 2.81907,
+     "y": 1.02864,
+     "z": 0.0,
+     "location": "column base (SPT 21)",
+     "px": -0.1102,
+     "py": 0.034,
+     "pz": 31.6731
+    },
+    {
+     "node": 22,
+     "x": 0.51943,
+     "y": 2.95526,
+     "z": 0.0,
+     "location": "column base (SPT 22)",
+     "px": -0.091,
+     "py": -0.0384,
+     "pz": 34.0381
+    },
+    {
+     "node": 23,
+     "x": -2.29864,
+     "y": 1.92747,
+     "z": 0.0,
+     "location": "column base (SPT 23)",
+     "px": 0.025,
+     "py": -0.1329,
+     "pz": 35.967
+    },
+    {
+     "node": 24,
+     "x": -2.81758,
+     "y": -1.02695,
+     "z": 0.0,
+     "location": "column base (SPT 24)",
+     "px": 0.049,
+     "py": 0.0315,
+     "pz": 35.9038
+    },
+    {
+     "node": 25,
+     "x": -0.51845,
+     "y": -2.95358,
+     "z": 0.0,
+     "location": "column base (SPT 25)",
+     "px": 0.0557,
+     "py": 0.0302,
+     "pz": 18.2487
+    },
+    {
+     "node": 26,
+     "x": -4.24906,
+     "y": -7.36156,
+     "z": 0.0,
+     "location": "column base (SPT 26)",
+     "px": 0.031,
+     "py": 0.0563,
+     "pz": 9.2834
+    },
+    {
+     "node": 27,
+     "x": -2.08142,
+     "y": -11.8171,
+     "z": 0.0,
+     "location": "column base (SPT 27)",
+     "px": 4.0526,
+     "py": 36.1751,
+     "pz": 108.1602
+    },
+    {
+     "node": 28,
+     "x": -1.47501,
+     "y": -8.37087,
+     "z": 0.0,
+     "location": "column base (SPT 28)",
+     "px": 0.0711,
+     "py": -0.0797,
+     "pz": 5.7599
+    },
+    {
+     "node": 29,
+     "x": 1.47695,
+     "y": -8.37053,
+     "z": 0.0,
+     "location": "column base (SPT 29)",
+     "px": 0.1201,
+     "py": -0.0275,
+     "pz": 21.2732
+    },
+    {
+     "node": 30,
+     "x": 2.29963,
+     "y": -1.92578,
+     "z": 0.0,
+     "location": "column base (SPT 30)",
+     "px": 0.0481,
+     "py": 0.1782,
+     "pz": 32.8181
+    },
+    {
+     "node": 31,
+     "x": 4.25077,
+     "y": -7.36057,
+     "z": 0.0,
+     "location": "column base (SPT 31)",
+     "px": 0.1786,
+     "py": -0.2562,
+     "pz": -6.443
+    },
+    {
+     "node": 32,
+     "x": 6.00142,
+     "y": -10.3903,
+     "z": 0.0,
+     "location": "column base (SPT 32)",
+     "px": -2.8044,
+     "py": 35.0545,
+     "pz": 98.2359
+    },
+    {
+     "node": 33,
+     "x": 6.51188,
+     "y": -5.46283,
+     "z": 0.0,
+     "location": "column base (SPT 33)",
+     "px": -0.0212,
+     "py": 0.0182,
+     "pz": 9.0374
+    },
+    {
+     "node": 34,
+     "x": 11.2761,
+     "y": -4.10182,
+     "z": 0.0,
+     "location": "column base (SPT 34)",
+     "px": -11.3566,
+     "py": 20.6918,
+     "pz": 57.9083
+    },
+    {
+     "node": 901,
+     "x": 11.68,
+     "y": -2.48,
+     "z": 0.64,
+     "location": "external stair base (SPT 901): right flight 1 inner foot",
+     "px": 0.04,
+     "py": 7.5155,
+     "pz": 4.5511
+    },
+    {
+     "node": 902,
+     "x": 13.73,
+     "y": -2.84,
+     "z": 0.64,
+     "location": "external stair base (SPT 902): right flight 1 outer foot",
+     "px": 0.3058,
+     "py": 8.8133,
+     "pz": 5.3047
+    },
+    {
+     "node": 903,
+     "x": 12.09,
+     "y": -0.06,
+     "z": 0.0,
+     "location": "external stair base (SPT 903): right landing 1 leg inner-low base",
+     "px": -0.055,
+     "py": 0.0946,
+     "pz": -3.7701
+    },
+    {
+     "node": 904,
+     "x": 14.14,
+     "y": -0.39,
+     "z": 0.0,
+     "location": "external stair base (SPT 904): right landing 1 leg outer-low base",
+     "px": -0.0685,
+     "py": 0.0951,
+     "pz": -1.9639
+    },
+    {
+     "node": 905,
+     "x": 14.04,
+     "y": 1.02,
+     "z": 0.0,
+     "location": "external stair base (SPT 905): right landing 1 leg outer-high base",
+     "px": -0.0817,
+     "py": 0.1411,
+     "pz": 1.9855
+    },
+    {
+     "node": 906,
+     "x": 11.99,
+     "y": 0.66,
+     "z": 0.0,
+     "location": "external stair base (SPT 906): right landing 1 leg inner-high base",
+     "px": -0.0749,
+     "py": 0.1349,
+     "pz": 2.2813
+    },
+    {
+     "node": 907,
+     "x": 13.59,
+     "y": 3.53,
+     "z": 0.0,
+     "location": "external stair base (SPT 907): right landing 2 leg outer-low base",
+     "px": -0.029,
+     "py": 0.2193,
+     "pz": -0.3785
+    },
+    {
+     "node": 908,
+     "x": 13.25,
+     "y": 5.42,
+     "z": 0.0,
+     "location": "external stair base (SPT 908): right landing 2 leg outer-high base",
+     "px": -0.0373,
+     "py": 0.2108,
+     "pz": 2.6358
+    },
+    {
+     "node": 909,
+     "x": 10.55,
+     "y": -5.61,
+     "z": 0.64,
+     "location": "external stair base (SPT 909): left flight 1 inner foot",
+     "px": 7.8315,
+     "py": 16.958,
+     "pz": -9.6374
+    },
+    {
+     "node": 910,
+     "x": 12.36,
+     "y": -6.65,
+     "z": 0.64,
+     "location": "external stair base (SPT 910): left flight 1 outer foot",
+     "px": -6.3093,
+     "py": -3.9073,
+     "pz": 8.2233
+    },
+    {
+     "node": 911,
+     "x": 9.32,
+     "y": -7.74,
+     "z": 0.0,
+     "location": "external stair base (SPT 911): left landing 1 leg inner-low base",
+     "px": -0.1278,
+     "py": 0.1359,
+     "pz": 10.1742
+    },
+    {
+     "node": 912,
+     "x": 11.11,
+     "y": -8.78,
+     "z": 0.0,
+     "location": "external stair base (SPT 912): left landing 1 leg outer-low base",
+     "px": -0.1035,
+     "py": 0.1755,
+     "pz": 3.302
+    },
+    {
+     "node": 913,
+     "x": 10.14,
+     "y": -9.82,
+     "z": 0.0,
+     "location": "external stair base (SPT 913): left landing 1 leg outer-high base",
+     "px": -0.203,
+     "py": 0.2135,
+     "pz": 6.002
+    },
+    {
+     "node": 914,
+     "x": 8.79,
+     "y": -8.23,
+     "z": 0.0,
+     "location": "external stair base (SPT 914): left landing 1 leg inner-high base",
+     "px": -0.1873,
+     "py": 0.2624,
+     "pz": 0.037
+    },
+    {
+     "node": 915,
+     "x": 8.19,
+     "y": -11.46,
+     "z": 0.0,
+     "location": "external stair base (SPT 915): left landing 2 leg outer-low base",
+     "px": -0.0733,
+     "py": 0.2768,
+     "pz": 6.0469
+    },
+    {
+     "node": 916,
+     "x": 6.74,
+     "y": -12.73,
+     "z": 0.0,
+     "location": "external stair base (SPT 916): left landing 2 leg outer-high base",
+     "px": -0.1417,
+     "py": 0.3664,
+     "pz": 2.1407
+    },
+    {
+     "node": 1001,
+     "x": 0.000427,
+     "y": -0.30574,
+     "z": 0.0,
+     "location": "SPT 1001",
+     "px": -0.0718,
+     "py": 0.3436,
+     "pz": 9.3601
+    },
+    {
+     "node": 1002,
+     "x": 0.000427,
+     "y": 0.30426,
+     "z": 0.0,
+     "location": "SPT 1002",
+     "px": -0.0058,
+     "py": 0.1633,
+     "pz": -4.5917
+    },
+    {
+     "node": 5807,
+     "x": -0.07139,
+     "y": 0.295685,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.0636,
+     "py": 0.1659,
+     "pz": -4.38
+    },
+    {
+     "node": 5808,
+     "x": -0.139168,
+     "y": 0.27044,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.1739,
+     "py": 0.2877,
+     "pz": -4.4178
+    },
+    {
+     "node": 5809,
+     "x": -0.216423,
+     "y": 0.213739,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.1819,
+     "py": 0.4093,
+     "pz": -3.4652
+    },
+    {
+     "node": 5810,
+     "x": -0.272272,
+     "y": 0.135865,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.1265,
+     "py": 0.5269,
+     "pz": -1.0655
+    },
+    {
+     "node": 5811,
+     "x": -0.304216,
+     "y": 0.014023,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.1125,
+     "py": 0.4757,
+     "pz": 3.2225
+    },
+    {
+     "node": 5812,
+     "x": -0.284202,
+     "y": -0.110336,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.117,
+     "py": 0.5526,
+     "pz": 7.1386
+    },
+    {
+     "node": 5813,
+     "x": -0.230503,
+     "y": -0.19998,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.0016,
+     "py": 0.5729,
+     "pz": 9.5077
+    },
+    {
+     "node": 5814,
+     "x": -0.149696,
+     "y": -0.266236,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.1746,
+     "py": 0.4949,
+     "pz": 10.0966
+    },
+    {
+     "node": 5815,
+     "x": -0.07719,
+     "y": -0.295698,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.0718,
+     "py": 0.37,
+     "pz": 9.4597
+    },
+    {
+     "node": 5816,
+     "x": 0.072243,
+     "y": -0.297164,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.0978,
+     "py": 0.3435,
+     "pz": 8.9772
+    },
+    {
+     "node": 5817,
+     "x": 0.140021,
+     "y": -0.271919,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.0025,
+     "py": 0.3028,
+     "pz": 8.5702
+    },
+    {
+     "node": 5818,
+     "x": 0.202296,
+     "y": -0.229374,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.0678,
+     "py": 0.887,
+     "pz": 9.4897
+    },
+    {
+     "node": 5819,
+     "x": 0.273125,
+     "y": -0.137343,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.3744,
+     "py": 0.5074,
+     "pz": 9.4564
+    },
+    {
+     "node": 5820,
+     "x": 0.305396,
+     "y": 0.00357,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.251,
+     "py": 0.1862,
+     "pz": 4.7222
+    },
+    {
+     "node": 5821,
+     "x": 0.285056,
+     "y": 0.108857,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.0468,
+     "py": 0.3392,
+     "pz": 0.3998
+    },
+    {
+     "node": 5822,
+     "x": 0.231356,
+     "y": 0.1985,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.0706,
+     "py": 0.2677,
+     "pz": -2.3224
+    },
+    {
+     "node": 5823,
+     "x": 0.150549,
+     "y": 0.264757,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.1226,
+     "py": 0.2742,
+     "pz": -3.9786
+    },
+    {
+     "node": 5824,
+     "x": 0.078043,
+     "y": 0.294219,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.0667,
+     "py": 0.1786,
+     "pz": -4.4179
+    }
+   ]
+  },
+  {
+   "lc": 134,
+   "title": "134 EQU 0.9G+W +Y uplift",
+   "sum_Fx": -3.283,
+   "sum_Fy": -314.071,
+   "sum_Fz": 803.785,
+   "sofistik_stored_sum_kN": [
+    -3.283,
+    -314.071,
+    803.786
+   ],
+   "supports": 69,
+   "max_uplift": {
+    "node": 27,
+    "pz": -45.0267
+   },
+   "uplift_nodes": [
+    27,
+    32,
+    4,
+    11,
+    911,
+    9,
+    5814,
+    5815,
+    1001,
+    5816,
+    5813,
+    910,
+    5817,
+    5818,
+    5812,
+    902,
+    913,
+    901
+   ],
+   "reactions": [
+    {
+     "node": 2,
+     "x": -11.999,
+     "y": -0.002216,
+     "z": 0.0,
+     "location": "column base (SPT 2)",
+     "px": 9.1515,
+     "py": -20.0762,
+     "pz": 36.1634
+    },
+    {
+     "node": 3,
+     "x": -9.19319,
+     "y": 7.71111,
+     "z": 0.0,
+     "location": "column base (SPT 3)",
+     "px": 8.4191,
+     "py": -29.3973,
+     "pz": 80.8139
+    },
+    {
+     "node": 4,
+     "x": -9.19034,
+     "y": -7.71451,
+     "z": 0.0,
+     "location": "column base (SPT 4)",
+     "px": -2.4251,
+     "py": -18.0852,
+     "pz": -17.5617
+    },
+    {
+     "node": 5,
+     "x": -6.51137,
+     "y": -5.462,
+     "z": 0.0,
+     "location": "column base (SPT 5)",
+     "px": 0.2563,
+     "py": -4.0289,
+     "pz": 22.7246
+    },
+    {
+     "node": 6,
+     "x": -7.98689,
+     "y": -2.90536,
+     "z": 0.0,
+     "location": "column base (SPT 6)",
+     "px": 0.3002,
+     "py": -4.4518,
+     "pz": 7.9567
+    },
+    {
+     "node": 7,
+     "x": -8.49983,
+     "y": -0.000986,
+     "z": 0.0,
+     "location": "column base (SPT 7)",
+     "px": -0.0589,
+     "py": -4.2394,
+     "pz": 5.4702
+    },
+    {
+     "node": 8,
+     "x": -7.9864,
+     "y": 2.90887,
+     "z": 0.0,
+     "location": "column base (SPT 8)",
+     "px": 0.0502,
+     "py": -0.0238,
+     "pz": 9.1762
+    },
+    {
+     "node": 9,
+     "x": -6.51013,
+     "y": 5.46517,
+     "z": 0.0,
+     "location": "column base (SPT 9)",
+     "px": -0.1021,
+     "py": 0.0206,
+     "pz": -5.7613
+    },
+    {
+     "node": 10,
+     "x": -4.24858,
+     "y": 7.3624,
+     "z": 0.0,
+     "location": "column base (SPT 10)",
+     "px": 0.0332,
+     "py": -0.0649,
+     "pz": 9.2535
+    },
+    {
+     "node": 11,
+     "x": -1.47453,
+     "y": 8.37171,
+     "z": 0.0,
+     "location": "column base (SPT 11)",
+     "px": -0.0264,
+     "py": 0.0691,
+     "pz": -11.0025
+    },
+    {
+     "node": 12,
+     "x": -2.08579,
+     "y": 11.8163,
+     "z": 0.0,
+     "location": "column base (SPT 12)",
+     "px": 2.07,
+     "py": -34.3404,
+     "pz": 106.0225
+    },
+    {
+     "node": 13,
+     "x": 1.47501,
+     "y": 8.37087,
+     "z": 0.0,
+     "location": "column base (SPT 13)",
+     "px": -0.0094,
+     "py": -0.0539,
+     "pz": 8.9031
+    },
+    {
+     "node": 14,
+     "x": 5.99758,
+     "y": 10.3925,
+     "z": 0.0,
+     "location": "column base (SPT 14)",
+     "px": -3.4632,
+     "py": -36.5358,
+     "pz": 100.4968
+    },
+    {
+     "node": 15,
+     "x": 4.24687,
+     "y": 7.36169,
+     "z": 0.0,
+     "location": "column base (SPT 15)",
+     "px": 0.1021,
+     "py": 0.005,
+     "pz": 8.1108
+    },
+    {
+     "node": 16,
+     "x": 6.51061,
+     "y": 5.46434,
+     "z": 0.0,
+     "location": "column base (SPT 16)",
+     "px": 0.1638,
+     "py": 0.0076,
+     "pz": 24.5825
+    },
+    {
+     "node": 17,
+     "x": 7.98689,
+     "y": 2.90804,
+     "z": 0.0,
+     "location": "column base (SPT 17)",
+     "px": 0.3003,
+     "py": 0.0498,
+     "pz": 3.6894
+    },
+    {
+     "node": 18,
+     "x": 8.49983,
+     "y": 0.000986,
+     "z": 0.0,
+     "location": "column base (SPT 18)",
+     "px": -0.0297,
+     "py": -4.5611,
+     "pz": 9.397
+    },
+    {
+     "node": 19,
+     "x": 11.2746,
+     "y": 4.10598,
+     "z": 0.0,
+     "location": "column base (SPT 19)",
+     "px": -9.1725,
+     "py": -25.8669,
+     "pz": 60.6736
+    },
+    {
+     "node": 20,
+     "x": 7.98739,
+     "y": -2.90718,
+     "z": 0.0,
+     "location": "column base (SPT 20)",
+     "px": -0.1729,
+     "py": -4.1744,
+     "pz": 13.4694
+    },
+    {
+     "node": 21,
+     "x": 2.81907,
+     "y": 1.02864,
+     "z": 0.0,
+     "location": "column base (SPT 21)",
+     "px": -0.0879,
+     "py": -0.1143,
+     "pz": 28.8326
+    },
+    {
+     "node": 22,
+     "x": 0.51943,
+     "y": 2.95526,
+     "z": 0.0,
+     "location": "column base (SPT 22)",
+     "px": -0.031,
+     "py": -0.0954,
+     "pz": 30.4422
+    },
+    {
+     "node": 23,
+     "x": -2.29864,
+     "y": 1.92747,
+     "z": 0.0,
+     "location": "column base (SPT 23)",
+     "px": -0.0049,
+     "py": -0.1384,
+     "pz": 33.3526
+    },
+    {
+     "node": 24,
+     "x": -2.81758,
+     "y": -1.02695,
+     "z": 0.0,
+     "location": "column base (SPT 24)",
+     "px": 0.0554,
+     "py": -0.0108,
+     "pz": 37.0942
+    },
+    {
+     "node": 25,
+     "x": -0.51845,
+     "y": -2.95358,
+     "z": 0.0,
+     "location": "column base (SPT 25)",
+     "px": 0.0369,
+     "py": 0.0754,
+     "pz": 27.5638
+    },
+    {
+     "node": 26,
+     "x": -4.24906,
+     "y": -7.36156,
+     "z": 0.0,
+     "location": "column base (SPT 26)",
+     "px": 0.4134,
+     "py": -3.8438,
+     "pz": 8.4646
+    },
+    {
+     "node": 27,
+     "x": -2.08142,
+     "y": -11.8171,
+     "z": 0.0,
+     "location": "column base (SPT 27)",
+     "px": -0.5842,
+     "py": -26.7221,
+     "pz": -45.0267
+    },
+    {
+     "node": 28,
+     "x": -1.47501,
+     "y": -8.37087,
+     "z": 0.0,
+     "location": "column base (SPT 28)",
+     "px": -0.0167,
+     "py": -3.7041,
+     "pz": 42.7527
+    },
+    {
+     "node": 29,
+     "x": 1.47695,
+     "y": -8.37053,
+     "z": 0.0,
+     "location": "column base (SPT 29)",
+     "px": -0.1331,
+     "py": -3.7282,
+     "pz": 20.1775
+    },
+    {
+     "node": 30,
+     "x": 2.29963,
+     "y": -1.92578,
+     "z": 0.0,
+     "location": "column base (SPT 30)",
+     "px": -0.0246,
+     "py": 0.0548,
+     "pz": 35.6705
+    },
+    {
+     "node": 31,
+     "x": 4.25077,
+     "y": -7.36057,
+     "z": 0.0,
+     "location": "column base (SPT 31)",
+     "px": -0.1885,
+     "py": -3.7789,
+     "pz": 33.731
+    },
+    {
+     "node": 32,
+     "x": 6.00142,
+     "y": -10.3903,
+     "z": 0.0,
+     "location": "column base (SPT 32)",
+     "px": 0.4609,
+     "py": -27.046,
+     "pz": -36.1025
+    },
+    {
+     "node": 33,
+     "x": 6.51188,
+     "y": -5.46283,
+     "z": 0.0,
+     "location": "column base (SPT 33)",
+     "px": -0.4545,
+     "py": -4.1802,
+     "pz": 7.4592
+    },
+    {
+     "node": 34,
+     "x": 11.2761,
+     "y": -4.10182,
+     "z": 0.0,
+     "location": "column base (SPT 34)",
+     "px": -4.1212,
+     "py": -16.1505,
+     "pz": 9.6646
+    },
+    {
+     "node": 901,
+     "x": 11.68,
+     "y": -2.48,
+     "z": 0.64,
+     "location": "external stair base (SPT 901): right flight 1 inner foot",
+     "px": 0.7819,
+     "py": -5.9941,
+     "pz": -0.6126
+    },
+    {
+     "node": 902,
+     "x": 13.73,
+     "y": -2.84,
+     "z": 0.64,
+     "location": "external stair base (SPT 902): right flight 1 outer foot",
+     "px": -0.9237,
+     "py": -7.011,
+     "pz": -1.3693
+    },
+    {
+     "node": 903,
+     "x": 12.09,
+     "y": -0.06,
+     "z": 0.0,
+     "location": "external stair base (SPT 903): right landing 1 leg inner-low base",
+     "px": 0.0584,
+     "py": -0.0964,
+     "pz": 7.4695
+    },
+    {
+     "node": 904,
+     "x": 14.14,
+     "y": -0.39,
+     "z": 0.0,
+     "location": "external stair base (SPT 904): right landing 1 leg outer-low base",
+     "px": 0.0488,
+     "py": -0.108,
+     "pz": 6.3585
+    },
+    {
+     "node": 905,
+     "x": 14.04,
+     "y": 1.02,
+     "z": 0.0,
+     "location": "external stair base (SPT 905): right landing 1 leg outer-high base",
+     "px": 0.0529,
+     "py": -0.1274,
+     "pz": 2.9084
+    },
+    {
+     "node": 906,
+     "x": 11.99,
+     "y": 0.66,
+     "z": 0.0,
+     "location": "external stair base (SPT 906): right landing 1 leg inner-high base",
+     "px": 0.0623,
+     "py": -0.1268,
+     "pz": 2.7977
+    },
+    {
+     "node": 907,
+     "x": 13.59,
+     "y": 3.53,
+     "z": 0.0,
+     "location": "external stair base (SPT 907): right landing 2 leg outer-low base",
+     "px": -0.0303,
+     "py": -0.2231,
+     "pz": 7.3328
+    },
+    {
+     "node": 908,
+     "x": 13.25,
+     "y": 5.42,
+     "z": 0.0,
+     "location": "external stair base (SPT 908): right landing 2 leg outer-high base",
+     "px": -0.0993,
+     "py": -0.2428,
+     "pz": 2.0141
+    },
+    {
+     "node": 909,
+     "x": 10.55,
+     "y": -5.61,
+     "z": 0.64,
+     "location": "external stair base (SPT 909): left flight 1 inner foot",
+     "px": -8.0186,
+     "py": -18.6633,
+     "pz": 13.521
+    },
+    {
+     "node": 910,
+     "x": 12.36,
+     "y": -6.65,
+     "z": 0.64,
+     "location": "external stair base (SPT 910): left flight 1 outer foot",
+     "px": 4.6837,
+     "py": 3.0845,
+     "pz": -4.3866
+    },
+    {
+     "node": 911,
+     "x": 9.32,
+     "y": -7.74,
+     "z": 0.0,
+     "location": "external stair base (SPT 911): left landing 1 leg inner-low base",
+     "px": 0.133,
+     "py": -0.138,
+     "pz": -6.4173
+    },
+    {
+     "node": 912,
+     "x": 11.11,
+     "y": -8.78,
+     "z": 0.0,
+     "location": "external stair base (SPT 912): left landing 1 leg outer-low base",
+     "px": 0.0976,
+     "py": -0.1538,
+     "pz": 1.1253
+    },
+    {
+     "node": 913,
+     "x": 10.14,
+     "y": -9.82,
+     "z": 0.0,
+     "location": "external stair base (SPT 913): left landing 1 leg outer-high base",
+     "px": 0.1734,
+     "py": -0.2061,
+     "pz": -1.0393
+    },
+    {
+     "node": 914,
+     "x": 8.79,
+     "y": -8.23,
+     "z": 0.0,
+     "location": "external stair base (SPT 914): left landing 1 leg inner-high base",
+     "px": 0.1767,
+     "py": -0.2637,
+     "pz": 5.1405
+    },
+    {
+     "node": 915,
+     "x": 8.19,
+     "y": -11.46,
+     "z": 0.0,
+     "location": "external stair base (SPT 915): left landing 2 leg outer-low base",
+     "px": 0.0301,
+     "py": -0.2376,
+     "pz": 1.0327
+    },
+    {
+     "node": 916,
+     "x": 6.74,
+     "y": -12.73,
+     "z": 0.0,
+     "location": "external stair base (SPT 916): left landing 2 leg outer-high base",
+     "px": 0.0565,
+     "py": -0.2572,
+     "pz": 2.5488
+    },
+    {
+     "node": 1001,
+     "x": 0.000427,
+     "y": -0.30574,
+     "z": 0.0,
+     "location": "SPT 1001",
+     "px": 0.219,
+     "py": -0.1842,
+     "pz": -5.0462
+    },
+    {
+     "node": 1002,
+     "x": 0.000427,
+     "y": 0.30426,
+     "z": 0.0,
+     "location": "SPT 1002",
+     "px": -0.2711,
+     "py": -0.3354,
+     "pz": 9.739
+    },
+    {
+     "node": 5807,
+     "x": -0.07139,
+     "y": 0.295685,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.2819,
+     "py": -0.3769,
+     "pz": 8.9774
+    },
+    {
+     "node": 5808,
+     "x": -0.139168,
+     "y": 0.27044,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.3826,
+     "py": -0.5927,
+     "pz": 9.3045
+    },
+    {
+     "node": 5809,
+     "x": -0.216423,
+     "y": 0.213739,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.2986,
+     "py": -0.7805,
+     "pz": 8.5172
+    },
+    {
+     "node": 5810,
+     "x": -0.272272,
+     "y": 0.135865,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.1489,
+     "py": -0.9989,
+     "pz": 6.4901
+    },
+    {
+     "node": 5811,
+     "x": -0.304216,
+     "y": 0.014023,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.0663,
+     "py": -0.9628,
+     "pz": 2.6875
+    },
+    {
+     "node": 5812,
+     "x": -0.284202,
+     "y": -0.110336,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.186,
+     "py": -0.8025,
+     "pz": -1.6945
+    },
+    {
+     "node": 5813,
+     "x": -0.230503,
+     "y": -0.19998,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.3022,
+     "py": -0.6436,
+     "pz": -4.4085
+    },
+    {
+     "node": 5814,
+     "x": -0.149696,
+     "y": -0.266236,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.3792,
+     "py": -0.4513,
+     "pz": -5.436
+    },
+    {
+     "node": 5815,
+     "x": -0.07719,
+     "y": -0.295698,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.2459,
+     "py": -0.2622,
+     "pz": -5.2594
+    },
+    {
+     "node": 5816,
+     "x": 0.072243,
+     "y": -0.297164,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.1769,
+     "py": -0.1269,
+     "pz": -4.4913
+    },
+    {
+     "node": 5817,
+     "x": 0.140021,
+     "y": -0.271919,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.0668,
+     "py": -0.1075,
+     "pz": -3.7635
+    },
+    {
+     "node": 5818,
+     "x": 0.202296,
+     "y": -0.229374,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.0509,
+     "py": -0.308,
+     "pz": -2.9183
+    },
+    {
+     "node": 5819,
+     "x": 0.273125,
+     "y": -0.137343,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": 0.0146,
+     "py": 0.0374,
+     "pz": 0.3136
+    },
+    {
+     "node": 5820,
+     "x": 0.305396,
+     "y": 0.00357,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.3907,
+     "py": -0.0009,
+     "pz": 5.2126
+    },
+    {
+     "node": 5821,
+     "x": 0.285056,
+     "y": 0.108857,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.4099,
+     "py": -0.1661,
+     "pz": 8.1851
+    },
+    {
+     "node": 5822,
+     "x": 0.231356,
+     "y": 0.1985,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.2952,
+     "py": -0.4094,
+     "pz": 10.8218
+    },
+    {
+     "node": 5823,
+     "x": 0.150549,
+     "y": 0.264757,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.1575,
+     "py": -0.3931,
+     "pz": 11.2389
+    },
+    {
+     "node": 5824,
+     "x": 0.078043,
+     "y": 0.294219,
+     "z": 0.0,
+     "location": "kingpost base line",
+     "px": -0.2423,
+     "py": -0.3106,
+     "pz": 10.2367
+    }
+   ]
+  }
+ ]
+}

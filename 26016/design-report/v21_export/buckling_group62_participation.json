@@ -1,0 +1,853 @@
+{
+ "what": "Group 62 (external stair) participation in the 20 buckling modes of PLC 102 and PLC 119, model v21",
+ "measures": {
+  "g62_max_rel": "max |u| over group 62 nodes / max |u| over all nodes (1.0 = the mode peaks in the stair)",
+  "g62_energy_share": "sum |u|^2 over group 62 nodes / sum |u|^2 over all nodes"
+ },
+ "modes": {
+  "102": [
+   {
+    "mode": 1,
+    "lc": 9201,
+    "title": "Buckling  1 fact    6.95",
+    "factor": 6.95,
+    "max_node": 2369,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 171.4,
+    "z": 1.74,
+    "g62_max_rel": 0.004,
+    "g62_energy_share": 0.0,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.228,
+     "15": 0.168,
+     "12": 0.034
+    }
+   },
+   {
+    "mode": 2,
+    "lc": 9202,
+    "title": "Buckling  2 fact    7.23",
+    "factor": 7.23,
+    "max_node": 3267,
+    "max_node_groups": [
+     15
+    ],
+    "r": 4.57,
+    "angle_deg": 300.0,
+    "z": 4.05,
+    "g62_max_rel": 0.054,
+    "g62_energy_share": 0.0004,
+    "top_groups_max_rel": {
+     "15": 1.0,
+     "14": 0.841,
+     "24": 0.799,
+     "13": 0.437
+    }
+   },
+   {
+    "mode": 3,
+    "lc": 9203,
+    "title": "Buckling  3 fact    7.33",
+    "factor": 7.33,
+    "max_node": 2161,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 211.4,
+    "z": 1.74,
+    "g62_max_rel": 0.022,
+    "g62_energy_share": 0.0004,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.216,
+     "15": 0.142,
+     "14": 0.084
+    }
+   },
+   {
+    "mode": 4,
+    "lc": 9204,
+    "title": "Buckling  4 fact    7.59",
+    "factor": 7.59,
+    "max_node": 2332,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 108.6,
+    "z": 1.74,
+    "g62_max_rel": 0.069,
+    "g62_energy_share": 0.0027,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.21,
+     "15": 0.138,
+     "14": 0.118
+    }
+   },
+   {
+    "mode": 5,
+    "lc": 9205,
+    "title": "Buckling  5 fact    7.66",
+    "factor": 7.66,
+    "max_node": 2228,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 308.6,
+    "z": 1.74,
+    "g62_max_rel": 0.086,
+    "g62_energy_share": 0.0086,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.192,
+     "15": 0.119,
+     "62": 0.086
+    }
+   },
+   {
+    "mode": 6,
+    "lc": 9206,
+    "title": "Buckling  6 fact    7.86",
+    "factor": 7.86,
+    "max_node": 2265,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 11.4,
+    "z": 1.74,
+    "g62_max_rel": 0.088,
+    "g62_energy_share": 0.0083,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.193,
+     "15": 0.123,
+     "62": 0.088
+    }
+   },
+   {
+    "mode": 7,
+    "lc": 9207,
+    "title": "Buckling  7 fact    7.98",
+    "factor": 7.98,
+    "max_node": 2228,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 308.6,
+    "z": 1.74,
+    "g62_max_rel": 0.056,
+    "g62_energy_share": 0.0025,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.192,
+     "15": 0.113,
+     "62": 0.056
+    }
+   },
+   {
+    "mode": 8,
+    "lc": 9208,
+    "title": "Buckling  8 fact    8.13",
+    "factor": 8.13,
+    "max_node": 2265,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 11.4,
+    "z": 1.74,
+    "g62_max_rel": 0.057,
+    "g62_energy_share": 0.0022,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.192,
+     "12": 0.125,
+     "15": 0.112
+    }
+   },
+   {
+    "mode": 9,
+    "lc": 9209,
+    "title": "Buckling  9 fact    8.16",
+    "factor": 8.16,
+    "max_node": 2358,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 148.6,
+    "z": 1.74,
+    "g62_max_rel": 0.027,
+    "g62_energy_share": 0.0004,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.148,
+     "15": 0.132,
+     "12": 0.119
+    }
+   },
+   {
+    "mode": 10,
+    "lc": 9210,
+    "title": "Buckling 10 fact    8.28",
+    "factor": 8.28,
+    "max_node": 2150,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 188.6,
+    "z": 1.74,
+    "g62_max_rel": 0.052,
+    "g62_energy_share": 0.0008,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.193,
+     "12": 0.176,
+     "15": 0.132
+    }
+   },
+   {
+    "mode": 11,
+    "lc": 9211,
+    "title": "Buckling 11 fact    8.43",
+    "factor": 8.43,
+    "max_node": 2202,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 268.6,
+    "z": 1.74,
+    "g62_max_rel": 0.08,
+    "g62_energy_share": 0.0032,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.147,
+     "15": 0.102,
+     "12": 0.087
+    }
+   },
+   {
+    "mode": 12,
+    "lc": 9212,
+    "title": "Buckling 12 fact    8.49",
+    "factor": 8.49,
+    "max_node": 2332,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 108.6,
+    "z": 1.74,
+    "g62_max_rel": 0.043,
+    "g62_energy_share": 0.0009,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.157,
+     "12": 0.14,
+     "15": 0.121
+    }
+   },
+   {
+    "mode": 13,
+    "lc": 9213,
+    "title": "Buckling 13 fact    8.70",
+    "factor": 8.7,
+    "max_node": 2291,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 51.4,
+    "z": 1.74,
+    "g62_max_rel": 0.08,
+    "g62_energy_share": 0.0038,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.149,
+     "15": 0.113,
+     "12": 0.091
+    }
+   },
+   {
+    "mode": 14,
+    "lc": 9214,
+    "title": "Buckling 14 fact    8.99",
+    "factor": 8.99,
+    "max_node": 2161,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 211.4,
+    "z": 1.74,
+    "g62_max_rel": 0.035,
+    "g62_energy_share": 0.0003,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "12": 0.396,
+     "21": 0.249,
+     "15": 0.145
+    }
+   },
+   {
+    "mode": 15,
+    "lc": 9215,
+    "title": "Buckling 15 fact    9.14",
+    "factor": 9.14,
+    "max_node": 2343,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 131.4,
+    "z": 1.74,
+    "g62_max_rel": 0.064,
+    "g62_energy_share": 0.0036,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "12": 0.41,
+     "21": 0.204,
+     "13": 0.144
+    }
+   },
+   {
+    "mode": 16,
+    "lc": 9216,
+    "title": "Buckling 16 fact    9.17",
+    "factor": 9.17,
+    "max_node": 2343,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 131.4,
+    "z": 1.74,
+    "g62_max_rel": 0.079,
+    "g62_energy_share": 0.0045,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "12": 0.471,
+     "21": 0.236,
+     "13": 0.158
+    }
+   },
+   {
+    "mode": 17,
+    "lc": 9217,
+    "title": "Buckling 17 fact    9.25",
+    "factor": 9.25,
+    "max_node": 2161,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 211.4,
+    "z": 1.74,
+    "g62_max_rel": 0.104,
+    "g62_energy_share": 0.0088,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "12": 0.41,
+     "21": 0.173,
+     "15": 0.143
+    }
+   },
+   {
+    "mode": 18,
+    "lc": 9218,
+    "title": "Buckling 18 fact    9.36",
+    "factor": 9.36,
+    "max_node": 2280,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 28.6,
+    "z": 1.74,
+    "g62_max_rel": 0.074,
+    "g62_energy_share": 0.0069,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "12": 0.333,
+     "21": 0.157,
+     "15": 0.149
+    }
+   },
+   {
+    "mode": 19,
+    "lc": 9219,
+    "title": "Buckling 19 fact    9.45",
+    "factor": 9.45,
+    "max_node": 2202,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 268.6,
+    "z": 1.74,
+    "g62_max_rel": 0.054,
+    "g62_energy_share": 0.0014,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "12": 0.561,
+     "13": 0.285,
+     "21": 0.234
+    }
+   },
+   {
+    "mode": 20,
+    "lc": 9220,
+    "title": "Buckling 20 fact    9.50",
+    "factor": 9.5,
+    "max_node": 2332,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 108.6,
+    "z": 1.74,
+    "g62_max_rel": 0.117,
+    "g62_energy_share": 0.0137,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "12": 0.272,
+     "21": 0.139,
+     "62": 0.117
+    }
+   }
+  ],
+  "119": [
+   {
+    "mode": 1,
+    "lc": 9221,
+    "title": "Buckling  1 fact    7.15",
+    "factor": 7.15,
+    "max_node": 3267,
+    "max_node_groups": [
+     15
+    ],
+    "r": 4.57,
+    "angle_deg": 300.0,
+    "z": 4.05,
+    "g62_max_rel": 0.052,
+    "g62_energy_share": 0.0004,
+    "top_groups_max_rel": {
+     "15": 1.0,
+     "14": 0.832,
+     "24": 0.798,
+     "13": 0.426
+    }
+   },
+   {
+    "mode": 2,
+    "lc": 9222,
+    "title": "Buckling  2 fact    7.40",
+    "factor": 7.4,
+    "max_node": 2358,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 148.6,
+    "z": 1.74,
+    "g62_max_rel": 0.004,
+    "g62_energy_share": 0.0,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.223,
+     "15": 0.165,
+     "12": 0.041
+    }
+   },
+   {
+    "mode": 3,
+    "lc": 9223,
+    "title": "Buckling  3 fact    7.72",
+    "factor": 7.72,
+    "max_node": 2161,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 211.4,
+    "z": 1.74,
+    "g62_max_rel": 0.013,
+    "g62_energy_share": 0.0001,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.207,
+     "15": 0.132,
+     "12": 0.067
+    }
+   },
+   {
+    "mode": 4,
+    "lc": 9224,
+    "title": "Buckling  4 fact    7.96",
+    "factor": 7.96,
+    "max_node": 2332,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 108.6,
+    "z": 1.74,
+    "g62_max_rel": 0.018,
+    "g62_energy_share": 0.0003,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.174,
+     "15": 0.099,
+     "12": 0.065
+    }
+   },
+   {
+    "mode": 5,
+    "lc": 9225,
+    "title": "Buckling  5 fact    8.17",
+    "factor": 8.17,
+    "max_node": 2187,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 251.4,
+    "z": 1.74,
+    "g62_max_rel": 0.065,
+    "g62_energy_share": 0.0058,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.188,
+     "15": 0.117,
+     "62": 0.065
+    }
+   },
+   {
+    "mode": 6,
+    "lc": 9226,
+    "title": "Buckling  6 fact    8.34",
+    "factor": 8.34,
+    "max_node": 2265,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 11.4,
+    "z": 1.74,
+    "g62_max_rel": 0.081,
+    "g62_energy_share": 0.0085,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.191,
+     "15": 0.118,
+     "62": 0.081
+    }
+   },
+   {
+    "mode": 7,
+    "lc": 9227,
+    "title": "Buckling  7 fact    8.50",
+    "factor": 8.5,
+    "max_node": 2228,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 308.6,
+    "z": 1.74,
+    "g62_max_rel": 0.072,
+    "g62_energy_share": 0.0063,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.2,
+     "15": 0.126,
+     "62": 0.072
+    }
+   },
+   {
+    "mode": 8,
+    "lc": 9228,
+    "title": "Buckling  8 fact    8.66",
+    "factor": 8.66,
+    "max_node": 2265,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 11.4,
+    "z": 1.74,
+    "g62_max_rel": 0.055,
+    "g62_energy_share": 0.0056,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.185,
+     "15": 0.104,
+     "12": 0.058
+    }
+   },
+   {
+    "mode": 9,
+    "lc": 9229,
+    "title": "Buckling  9 fact    8.67",
+    "factor": 8.67,
+    "max_node": 2369,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 171.4,
+    "z": 1.74,
+    "g62_max_rel": 0.012,
+    "g62_energy_share": 0.0002,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.109,
+     "15": 0.072,
+     "13": 0.033
+    }
+   },
+   {
+    "mode": 10,
+    "lc": 9230,
+    "title": "Buckling 10 fact    8.80",
+    "factor": 8.8,
+    "max_node": 2150,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 188.6,
+    "z": 1.74,
+    "g62_max_rel": 0.013,
+    "g62_energy_share": 0.0004,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.192,
+     "12": 0.176,
+     "15": 0.136
+    }
+   },
+   {
+    "mode": 11,
+    "lc": 9231,
+    "title": "Buckling 11 fact    9.10",
+    "factor": 9.1,
+    "max_node": 2202,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 268.6,
+    "z": 1.74,
+    "g62_max_rel": 0.087,
+    "g62_energy_share": 0.0017,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "21": 0.156,
+     "12": 0.154,
+     "15": 0.133
+    }
+   },
+   {
+    "mode": 12,
+    "lc": 9232,
+    "title": "Buckling 12 fact    9.11",
+    "factor": 9.11,
+    "max_node": 2343,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 131.4,
+    "z": 1.74,
+    "g62_max_rel": 0.019,
+    "g62_energy_share": 0.0001,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "12": 0.169,
+     "21": 0.123,
+     "15": 0.116
+    }
+   },
+   {
+    "mode": 13,
+    "lc": 9233,
+    "title": "Buckling 13 fact    9.31",
+    "factor": 9.31,
+    "max_node": 2291,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 51.4,
+    "z": 1.74,
+    "g62_max_rel": 0.085,
+    "g62_energy_share": 0.0029,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "12": 0.145,
+     "21": 0.141,
+     "15": 0.12
+    }
+   },
+   {
+    "mode": 14,
+    "lc": 9234,
+    "title": "Buckling 14 fact    9.61",
+    "factor": 9.61,
+    "max_node": 2213,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 291.4,
+    "z": 1.74,
+    "g62_max_rel": 0.08,
+    "g62_energy_share": 0.0064,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "12": 0.333,
+     "21": 0.225,
+     "15": 0.174
+    }
+   },
+   {
+    "mode": 15,
+    "lc": 9235,
+    "title": "Buckling 15 fact    9.76",
+    "factor": 9.76,
+    "max_node": 2332,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 108.6,
+    "z": 1.74,
+    "g62_max_rel": 0.033,
+    "g62_energy_share": 0.0022,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "12": 0.298,
+     "21": 0.171,
+     "15": 0.139
+    }
+   },
+   {
+    "mode": 16,
+    "lc": 9236,
+    "title": "Buckling 16 fact    9.83",
+    "factor": 9.83,
+    "max_node": 2161,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 211.4,
+    "z": 1.74,
+    "g62_max_rel": 0.092,
+    "g62_energy_share": 0.0086,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "12": 0.381,
+     "21": 0.244,
+     "14": 0.169
+    }
+   },
+   {
+    "mode": 17,
+    "lc": 9237,
+    "title": "Buckling 17 fact    9.93",
+    "factor": 9.93,
+    "max_node": 4586,
+    "max_node_groups": [
+     14
+    ],
+    "r": 3.0,
+    "angle_deg": 200.0,
+    "z": 1.62,
+    "g62_max_rel": 0.026,
+    "g62_energy_share": 0.004,
+    "top_groups_max_rel": {
+     "14": 1.0,
+     "11": 0.314,
+     "15": 0.199,
+     "12": 0.149
+    }
+   },
+   {
+    "mode": 18,
+    "lc": 9238,
+    "title": "Buckling 18 fact    9.98",
+    "factor": 9.98,
+    "max_node": 2239,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 331.4,
+    "z": 1.74,
+    "g62_max_rel": 0.071,
+    "g62_energy_share": 0.0066,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "14": 0.443,
+     "12": 0.15,
+     "21": 0.132
+    }
+   },
+   {
+    "mode": 19,
+    "lc": 9239,
+    "title": "Buckling 19 fact   10.00",
+    "factor": 10.0,
+    "max_node": 2254,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 348.6,
+    "z": 1.74,
+    "g62_max_rel": 0.099,
+    "g62_energy_share": 0.0097,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "12": 0.434,
+     "13": 0.257,
+     "14": 0.166
+    }
+   },
+   {
+    "mode": 20,
+    "lc": 9240,
+    "title": "Buckling 20 fact   10.07",
+    "factor": 10.07,
+    "max_node": 2343,
+    "max_node_groups": [
+     11
+    ],
+    "r": 11.82,
+    "angle_deg": 131.4,
+    "z": 1.74,
+    "g62_max_rel": 0.016,
+    "g62_energy_share": 0.0007,
+    "top_groups_max_rel": {
+     "11": 1.0,
+     "12": 0.342,
+     "14": 0.31,
+     "21": 0.171
+    }
+   }
+  ]
+ }
+}

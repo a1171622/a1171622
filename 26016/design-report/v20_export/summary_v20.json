@@ -1,0 +1,308 @@
+{
+ "source": {
+  "model": "26016 member check v20 (v19m + qp 0.5 kPa + My hinges at 12 external stair stringer ends, run 13 Nov 2026, NguyenPC, exit 0, 0 errors, 212 warnings)",
+  "cdb": "C:\\Sofistik workflow\\26016-member-check\\v20\\26016_check_v20.cdb",
+  "erg": "C:\\Sofistik workflow\\26016-member-check\\v20\\26016_check_v20.erg",
+  "extracted": "2026-11-13 15:17",
+  "reader": "SOFiSTiK MCP server read-only CDB reader (sof_cdb_w DLL), .erg tables parsed by erg.py",
+  "units": "forces kN, moments kNm, displacements mm, coordinates m"
+ },
+ "buckling": {
+  "102": {
+   "lowest_lc": 9201,
+   "title": "Buckling  1 fact    6.95"
+  },
+  "119": {
+   "lowest_lc": 9221,
+   "title": "Buckling  1 fact    7.32"
+  }
+ },
+ "groups": {
+  "11": {
+   "bdk_max": 0.383,
+   "bdk_sln": 36,
+   "bdk_lc": 147,
+   "aqb_max": 0.231,
+   "aqb_beam": 60084,
+   "aqb_lc": 152,
+   "aqb_sln": 24
+  },
+  "12": {
+   "bdk_max": 0.096,
+   "bdk_sln": 448,
+   "bdk_lc": 121,
+   "aqb_max": 0.064,
+   "aqb_beam": 70057,
+   "aqb_lc": 105,
+   "aqb_sln": 448
+  },
+  "13": {
+   "bdk_max": 0.254,
+   "bdk_sln": 41,
+   "bdk_lc": 121,
+   "aqb_max": 0.216,
+   "aqb_beam": 80021,
+   "aqb_lc": 152,
+   "aqb_sln": 39
+  },
+  "14": {
+   "bdk_max": 0.36,
+   "bdk_sln": 399,
+   "bdk_lc": 145,
+   "aqb_max": 0.286,
+   "aqb_beam": 90021,
+   "aqb_lc": 145,
+   "aqb_sln": 399
+  },
+  "15": {
+   "bdk_max": 0.672,
+   "bdk_sln": 223,
+   "bdk_lc": 153,
+   "aqb_max": 0.55,
+   "aqb_beam": 100832,
+   "aqb_lc": 152,
+   "aqb_sln": 1545
+  },
+  "21": {
+   "bdk_max": 0.398,
+   "bdk_sln": 17,
+   "bdk_lc": 145,
+   "aqb_max": 0.387,
+   "aqb_beam": 110113,
+   "aqb_lc": 146,
+   "aqb_sln": 9
+  },
+  "23": {
+   "bdk_max": 0.141,
+   "bdk_sln": 96,
+   "bdk_lc": 119,
+   "aqb_max": 0.182,
+   "aqb_beam": 120020,
+   "aqb_lc": 152,
+   "aqb_sln": 96
+  },
+  "24": {
+   "bdk_max": 0.29,
+   "bdk_sln": 417,
+   "bdk_lc": 122,
+   "aqb_max": 0.297,
+   "aqb_beam": 130031,
+   "aqb_lc": 153,
+   "aqb_sln": 417
+  },
+  "25": {
+   "bdk_max": 1.06,
+   "bdk_sln": 56,
+   "bdk_lc": 120,
+   "aqb_max": 1.061,
+   "aqb_beam": 140020,
+   "aqb_lc": 120,
+   "aqb_sln": 56
+  },
+  "31": {
+   "bdk_max": 0.239,
+   "bdk_sln": 380,
+   "bdk_lc": 147,
+   "aqb_max": 0.351,
+   "aqb_beam": 150043,
+   "aqb_lc": 145,
+   "aqb_sln": 376
+  },
+  "35": {
+   "bdk_max": 0.377,
+   "bdk_sln": 318,
+   "bdk_lc": 107,
+   "aqb_max": 0.287,
+   "aqb_beam": 160735,
+   "aqb_lc": 107,
+   "aqb_sln": 345
+  },
+  "60": {
+   "bdk_max": 0.314,
+   "bdk_sln": 490,
+   "bdk_lc": 122,
+   "aqb_max": 0.698,
+   "aqb_beam": 170105,
+   "aqb_lc": null,
+   "aqb_sln": 458
+  },
+  "61": {
+   "bdk_max": 0.111,
+   "bdk_sln": 602,
+   "bdk_lc": 120,
+   "aqb_max": 0.101,
+   "aqb_beam": 180010,
+   "aqb_lc": 120,
+   "aqb_sln": 602
+  },
+  "62": {
+   "bdk_max": 0.975,
+   "bdk_sln": 722,
+   "bdk_lc": 122,
+   "aqb_max": 0.516,
+   "aqb_beam": 190055,
+   "aqb_lc": null,
+   "aqb_sln": 727
+  }
+ },
+ "above_0_90": [
+  {
+   "check": "AQB",
+   "sln": 56,
+   "group": 25,
+   "util": 1.061,
+   "lc": 120,
+   "beam": 140020,
+   "x": 0.417,
+   "title": "Line"
+  },
+  {
+   "check": "BDK",
+   "sln": 56,
+   "group": 25,
+   "util": 1.06,
+   "lc": 120,
+   "title": "Line"
+  },
+  {
+   "check": "BDK",
+   "sln": 57,
+   "group": 25,
+   "util": 1.011,
+   "lc": 120,
+   "title": "Line"
+  },
+  {
+   "check": "AQB",
+   "sln": 57,
+   "group": 25,
+   "util": 1.007,
+   "lc": 120,
+   "beam": 140021,
+   "x": 0.0,
+   "title": "Line"
+  },
+  {
+   "check": "BDK",
+   "sln": 62,
+   "group": 25,
+   "util": 1.003,
+   "lc": 122,
+   "title": "Line"
+  },
+  {
+   "check": "AQB",
+   "sln": 62,
+   "group": 25,
+   "util": 1.0,
+   "lc": 153,
+   "beam": 140080,
+   "x": 0.417,
+   "title": "Line"
+  },
+  {
+   "check": "BDK",
+   "sln": 722,
+   "group": 62,
+   "util": 0.975,
+   "lc": 122,
+   "title": "right landing 2 leg outer-low"
+  },
+  {
+   "check": "BDK",
+   "sln": 69,
+   "group": 25,
+   "util": 0.974,
+   "lc": 119,
+   "title": "Line"
+  },
+  {
+   "check": "BDK",
+   "sln": 767,
+   "group": 62,
+   "util": 0.966,
+   "lc": 121,
+   "title": "left landing 2 leg outer-low"
+  },
+  {
+   "check": "AQB",
+   "sln": 69,
+   "group": 25,
+   "util": 0.965,
+   "lc": 153,
+   "beam": 140141,
+   "x": 0.0,
+   "title": "Line"
+  },
+  {
+   "check": "BDK",
+   "sln": 68,
+   "group": 25,
+   "util": 0.958,
+   "lc": 121,
+   "title": "Line"
+  },
+  {
+   "check": "BDK",
+   "sln": 66,
+   "group": 25,
+   "util": 0.957,
+   "lc": 121,
+   "title": "Line"
+  },
+  {
+   "check": "AQB",
+   "sln": 68,
+   "group": 25,
+   "util": 0.953,
+   "lc": 153,
+   "beam": 140140,
+   "x": 0.417,
+   "title": "Line"
+  },
+  {
+   "check": "AQB",
+   "sln": 66,
+   "group": 25,
+   "util": 0.947,
+   "lc": 153,
+   "beam": 140120,
+   "x": 0.417,
+   "title": "Line"
+  },
+  {
+   "check": "BDK",
+   "sln": 67,
+   "group": 25,
+   "util": 0.938,
+   "lc": 121,
+   "title": "Line"
+  },
+  {
+   "check": "AQB",
+   "sln": 67,
+   "group": 25,
+   "util": 0.928,
+   "lc": 153,
+   "beam": 140121,
+   "x": 0.0,
+   "title": "Line"
+  },
+  {
+   "check": "BDK",
+   "sln": 61,
+   "group": 25,
+   "util": 0.91,
+   "lc": 122,
+   "title": "Line"
+  },
+  {
+   "check": "BDK",
+   "sln": 70,
+   "group": 25,
+   "util": 0.905,
+   "lc": 119,
+   "title": "Line"
+  }
+ ]
+}

@@ -1,0 +1,170 @@
+{
+ "source": {
+  "model": "26016 member check v21 (v20 + drawings 970027-S01-ST sections: stair RHS 160x80x5, L2 radials UB 457x191x98, landing supports SHS 80x80x6.3; run 13 Nov 2026, NguyenPC, exit 0, 0 errors, 212 warnings)",
+  "cdb": "C:\\Sofistik workflow\\26016-member-check\\v21\\26016_check_v21.cdb",
+  "erg": "C:\\Sofistik workflow\\26016-member-check\\v21\\26016_check_v21.erg",
+  "extracted": "2026-11-13 18:28",
+  "reader": "SOFiSTiK MCP server read-only CDB reader (sof_cdb_w DLL), .erg tables parsed by erg.py",
+  "units": "forces kN, moments kNm, displacements mm, coordinates m"
+ },
+ "sign": "Support forces as stored by SOFiSTiK = force of the support on the structure in global axes: pz > 0 = support pushes the structure up (bearing / compression on the foundation), pz < 0 = uplift (tension in the anchors).",
+ "what": "Sum of the support forces of all supports for the basic load cases (unfactored). Check: equals the sum stored by SOFiSTiK and the applied load.",
+ "load_cases": [
+  {
+   "lc": 1,
+   "title": "SW self-weight",
+   "sum_Fx": -0.0,
+   "sum_Fy": -0.0,
+   "sum_Fz": 882.315,
+   "sofistik_stored_sum_kN": [
+    0.0,
+    -0.0,
+    882.315
+   ],
+   "supports": 69
+  },
+  {
+   "lc": 2,
+   "title": "SDL floors roof handrail walls",
+   "sum_Fx": -0.0,
+   "sum_Fy": -0.0,
+   "sum_Fz": 842.933,
+   "sofistik_stored_sum_kN": [
+    0.0,
+    0.0,
+    842.933
+   ],
+   "supports": 69
+  },
+  {
+   "lc": 3,
+   "title": "SDL stairs handrail",
+   "sum_Fx": 0.0,
+   "sum_Fy": -0.0,
+   "sum_Fz": 28.878,
+   "sofistik_stored_sum_kN": [
+    0.0,
+    -0.0,
+    28.878
+   ],
+   "supports": 69
+  },
+  {
+   "lc": 4,
+   "title": "DL 0.2 kPa all floors",
+   "sum_Fx": -0.0,
+   "sum_Fy": -0.0,
+   "sum_Fz": 176.013,
+   "sofistik_stored_sum_kN": [
+    0.0,
+    -0.0,
+    176.013
+   ],
+   "supports": 69
+  },
+  {
+   "lc": 11,
+   "title": "LL L1 full",
+   "sum_Fx": -0.0,
+   "sum_Fy": 0.0,
+   "sum_Fz": 2160.727,
+   "sofistik_stored_sum_kN": [
+    0.0,
+    -0.0,
+    2160.727
+   ],
+   "supports": 69
+  },
+  {
+   "lc": 12,
+   "title": "LL roof Cat H",
+   "sum_Fx": 0.0,
+   "sum_Fy": 0.0,
+   "sum_Fz": 259.287,
+   "sofistik_stored_sum_kN": [
+    -0.0,
+    0.0,
+    259.287
+   ],
+   "supports": 69
+  },
+  {
+   "lc": 13,
+   "title": "LL L2 full",
+   "sum_Fx": 0.0,
+   "sum_Fy": -0.0,
+   "sum_Fz": 1915.328,
+   "sofistik_stored_sum_kN": [
+    0.0,
+    0.0,
+    1915.328
+   ],
+   "supports": 69
+  },
+  {
+   "lc": 14,
+   "title": "LL stairs",
+   "sum_Fx": 0.0,
+   "sum_Fy": 0.0,
+   "sum_Fz": 324.273,
+   "sofistik_stored_sum_kN": [
+    0.0,
+    -0.0,
+    324.273
+   ],
+   "supports": 69
+  },
+  {
+   "lc": 71,
+   "title": "WL+X all + uplift",
+   "sum_Fx": -200.979,
+   "sum_Fy": -0.135,
+   "sum_Fz": -650.636,
+   "sofistik_stored_sum_kN": [
+    -200.979,
+    -0.135,
+    -650.637
+   ],
+   "supports": 69
+  },
+  {
+   "lc": 72,
+   "title": "WL-X all + uplift",
+   "sum_Fx": 196.03,
+   "sum_Fy": 0.951,
+   "sum_Fz": -607.476,
+   "sofistik_stored_sum_kN": [
+    196.029,
+    0.951,
+    -607.476
+   ],
+   "supports": 69
+  },
+  {
+   "lc": 73,
+   "title": "WL-Y all + uplift",
+   "sum_Fx": -1.858,
+   "sum_Fy": 207.459,
+   "sum_Fz": -636.439,
+   "sofistik_stored_sum_kN": [
+    -1.858,
+    207.459,
+    -636.44
+   ],
+   "supports": 69
+  },
+  {
+   "lc": 74,
+   "title": "WL+Y all + uplift",
+   "sum_Fx": -2.188,
+   "sum_Fy": -205.523,
+   "sum_Fz": -622.226,
+   "sofistik_stored_sum_kN": [
+    -2.188,
+    -205.523,
+    -622.226
+   ],
+   "supports": 69
+  }
+ ]
+}

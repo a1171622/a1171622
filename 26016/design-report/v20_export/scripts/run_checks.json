@@ -1,0 +1,8 @@
+{"table": {
+ "exit code / errors": ["0 / 0", "0 / 0 (run 2; run 1 with 16 stringer hinges aborted in the PLC 102 eigen ASE: 3 rigid body modes, free rotation at foot nodes 901/909/910)"],
+ "warnings (erg)": ["284", "212 (tool count); same warning numbers as v19m, fewer BDK 156 / 205"],
+ "warning difference": ["-", "no new warning type; BDK no. 156: 81 -> 19, no. 205: 15 -> 6, no. 10989: 3 -> 2"],
+ "mechanism / singularity / error 197": ["none", "none in run 2"],
+ "run time": ["32.9 min (1972 s), peak RAM 10.1 GB", "34.0 min (2041 s), peak RAM 10.1 GB"],
+ "programs": ["AQUA SOFIMSHC SOFILOAD ASE MAXIMA BDK x2 ASE x2 (eigen) AQB", "same, all finished"]
+}}

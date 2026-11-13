@@ -1,0 +1,879 @@
+[
+ {
+  "file": "P00_key_beam_groups.png",
+  "caption": "Key: beam groups of model v19m (group number on each member, colour legend at top). Groups 1, 2, 6, 7 are shell (QUAD) groups and are not shown.",
+  "size": [
+   2658,
+   3024
+  ]
+ },
+ {
+  "file": "P01_L1_My.png",
+  "caption": "My [kNm], ULS envelope: max LC 4329 (red) and min LC 4330 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. Level 1 framing (group 15) My. Diagram scale 1 cm = 50 kNm (on the 25.5 cm sheet); labels only where |value| > 37 kNm. Envelope extremes: max 43.35, min -81.45 kNm.",
+  "size": [
+   2658,
+   3024
+  ],
+  "picture": {
+   "name": "L1_My",
+   "title": "Level 1 framing (group 15) My",
+   "groups": [
+    15
+   ],
+   "q": "MY",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -2.6 AXIS NEGZ",
+   "H": 30,
+   "extra": [],
+   "unit": 50,
+   "thr": 37.0,
+   "max": 43.35,
+   "max_group": 15,
+   "min": -81.45,
+   "min_group": 15,
+   "lcs": [
+    4329,
+    4330
+   ]
+  }
+ },
+ {
+  "file": "P02_L1_Vz.png",
+  "caption": "Vz [kN], ULS envelope: max LC 4325 (red) and min LC 4326 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. Level 1 framing (group 15) Vz. Diagram scale 1 cm = 50 kN (on the 25.5 cm sheet); labels only where |value| > 35 kN. Envelope extremes: max 76.97, min -76.7 kN.",
+  "size": [
+   2658,
+   3024
+  ],
+  "picture": {
+   "name": "L1_Vz",
+   "title": "Level 1 framing (group 15) Vz",
+   "groups": [
+    15
+   ],
+   "q": "VZ",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -2.6 AXIS NEGZ",
+   "H": 30,
+   "extra": [],
+   "unit": 50,
+   "thr": 35.0,
+   "max": 76.97,
+   "max_group": 15,
+   "min": -76.7,
+   "min_group": 15,
+   "lcs": [
+    4325,
+    4326
+   ]
+  }
+ },
+ {
+  "file": "P03_L1_N.png",
+  "caption": "N [kN], ULS envelope: max LC 4321 (red) and min LC 4322 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. Level 1 framing (group 15) N. Diagram scale 1 cm = 200 kN (on the 25.5 cm sheet); labels only where |value| > 66 kN. Envelope extremes: max 109.33, min -71.62 kN.",
+  "size": [
+   2658,
+   3024
+  ],
+  "picture": {
+   "name": "L1_N",
+   "title": "Level 1 framing (group 15) N",
+   "groups": [
+    15
+   ],
+   "q": "N",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -2.6 AXIS NEGZ",
+   "H": 30,
+   "extra": [],
+   "unit": 200,
+   "thr": 66.0,
+   "max": 109.33,
+   "max_group": 15,
+   "min": -71.62,
+   "min_group": 15,
+   "lcs": [
+    4321,
+    4322
+   ]
+  }
+ },
+ {
+  "file": "P04_L2_My.png",
+  "caption": "My [kNm], ULS envelope: max LC 4329 (red) and min LC 4330 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. Level 2 framing (group 25) My. Diagram scale 1 cm = 200 kNm (on the 25.5 cm sheet); labels only where |value| > 127 kNm. Envelope extremes: max 233.68, min -363.75 kNm.",
+  "size": [
+   2658,
+   3024
+  ],
+  "picture": {
+   "name": "L2_My",
+   "title": "Level 2 framing (group 25) My",
+   "groups": [
+    25
+   ],
+   "q": "MY",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -2.6 AXIS NEGZ",
+   "H": 30,
+   "extra": [],
+   "unit": 200,
+   "thr": 127.0,
+   "max": 233.68,
+   "max_group": 25,
+   "min": -363.75,
+   "min_group": 25,
+   "lcs": [
+    4329,
+    4330
+   ]
+  }
+ },
+ {
+  "file": "P05_L2_Vz.png",
+  "caption": "Vz [kN], ULS envelope: max LC 4325 (red) and min LC 4326 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. Level 2 framing (group 25) Vz. Diagram scale 1 cm = 100 kN (on the 25.5 cm sheet); labels only where |value| > 66 kN. Envelope extremes: max 146.23, min -109.44 kN.",
+  "size": [
+   2658,
+   3024
+  ],
+  "picture": {
+   "name": "L2_Vz",
+   "title": "Level 2 framing (group 25) Vz",
+   "groups": [
+    25
+   ],
+   "q": "VZ",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -2.6 AXIS NEGZ",
+   "H": 30,
+   "extra": [],
+   "unit": 100,
+   "thr": 66.0,
+   "max": 146.23,
+   "max_group": 25,
+   "min": -109.44,
+   "min_group": 25,
+   "lcs": [
+    4325,
+    4326
+   ]
+  }
+ },
+ {
+  "file": "P06_L2_N.png",
+  "caption": "N [kN], ULS envelope: max LC 4321 (red) and min LC 4322 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. Level 2 framing (group 25) N. Diagram scale 1 cm = 100 kN (on the 25.5 cm sheet); labels only where |value| > 37 kN. Envelope extremes: max 62.26, min -55.38 kN.",
+  "size": [
+   2658,
+   3024
+  ],
+  "picture": {
+   "name": "L2_N",
+   "title": "Level 2 framing (group 25) N",
+   "groups": [
+    25
+   ],
+   "q": "N",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -2.6 AXIS NEGZ",
+   "H": 30,
+   "extra": [],
+   "unit": 100,
+   "thr": 37.0,
+   "max": 62.26,
+   "max_group": 25,
+   "min": -55.38,
+   "min_group": 25,
+   "lcs": [
+    4321,
+    4322
+   ]
+  }
+ },
+ {
+  "file": "P07_RF_My.png",
+  "caption": "My [kNm], ULS envelope: max LC 4329 (red) and min LC 4330 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. Roof framing (group 35) My. Diagram scale 1 cm = 50 kNm (on the 25.5 cm sheet); labels only where |value| > 33 kNm. Envelope extremes: max 73.98, min -60.84 kNm.",
+  "size": [
+   2658,
+   3024
+  ],
+  "picture": {
+   "name": "RF_My",
+   "title": "Roof framing (group 35) My",
+   "groups": [
+    35
+   ],
+   "q": "MY",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -2.6 AXIS NEGZ",
+   "H": 30,
+   "extra": [],
+   "unit": 50,
+   "thr": 33.0,
+   "max": 73.98,
+   "max_group": 35,
+   "min": -60.84,
+   "min_group": 35,
+   "lcs": [
+    4329,
+    4330
+   ]
+  }
+ },
+ {
+  "file": "P08_RF_Vz.png",
+  "caption": "Vz [kN], ULS envelope: max LC 4325 (red) and min LC 4326 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. Roof framing (group 35) Vz. Diagram scale 1 cm = 20 kN (on the 25.5 cm sheet); labels only where |value| > 14 kN. Envelope extremes: max 30.99, min -31.3 kN.",
+  "size": [
+   2658,
+   3024
+  ],
+  "picture": {
+   "name": "RF_Vz",
+   "title": "Roof framing (group 35) Vz",
+   "groups": [
+    35
+   ],
+   "q": "VZ",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -2.6 AXIS NEGZ",
+   "H": 30,
+   "extra": [],
+   "unit": 20,
+   "thr": 14.0,
+   "max": 30.99,
+   "max_group": 35,
+   "min": -31.3,
+   "min_group": 35,
+   "lcs": [
+    4325,
+    4326
+   ]
+  }
+ },
+ {
+  "file": "P09_RF_N.png",
+  "caption": "N [kN], ULS envelope: max LC 4321 (red) and min LC 4322 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. Roof framing (group 35) N. Diagram scale 1 cm = 100 kN (on the 25.5 cm sheet); labels only where |value| > 44 kN. Envelope extremes: max 72.75, min -67.43 kN.",
+  "size": [
+   2658,
+   3024
+  ],
+  "picture": {
+   "name": "RF_N",
+   "title": "Roof framing (group 35) N",
+   "groups": [
+    35
+   ],
+   "q": "N",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -2.6 AXIS NEGZ",
+   "H": 30,
+   "extra": [],
+   "unit": 100,
+   "thr": 44.0,
+   "max": 72.75,
+   "max_group": 35,
+   "min": -67.43,
+   "min_group": 35,
+   "lcs": [
+    4321,
+    4322
+   ]
+  }
+ },
+ {
+  "file": "P10_L1_Mz_plan.png",
+  "caption": "Mz [kNm], ULS envelope: max LC 4331 (red) and min LC 4332 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. Level 1 framing (group 15) Mz, plan. Diagram scale 1 cm = 5 kNm (on the 25.5 cm sheet); labels only where |value| > 3.1 kNm. Envelope extremes: max 10.07, min -10.41 kNm.",
+  "size": [
+   2658,
+   3024
+  ],
+  "picture": {
+   "name": "L1_Mz_plan",
+   "title": "Level 1 framing (group 15) Mz, plan",
+   "groups": [
+    15
+   ],
+   "q": "MZ",
+   "view": "VIEW TYPE DIRE X 0 Y 0 Z -1 AXIS NEGY",
+   "H": 30,
+   "extra": [],
+   "unit": 5,
+   "thr": 3.1,
+   "max": 10.07,
+   "max_group": 15,
+   "min": -10.41,
+   "min_group": 15,
+   "lcs": [
+    4331,
+    4332
+   ]
+  }
+ },
+ {
+  "file": "P11_L1_ring85_Mz_plan.png",
+  "caption": "Mz [kNm], ULS envelope: max LC 4331 (red) and min LC 4332 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. Level 1 ring r 8.5 only (group 15) Mz, plan. Diagram scale 1 cm = 1 kNm (on the 25.5 cm sheet); labels only where |value| > 0.6 kNm. Envelope extremes: max 1.87, min -1.83 kNm.",
+  "size": [
+   2658,
+   3024
+  ],
+  "picture": {
+   "name": "L1_ring85_Mz_plan",
+   "title": "Level 1 ring r 8.5 only (group 15) Mz, plan",
+   "groups": [
+    15
+   ],
+   "q": "MZ",
+   "view": "VIEW TYPE DIRE X 0 Y 0 Z -1 AXIS NEGY",
+   "H": 30,
+   "extra": [
+    "SEL ETYP BEAM TYPE NO VAL1 100184 VAL2 100190",
+    "SEL ETYP BEAM TYPE NO VAL1 100222 VAL2 100228",
+    "SEL ETYP BEAM TYPE NO VAL1 100252 VAL2 100258",
+    "SEL ETYP BEAM TYPE NO VAL1 100282 VAL2 100288",
+    "SEL ETYP BEAM TYPE NO VAL1 100312 VAL2 100318",
+    "SEL ETYP BEAM TYPE NO VAL1 100468 VAL2 100474",
+    "SEL ETYP BEAM TYPE NO VAL1 100493 VAL2 100506",
+    "SEL ETYP BEAM TYPE NO VAL1 100525 VAL2 100538",
+    "SEL ETYP BEAM TYPE NO VAL1 100557 VAL2 100563",
+    "SEL ETYP BEAM TYPE NO VAL1 100573 VAL2 100593",
+    "SEL ETYP BEAM TYPE NO VAL1 100716 VAL2 100729",
+    "SEL ETYP BEAM TYPE NO VAL1 100775 VAL2 100788"
+   ],
+   "unit": 1,
+   "thr": 0.6,
+   "max": 1.87,
+   "max_group": "ring85",
+   "min": -1.83,
+   "min_group": "ring85",
+   "lcs": [
+    4331,
+    4332
+   ]
+  }
+ },
+ {
+  "file": "P12_V_G-L1_N.png",
+  "caption": "N [kN], ULS envelope: max LC 4321 (red) and min LC 4322 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. columns and rakers ground to Level 1 (groups 11, 12, 13, 14, 21, 23, 24, 31) N. Diagram scale 1 cm = 200 kN (on the 25.5 cm sheet); labels only where |value| > 239 kN. Envelope extremes: max 56.84, min -398.98 kN.",
+  "size": [
+   2658,
+   2315
+  ],
+  "picture": {
+   "name": "V_G-L1_N",
+   "title": "columns and rakers ground to Level 1 (groups 11, 12, 13, 14, 21, 23, 24, 31) N",
+   "groups": [
+    11,
+    12,
+    13,
+    14,
+    21,
+    23,
+    24,
+    31
+   ],
+   "q": "N",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ",
+   "H": 24,
+   "extra": [
+    "SEL ETYP BEAM TYPE NO VAL1 60001 VAL2 60252",
+    "SEL ETYP BEAM TYPE NO VAL1 70001 VAL2 70117",
+    "SEL ETYP BEAM TYPE NO VAL1 80001 VAL2 80180",
+    "SEL ETYP BEAM TYPE NO VAL1 90001 VAL2 90060"
+   ],
+   "unit": 200,
+   "thr": 239.0,
+   "max": 56.84,
+   "max_group": "G-L1",
+   "min": -398.98,
+   "min_group": "G-L1",
+   "lcs": [
+    4321,
+    4322
+   ]
+  }
+ },
+ {
+  "file": "P13_V_G-L1_My.png",
+  "caption": "My [kNm], ULS envelope: max LC 4329 (red) and min LC 4330 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. columns and rakers ground to Level 1 (groups 11, 12, 13, 14, 21, 23, 24, 31) My. Diagram scale 1 cm = 10 kNm (on the 25.5 cm sheet); labels only where |value| > 3.2 kNm. Envelope extremes: max 7.08, min -7.08 kNm.",
+  "size": [
+   2658,
+   2315
+  ],
+  "picture": {
+   "name": "V_G-L1_My",
+   "title": "columns and rakers ground to Level 1 (groups 11, 12, 13, 14, 21, 23, 24, 31) My",
+   "groups": [
+    11,
+    12,
+    13,
+    14,
+    21,
+    23,
+    24,
+    31
+   ],
+   "q": "MY",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ",
+   "H": 24,
+   "extra": [
+    "SEL ETYP BEAM TYPE NO VAL1 60001 VAL2 60252",
+    "SEL ETYP BEAM TYPE NO VAL1 70001 VAL2 70117",
+    "SEL ETYP BEAM TYPE NO VAL1 80001 VAL2 80180",
+    "SEL ETYP BEAM TYPE NO VAL1 90001 VAL2 90060"
+   ],
+   "unit": 10,
+   "thr": 3.2,
+   "max": 7.08,
+   "max_group": "G-L1",
+   "min": -7.08,
+   "min_group": "G-L1",
+   "lcs": [
+    4329,
+    4330
+   ]
+  }
+ },
+ {
+  "file": "P14_V_G-L1_Mz.png",
+  "caption": "Mz [kNm], ULS envelope: max LC 4331 (red) and min LC 4332 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. columns and rakers ground to Level 1 (groups 11, 12, 13, 14, 21, 23, 24, 31) Mz. Diagram scale 1 cm = 10 kNm (on the 25.5 cm sheet); labels only where |value| > 4.9 kNm. Envelope extremes: max 8.2, min -10.93 kNm.",
+  "size": [
+   2658,
+   2315
+  ],
+  "picture": {
+   "name": "V_G-L1_Mz",
+   "title": "columns and rakers ground to Level 1 (groups 11, 12, 13, 14, 21, 23, 24, 31) Mz",
+   "groups": [
+    11,
+    12,
+    13,
+    14,
+    21,
+    23,
+    24,
+    31
+   ],
+   "q": "MZ",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ",
+   "H": 24,
+   "extra": [
+    "SEL ETYP BEAM TYPE NO VAL1 60001 VAL2 60252",
+    "SEL ETYP BEAM TYPE NO VAL1 70001 VAL2 70117",
+    "SEL ETYP BEAM TYPE NO VAL1 80001 VAL2 80180",
+    "SEL ETYP BEAM TYPE NO VAL1 90001 VAL2 90060"
+   ],
+   "unit": 10,
+   "thr": 4.9,
+   "max": 8.2,
+   "max_group": "G-L1",
+   "min": -10.93,
+   "min_group": "G-L1",
+   "lcs": [
+    4331,
+    4332
+   ]
+  }
+ },
+ {
+  "file": "P15_V_L1-L2_N.png",
+  "caption": "N [kN], ULS envelope: max LC 4321 (red) and min LC 4322 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. columns and rakers Level 1 to Level 2 (groups 11, 12, 13, 14, 21, 23, 24, 31) N. Diagram scale 1 cm = 200 kN (on the 25.5 cm sheet); labels only where |value| > 158 kN. Envelope extremes: max 59.71, min -264.01 kN.",
+  "size": [
+   2658,
+   2315
+  ],
+  "picture": {
+   "name": "V_L1-L2_N",
+   "title": "columns and rakers Level 1 to Level 2 (groups 11, 12, 13, 14, 21, 23, 24, 31) N",
+   "groups": [
+    11,
+    12,
+    13,
+    14,
+    21,
+    23,
+    24,
+    31
+   ],
+   "q": "N",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ",
+   "H": 24,
+   "extra": [
+    "SEL ETYP BEAM TYPE NO VAL1 80181 VAL2 80200",
+    "SEL ETYP BEAM TYPE NO VAL1 110001 VAL2 110252",
+    "SEL ETYP BEAM TYPE NO VAL1 120001 VAL2 120020",
+    "SEL ETYP BEAM TYPE NO VAL1 130001 VAL2 130060"
+   ],
+   "unit": 200,
+   "thr": 158.0,
+   "max": 59.71,
+   "max_group": "L1-L2",
+   "min": -264.01,
+   "min_group": "L1-L2",
+   "lcs": [
+    4321,
+    4322
+   ]
+  }
+ },
+ {
+  "file": "P16_V_L1-L2_My.png",
+  "caption": "My [kNm], ULS envelope: max LC 4329 (red) and min LC 4330 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. columns and rakers Level 1 to Level 2 (groups 11, 12, 13, 14, 21, 23, 24, 31) My. Diagram scale 1 cm = 10 kNm (on the 25.5 cm sheet); labels only where |value| > 10 kNm. Envelope extremes: max 21.91, min -22.58 kNm.",
+  "size": [
+   2658,
+   2315
+  ],
+  "picture": {
+   "name": "V_L1-L2_My",
+   "title": "columns and rakers Level 1 to Level 2 (groups 11, 12, 13, 14, 21, 23, 24, 31) My",
+   "groups": [
+    11,
+    12,
+    13,
+    14,
+    21,
+    23,
+    24,
+    31
+   ],
+   "q": "MY",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ",
+   "H": 24,
+   "extra": [
+    "SEL ETYP BEAM TYPE NO VAL1 80181 VAL2 80200",
+    "SEL ETYP BEAM TYPE NO VAL1 110001 VAL2 110252",
+    "SEL ETYP BEAM TYPE NO VAL1 120001 VAL2 120020",
+    "SEL ETYP BEAM TYPE NO VAL1 130001 VAL2 130060"
+   ],
+   "unit": 10,
+   "thr": 10.0,
+   "max": 21.91,
+   "max_group": "L1-L2",
+   "min": -22.58,
+   "min_group": "L1-L2",
+   "lcs": [
+    4329,
+    4330
+   ]
+  }
+ },
+ {
+  "file": "P17_V_L1-L2_Mz.png",
+  "caption": "Mz [kNm], ULS envelope: max LC 4331 (red) and min LC 4332 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. columns and rakers Level 1 to Level 2 (groups 11, 12, 13, 14, 21, 23, 24, 31) Mz. Diagram scale 1 cm = 10 kNm (on the 25.5 cm sheet); labels only where |value| > 7.2 kNm. Envelope extremes: max 10.91, min -15.96 kNm.",
+  "size": [
+   2658,
+   2315
+  ],
+  "picture": {
+   "name": "V_L1-L2_Mz",
+   "title": "columns and rakers Level 1 to Level 2 (groups 11, 12, 13, 14, 21, 23, 24, 31) Mz",
+   "groups": [
+    11,
+    12,
+    13,
+    14,
+    21,
+    23,
+    24,
+    31
+   ],
+   "q": "MZ",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ",
+   "H": 24,
+   "extra": [
+    "SEL ETYP BEAM TYPE NO VAL1 80181 VAL2 80200",
+    "SEL ETYP BEAM TYPE NO VAL1 110001 VAL2 110252",
+    "SEL ETYP BEAM TYPE NO VAL1 120001 VAL2 120020",
+    "SEL ETYP BEAM TYPE NO VAL1 130001 VAL2 130060"
+   ],
+   "unit": 10,
+   "thr": 7.2,
+   "max": 10.91,
+   "max_group": "L1-L2",
+   "min": -15.96,
+   "min_group": "L1-L2",
+   "lcs": [
+    4331,
+    4332
+   ]
+  }
+ },
+ {
+  "file": "P18_V_L2-RF_N.png",
+  "caption": "N [kN], ULS envelope: max LC 4321 (red) and min LC 4322 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. columns and rakers Level 2 to roof (groups 11, 12, 13, 14, 21, 23, 24, 31) N. Diagram scale 1 cm = 200 kN (on the 25.5 cm sheet); labels only where |value| > 40 kN. Envelope extremes: max 66.78, min -60 kN.",
+  "size": [
+   2658,
+   2315
+  ],
+  "picture": {
+   "name": "V_L2-RF_N",
+   "title": "columns and rakers Level 2 to roof (groups 11, 12, 13, 14, 21, 23, 24, 31) N",
+   "groups": [
+    11,
+    12,
+    13,
+    14,
+    21,
+    23,
+    24,
+    31
+   ],
+   "q": "N",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ",
+   "H": 24,
+   "extra": [
+    "SEL ETYP BEAM TYPE NO VAL1 150001 VAL2 150252"
+   ],
+   "unit": 200,
+   "thr": 40.0,
+   "max": 66.78,
+   "max_group": "L2-RF",
+   "min": -60.0,
+   "min_group": "L2-RF",
+   "lcs": [
+    4321,
+    4322
+   ]
+  }
+ },
+ {
+  "file": "P19_V_L2-RF_My.png",
+  "caption": "My [kNm], ULS envelope: max LC 4329 (red) and min LC 4330 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. columns and rakers Level 2 to roof (groups 11, 12, 13, 14, 21, 23, 24, 31) My. Diagram scale 1 cm = 10 kNm (on the 25.5 cm sheet); labels only where |value| > 11 kNm. Envelope extremes: max 21.21, min -23.63 kNm.",
+  "size": [
+   2658,
+   2315
+  ],
+  "picture": {
+   "name": "V_L2-RF_My",
+   "title": "columns and rakers Level 2 to roof (groups 11, 12, 13, 14, 21, 23, 24, 31) My",
+   "groups": [
+    11,
+    12,
+    13,
+    14,
+    21,
+    23,
+    24,
+    31
+   ],
+   "q": "MY",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ",
+   "H": 24,
+   "extra": [
+    "SEL ETYP BEAM TYPE NO VAL1 150001 VAL2 150252"
+   ],
+   "unit": 10,
+   "thr": 11.0,
+   "max": 21.21,
+   "max_group": "L2-RF",
+   "min": -23.63,
+   "min_group": "L2-RF",
+   "lcs": [
+    4329,
+    4330
+   ]
+  }
+ },
+ {
+  "file": "P20_V_L2-RF_Mz.png",
+  "caption": "Mz [kNm], ULS envelope: max LC 4331 (red) and min LC 4332 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. columns and rakers Level 2 to roof (groups 11, 12, 13, 14, 21, 23, 24, 31) Mz. Diagram scale 1 cm = 10 kNm (on the 25.5 cm sheet); labels only where |value| > 9 kNm. Envelope extremes: max 20.05, min -14.96 kNm.",
+  "size": [
+   2658,
+   2315
+  ],
+  "picture": {
+   "name": "V_L2-RF_Mz",
+   "title": "columns and rakers Level 2 to roof (groups 11, 12, 13, 14, 21, 23, 24, 31) Mz",
+   "groups": [
+    11,
+    12,
+    13,
+    14,
+    21,
+    23,
+    24,
+    31
+   ],
+   "q": "MZ",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ",
+   "H": 24,
+   "extra": [
+    "SEL ETYP BEAM TYPE NO VAL1 150001 VAL2 150252"
+   ],
+   "unit": 10,
+   "thr": 9.0,
+   "max": 20.05,
+   "max_group": "L2-RF",
+   "min": -14.96,
+   "min_group": "L2-RF",
+   "lcs": [
+    4331,
+    4332
+   ]
+  }
+ },
+ {
+  "file": "P21_S_int_N.png",
+  "caption": "N [kN], ULS envelope: max LC 4321 (red) and min LC 4322 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. internal stairs (groups 60, 61) N. Diagram scale 1 cm = 50 kN (on the 25.5 cm sheet); labels only where |value| > 49 kN. Envelope extremes: max 57.75, min -51.58 kN.",
+  "size": [
+   2658,
+   2315
+  ],
+  "picture": {
+   "name": "S_int_N",
+   "title": "internal stairs (groups 60, 61) N",
+   "groups": [
+    60,
+    61
+   ],
+   "q": "N",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ",
+   "H": 24,
+   "extra": [],
+   "unit": 50,
+   "thr": 49.0,
+   "max": 57.75,
+   "max_group": 60,
+   "min": -51.58,
+   "min_group": 61,
+   "lcs": [
+    4321,
+    4322
+   ]
+  }
+ },
+ {
+  "file": "P22_S_int_My.png",
+  "caption": "My [kNm], ULS envelope: max LC 4329 (red) and min LC 4330 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. internal stairs (groups 60, 61) My. Diagram scale 1 cm = 20 kNm (on the 25.5 cm sheet); labels only where |value| > 10 kNm. Envelope extremes: max 16.69, min -22.58 kNm.",
+  "size": [
+   2658,
+   2315
+  ],
+  "picture": {
+   "name": "S_int_My",
+   "title": "internal stairs (groups 60, 61) My",
+   "groups": [
+    60,
+    61
+   ],
+   "q": "MY",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ",
+   "H": 24,
+   "extra": [],
+   "unit": 20,
+   "thr": 10.0,
+   "max": 16.69,
+   "max_group": 60,
+   "min": -22.58,
+   "min_group": 60,
+   "lcs": [
+    4329,
+    4330
+   ]
+  }
+ },
+ {
+  "file": "P23_S_int_Vz.png",
+  "caption": "Vz [kN], ULS envelope: max LC 4325 (red) and min LC 4326 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. internal stairs (groups 60, 61) Vz. Diagram scale 1 cm = 20 kN (on the 25.5 cm sheet); labels only where |value| > 17 kN. Envelope extremes: max 37.47, min -28.53 kN.",
+  "size": [
+   2658,
+   2315
+  ],
+  "picture": {
+   "name": "S_int_Vz",
+   "title": "internal stairs (groups 60, 61) Vz",
+   "groups": [
+    60,
+    61
+   ],
+   "q": "VZ",
+   "view": "VIEW TYPE DIRE X 1 Y 1.4 Z -0.8 AXIS NEGZ",
+   "H": 24,
+   "extra": [],
+   "unit": 20,
+   "thr": 17.0,
+   "max": 37.47,
+   "max_group": 60,
+   "min": -28.53,
+   "min_group": 60,
+   "lcs": [
+    4325,
+    4326
+   ]
+  }
+ },
+ {
+  "file": "P24_S_ext_N.png",
+  "caption": "N [kN], ULS envelope: max LC 4321 (red) and min LC 4322 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. external stair (group 62) N. Diagram scale 1 cm = 100 kN (on the 25.5 cm sheet); labels only where |value| > 55 kN. Envelope extremes: max 64.98, min -62.71 kN.",
+  "size": [
+   2658,
+   2315
+  ],
+  "picture": {
+   "name": "S_ext_N",
+   "title": "external stair (group 62) N",
+   "groups": [
+    62
+   ],
+   "q": "N",
+   "view": "VIEW TYPE DIRE X -1 Y 0.35 Z -0.45 AXIS NEGZ",
+   "H": 24,
+   "extra": [],
+   "unit": 100,
+   "thr": 55.0,
+   "max": 64.98,
+   "max_group": 62,
+   "min": -62.71,
+   "min_group": 62,
+   "lcs": [
+    4321,
+    4322
+   ]
+  }
+ },
+ {
+  "file": "P25_S_ext_My.png",
+  "caption": "My [kNm], ULS envelope: max LC 4329 (red) and min LC 4330 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. external stair (group 62) My. Diagram scale 1 cm = 20 kNm (on the 25.5 cm sheet); labels only where |value| > 11 kNm. Envelope extremes: max 20.93, min -24.77 kNm.",
+  "size": [
+   2658,
+   2315
+  ],
+  "picture": {
+   "name": "S_ext_My",
+   "title": "external stair (group 62) My",
+   "groups": [
+    62
+   ],
+   "q": "MY",
+   "view": "VIEW TYPE DIRE X -1 Y 0.35 Z -0.45 AXIS NEGZ",
+   "H": 24,
+   "extra": [],
+   "unit": 20,
+   "thr": 11.0,
+   "max": 20.93,
+   "max_group": 62,
+   "min": -24.77,
+   "min_group": 62,
+   "lcs": [
+    4329,
+    4330
+   ]
+  }
+ },
+ {
+  "file": "P26_S_ext_Vz.png",
+  "caption": "Vz [kN], ULS envelope: max LC 4325 (red) and min LC 4326 (blue) over the 43 ULS STR combinations 101-130, 135, 141-148, 151-154. external stair (group 62) Vz. Diagram scale 1 cm = 20 kN (on the 25.5 cm sheet); labels only where |value| > 13 kN. Envelope extremes: max 27.85, min -15.62 kN.",
+  "size": [
+   2658,
+   2315
+  ],
+  "picture": {
+   "name": "S_ext_Vz",
+   "title": "external stair (group 62) Vz",
+   "groups": [
+    62
+   ],
+   "q": "VZ",
+   "view": "VIEW TYPE DIRE X -1 Y 0.35 Z -0.45 AXIS NEGZ",
+   "H": 24,
+   "extra": [],
+   "unit": 20,
+   "thr": 13.0,
+   "max": 27.85,
+   "max_group": 62,
+   "min": -15.62,
+   "min_group": 62,
+   "lcs": [
+    4325,
+    4326
+   ]
+  }
+ }
+]

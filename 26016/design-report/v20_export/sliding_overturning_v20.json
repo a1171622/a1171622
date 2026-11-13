@@ -1,0 +1,113 @@
+{
+ "rows": [
+  {
+   "combination": "DL + WL",
+   "wind": "+X",
+   "sum_Fz": 1269.5,
+   "H": 201.0,
+   "FoS": 2.53,
+   "min_support_Fz": -7.2,
+   "node": 901
+  },
+  {
+   "combination": "DL + WL",
+   "wind": "-X",
+   "sum_Fz": 1312.7,
+   "H": 196.0,
+   "FoS": 2.68,
+   "min_support_Fz": -7.6,
+   "node": 902
+  },
+  {
+   "combination": "DL + WL",
+   "wind": "-Y",
+   "sum_Fz": 1283.7,
+   "H": 207.5,
+   "FoS": 2.47,
+   "min_support_Fz": -5.2,
+   "node": 909
+  },
+  {
+   "combination": "DL + WL",
+   "wind": "+Y",
+   "sum_Fz": 1297.9,
+   "H": 205.5,
+   "FoS": 2.53,
+   "min_support_Fz": -2.6,
+   "node": 911
+  },
+  {
+   "combination": "DL + 0.7LL + 0.5WL",
+   "wind": "+X",
+   "sum_Fz": 4675.0,
+   "H": 100.5,
+   "FoS": 18.61,
+   "min_support_Fz": 3.0,
+   "node": 901
+  },
+  {
+   "combination": "DL + 0.7LL + 0.5WL",
+   "wind": "-X",
+   "sum_Fz": 4696.6,
+   "H": 98.0,
+   "FoS": 19.17,
+   "min_support_Fz": 0.9,
+   "node": 902
+  },
+  {
+   "combination": "DL + 0.7LL + 0.5WL",
+   "wind": "-Y",
+   "sum_Fz": 4682.1,
+   "H": 103.7,
+   "FoS": 18.05,
+   "min_support_Fz": 3.9,
+   "node": 909
+  },
+  {
+   "combination": "DL + 0.7LL + 0.5WL",
+   "wind": "+Y",
+   "sum_Fz": 4689.2,
+   "H": 102.8,
+   "FoS": 18.25,
+   "min_support_Fz": 3.6,
+   "node": 910
+  },
+  {
+   "combination": "DL + LL + 0.5WL",
+   "wind": "+X",
+   "sum_Fz": 5995.1,
+   "H": 100.5,
+   "FoS": 23.86,
+   "min_support_Fz": 5.3,
+   "node": 901
+  },
+  {
+   "combination": "DL + LL + 0.5WL",
+   "wind": "-X",
+   "sum_Fz": 6016.7,
+   "H": 98.0,
+   "FoS": 24.55,
+   "min_support_Fz": 2.5,
+   "node": 902
+  },
+  {
+   "combination": "DL + LL + 0.5WL",
+   "wind": "-Y",
+   "sum_Fz": 6002.2,
+   "H": 103.7,
+   "FoS": 23.14,
+   "min_support_Fz": 6.2,
+   "node": 909
+  },
+  {
+   "combination": "DL + LL + 0.5WL",
+   "wind": "+Y",
+   "sum_Fz": 6009.3,
+   "H": 102.8,
+   "FoS": 23.39,
+   "min_support_Fz": 5.3,
+   "node": 910
+  }
+ ],
+ "min_FoS_DL_WL": 2.47
+}

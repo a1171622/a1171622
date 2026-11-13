@@ -1,0 +1,33 @@
+check,zone,value,sigma_v_MPa,util,fy_MPa,t_mm,element,group,surface,z_m,angle_deg,r_m,lc,lc_title
+SLS,"horizontal collar / cap plates, Level 2",element,414.6,1.508,275.0,20.0,23531,1,bottom,7.811,334.8,0.602,201,201 SLS G+Q
+SLS,"horizontal collar / cap plates, Level 2",gauss,616.4,2.242,275.0,20.0,23531,1,max of top/bottom/mid at a Gauss point,7.811,334.8,0.602,201,201 SLS G+Q
+SLS,"horizontal collar / cap plates, roof",element,87.5,0.318,275.0,20.0,18006,1,top,11.914,39.8,0.513,201,201 SLS G+Q
+SLS,"horizontal collar / cap plates, roof",gauss,116.0,0.422,275.0,20.0,17671,1,max of top/bottom/mid at a Gauss point,11.914,179.6,0.51,201,201 SLS G+Q
+SLS,"tube wall, Level 2 connection zone (z 7.4-8.7)",element,93.9,0.341,275.0,20.0,50812,7,bottom,7.615,239.1,0.305,201,201 SLS G+Q
+SLS,"tube wall, Level 2 connection zone (z 7.4-8.7)",gauss,114.0,0.414,275.0,20.0,50812,7,max of top/bottom/mid at a Gauss point,7.615,239.1,0.305,201,201 SLS G+Q
+SLS,"tube wall, base zone (z 0-0.5)",element,23.3,0.085,275.0,20.0,41481,6,top,0.028,9.1,0.301,201,201 SLS G+Q
+SLS,"tube wall, base zone (z 0-0.5)",gauss,30.7,0.112,275.0,20.0,41481,6,max of top/bottom/mid at a Gauss point,0.028,9.1,0.301,201,201 SLS G+Q
+SLS,"tube wall, between levels",element,29.0,0.106,275.0,20.0,51680,7,top,4.678,254.0,0.293,201,201 SLS G+Q
+SLS,"tube wall, between levels",gauss,39.6,0.144,275.0,20.0,51680,7,max of top/bottom/mid at a Gauss point,4.678,254.0,0.293,201,201 SLS G+Q
+SLS,"tube wall, roof connection zone (z > 11.5)",element,24.8,0.09,275.0,20.0,43519,6,bottom,11.718,19.0,0.305,201,201 SLS G+Q
+SLS,"tube wall, roof connection zone (z > 11.5)",gauss,30.1,0.109,275.0,20.0,43249,6,max of top/bottom/mid at a Gauss point,11.706,79.2,0.304,201,201 SLS G+Q
+SLS,"vertical radial fin plates, Level 2",element,202.1,0.735,275.0,20.0,34073,2,top,7.803,240.1,0.498,201,201 SLS G+Q
+SLS,"vertical radial fin plates, Level 2",gauss,256.3,0.932,275.0,20.0,34073,2,max of top/bottom/mid at a Gauss point,7.803,240.1,0.498,201,201 SLS G+Q
+SLS,"vertical radial fin plates, roof",element,62.3,0.226,275.0,20.0,31335,2,top,11.906,220.0,0.497,201,201 SLS G+Q
+SLS,"vertical radial fin plates, roof",gauss,79.7,0.29,275.0,20.0,31335,2,max of top/bottom/mid at a Gauss point,11.906,220.0,0.497,201,201 SLS G+Q
+ULS,"horizontal collar / cap plates, Level 2",element,609.3,2.216,275.0,20.0,23531,1,bottom,7.811,334.8,0.602,122,122 ULS G+Q+psiW +Y down
+ULS,"horizontal collar / cap plates, Level 2",gauss,905.0,3.291,275.0,20.0,23531,1,max of top/bottom/mid at a Gauss point,7.811,334.8,0.602,122,122 ULS G+Q+psiW +Y down
+ULS,"horizontal collar / cap plates, roof",element,156.6,0.57,275.0,20.0,17671,1,top,11.914,179.6,0.51,107,107 ULS 1.0G+W +X uplift
+ULS,"horizontal collar / cap plates, roof",gauss,210.1,0.764,275.0,20.0,17671,1,max of top/bottom/mid at a Gauss point,11.914,179.6,0.51,107,107 ULS 1.0G+W +X uplift
+ULS,"tube wall, Level 2 connection zone (z 7.4-8.7)",element,137.5,0.5,275.0,20.0,50812,7,bottom,7.615,239.1,0.305,122,122 ULS G+Q+psiW +Y down
+ULS,"tube wall, Level 2 connection zone (z 7.4-8.7)",gauss,167.3,0.608,275.0,20.0,50812,7,max of top/bottom/mid at a Gauss point,7.615,239.1,0.305,122,122 ULS G+Q+psiW +Y down
+ULS,"tube wall, base zone (z 0-0.5)",element,34.3,0.125,275.0,20.0,41481,6,top,0.028,9.1,0.301,145,145 ULS 1.35G+1.5Q + EHF +X
+ULS,"tube wall, base zone (z 0-0.5)",gauss,45.1,0.164,275.0,20.0,41481,6,max of top/bottom/mid at a Gauss point,0.028,9.1,0.301,145,145 ULS 1.35G+1.5Q + EHF +X
+ULS,"tube wall, between levels",element,45.9,0.167,275.0,20.0,42798,6,bottom,11.418,275.1,0.305,110,110 ULS 1.0G+W +Y uplift
+ULS,"tube wall, between levels",gauss,57.4,0.209,275.0,20.0,51680,7,max of top/bottom/mid at a Gauss point,4.678,254.0,0.293,148,148 ULS 1.35G+1.5Q + EHF +Y
+ULS,"tube wall, roof connection zone (z > 11.5)",element,83.1,0.302,275.0,20.0,54454,7,bottom,11.708,259.4,0.305,110,110 ULS 1.0G+W +Y uplift
+ULS,"tube wall, roof connection zone (z > 11.5)",gauss,107.4,0.39,275.0,20.0,43249,6,max of top/bottom/mid at a Gauss point,11.706,79.2,0.304,109,109 ULS 1.0G+W -Y uplift
+ULS,"vertical radial fin plates, Level 2",element,298.8,1.087,275.0,20.0,34073,2,top,7.803,240.1,0.498,122,122 ULS G+Q+psiW +Y down
+ULS,"vertical radial fin plates, Level 2",gauss,379.0,1.378,275.0,20.0,34073,2,max of top/bottom/mid at a Gauss point,7.803,240.1,0.498,122,122 ULS G+Q+psiW +Y down
+ULS,"vertical radial fin plates, roof",element,111.6,0.406,275.0,20.0,31557,2,top,11.906,280.0,0.498,110,110 ULS 1.0G+W +Y uplift
+ULS,"vertical radial fin plates, roof",gauss,142.4,0.518,275.0,20.0,31557,2,max of top/bottom/mid at a Gauss point,11.906,280.0,0.498,110,110 ULS 1.0G+W +Y uplift

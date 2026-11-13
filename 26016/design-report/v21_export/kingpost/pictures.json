@@ -1,0 +1,58 @@
+[
+ {
+  "file": "K1_kingpost_vonMises_LC122_iso.png",
+  "title": "Kingpost, von Mises SV, whole height, isometric",
+  "lc": 122,
+  "legend_max_MPa": 382.6,
+  "shows": "whole kingpost; peak on the Level 2 bottom collar plate at the radial ties",
+  "note": "WinGRAF QUAD TYPE SV (max over the thickness, N/A +- M/W), values averaged to the nodes from the element centres (STYP ELEM -> E2N), MPa (PAGE UNII 5). No envelope over load cases in WinGRAF: governing LC of the zone plotted."
+ },
+ {
+  "file": "K2_kingpost_vonMises_LC122_opposite.png",
+  "title": "Kingpost, von Mises SV, opposite side",
+  "lc": 122,
+  "legend_max_MPa": 382.6,
+  "shows": "same as K1 from the opposite side",
+  "note": "WinGRAF QUAD TYPE SV (max over the thickness, N/A +- M/W), values averaged to the nodes from the element centres (STYP ELEM -> E2N), MPa (PAGE UNII 5). No envelope over load cases in WinGRAF: governing LC of the zone plotted."
+ },
+ {
+  "file": "K3_L2_zone_vonMises_LC122.png",
+  "title": "Level 2 connection zone (z 7.5-8.6), von Mises",
+  "lc": 122,
+  "legend_max_MPa": 382.6,
+  "shows": "collar plates z 7.81 / 8.30, fins, tube; hot spots at the 4-node radial ties on the bottom collar",
+  "note": "WinGRAF QUAD TYPE SV (max over the thickness, N/A +- M/W), values averaged to the nodes from the element centres (STYP ELEM -> E2N), MPa (PAGE UNII 5). No envelope over load cases in WinGRAF: governing LC of the zone plotted."
+ },
+ {
+  "file": "K3b_L2_bottom_collar_from_below_LC122.png",
+  "title": "Level 2 bottom collar plate (z 7.81) seen from below",
+  "lc": 122,
+  "legend_max_MPa": 382.6,
+  "shows": "ring of hot spots at r 0.6-0.7 = the tied nodes of the 18 radial ends; highest near 240 / 340 deg",
+  "note": "WinGRAF QUAD TYPE SV (max over the thickness, N/A +- M/W), values averaged to the nodes from the element centres (STYP ELEM -> E2N), MPa (PAGE UNII 5). No envelope over load cases in WinGRAF: governing LC of the zone plotted."
+ },
+ {
+  "file": "K4_roof_zone_vonMises_LC110.png",
+  "title": "Roof connection zone (z > 11.5), von Mises",
+  "lc": 110,
+  "legend_max_MPa": 120.9,
+  "shows": "roof plates and fins, max well below fy",
+  "note": "WinGRAF QUAD TYPE SV (max over the thickness, N/A +- M/W), values averaged to the nodes from the element centres (STYP ELEM -> E2N), MPa (PAGE UNII 5). No envelope over load cases in WinGRAF: governing LC of the zone plotted."
+ },
+ {
+  "file": "K5_base_zone_vonMises_LC145.png",
+  "title": "Base zone (z < 1.0), von Mises",
+  "lc": 145,
+  "legend_max_MPa": 34.3,
+  "shows": "tube wall at the 20 support nodes, low stress",
+  "note": "WinGRAF QUAD TYPE SV (max over the thickness, N/A +- M/W), values averaged to the nodes from the element centres (STYP ELEM -> E2N), MPa (PAGE UNII 5). No envelope over load cases in WinGRAF: governing LC of the zone plotted."
+ },
+ {
+  "file": "K6_L2_zone_deformed_vonMises_LC122.png",
+  "title": "Level 2 zone, deformed shape x50 with von Mises",
+  "lc": 122,
+  "legend_max_MPa": 382.6,
+  "shows": "governing LC 122, local plate bending of the bottom collar under the radial ties",
+  "note": "WinGRAF QUAD TYPE SV (max over the thickness, N/A +- M/W), values averaged to the nodes from the element centres (STYP ELEM -> E2N), MPa (PAGE UNII 5). No envelope over load cases in WinGRAF: governing LC of the zone plotted."
+ }
+]

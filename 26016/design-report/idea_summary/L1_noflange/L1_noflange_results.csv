@@ -1,0 +1,19 @@
+joint,forces,result,plates %,bolts %,welds %,governing case,load effects,source
+L1-R8-A_000,as-is,FAIL,147.3,5.4,98.3,LC_121,10,v15/xml_A_noflange_asis (run 2026-11-13)
+L1-R8-A_040,as-is,FAIL,1119.1,76.2,255.4,LC_135,11,v15/xml_A_noflange_asis (run 2026-11-13)
+L1-R8-A_120,as-is,FAIL,194.0,5.7,98.4,LC_120,12,v15/xml_A_noflange_asis (run 2026-11-13)
+L1-R8-A_160,as-is,FAIL,209.4,6.1,98.5,LC_145,11,v15/xml_A_noflange_asis (run 2026-11-13)
+L1-R8-A_200,as-is,FAIL,199.0,6.2,98.8,LC_148,9,v15/xml_A_noflange_asis (run 2026-11-13)
+L1-R8-A_240,as-is,FAIL,183.0,5.7,98.6,LC_119,10,v15/xml_A_noflange_asis (run 2026-11-13)
+L1-R8-A_320,as-is,FAIL,487.6,9.9,151.0,LC_135,12,v15/xml_A_noflange_asis (run 2026-11-13)
+L1-R8-B_080,as-is,FAIL,220.1,10.2,98.9,LC_120,14,v15/xml_B_noflange_asis (run 2026-11-13)
+L1-R8-B_280,as-is,FAIL,208.7,15.4,99.4,LC_146,13,v15/xml_B_noflange_asis (run 2026-11-13)
+L1-R8-A_000,Mz = 0,PASS,0.0,5.4,74.6,LC_120,11,v15/xml_mz0 (run 2026-10-27)
+L1-R8-A_040,Mz = 0,PASS,0.0,8.3,69.7,LC_121,11,v15/xml_mz0 (run 2026-10-27)
+L1-R8-A_120,Mz = 0,PASS,0.0,5.6,74.1,LC_121,12,v15/xml_mz0 (run 2026-10-27)
+L1-R8-A_160,Mz = 0,PASS,0.0,5.6,76.4,LC_119,11,v15/xml_mz0 (run 2026-10-27)
+L1-R8-A_200,Mz = 0,PASS,0.0,5.1,64.0,LC_119,9,v15/xml_mz0 (run 2026-10-27)
+L1-R8-A_240,Mz = 0,PASS,0.0,5.6,71.7,LC_122,9,v15/xml_mz0 (run 2026-10-27)
+L1-R8-A_320,Mz = 0,PASS,0.0,5.2,63.9,LC_120,11,v15/xml_mz0 (run 2026-10-27)
+L1-R8-B_080,Mz = 0,PASS,0.6,10.1,98.2,LC_121,12,"v15/xml_mz0 (run 2026-10-27), column welds a 4.2*"
+L1-R8-B_280,Mz = 0,PASS,0.1,15.0,97.8,LC_122,13,"v15/xml_mz0 (run 2026-10-27), column welds a 4.2*"

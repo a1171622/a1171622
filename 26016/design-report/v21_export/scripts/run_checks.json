@@ -1,0 +1,8 @@
+{"table": {
+ "exit code / errors": ["0 / 0", "0 / 0"],
+ "warnings (erg)": ["212 (tool count)", "212 (tool count)"],
+ "warning difference": ["-", "no new warning type; BDK no. 156: 19 -> 20, no. 205: 6 -> 4, SOFIMSHC no. 12149: 34 -> 35 (one more section line)"],
+ "mechanism / singularity / error 197": ["none", "none"],
+ "run time": ["34.0 min (2041 s), peak RAM 10.1 GB", "35.7 min (2139 s), peak RAM 10.1 GB"],
+ "programs": ["AQUA SOFIMSHC SOFILOAD ASE MAXIMA BDK x2 ASE x2 (eigen) AQB", "same, all finished"]
+}}
